@@ -1,0 +1,202 @@
+{
+  "layer": "top",
+  "width": 1920,
+  "height": 36,
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "reload_on_change": true,
+  "reload_style_on_change": true,
+
+  "modules-left": ["hyprland/workspaces"/* "niri/window"/*,"custom/launcher","memory","backlight","custom/previous","custom/pause","custom/next"*/],
+  "modules-center": [/*"hyprland/workspaces"*/"clock"],
+  "modules-right": ["bluetooth","network","pulseaudio","backlight","battery","memory"],
+
+  "pulseaudio": {
+    "tooltip": false,
+    "scroll-step": 5,
+    "format": "{icon} {volume}%",
+    "format-muted": "{icon} {volume}%",
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "format-icons": {
+      "default": [
+        "<span color='#1e1e2e'>󰝟 </span>",
+        "<span color='#1576BB'> </span>",
+        "<span color='#1576BB'> </span>",
+        "<span color='#1576BB'> </span>"
+      ]
+    }
+  },
+
+"niri/window": {
+    "format": "{}",
+	"rewrite": {
+		"(.*) - Mozilla Firefox": "🌎 $1",
+		"(.*) - zsh": "> [$1]"
+	}
+},
+
+"hyprland/workspaces": {
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "default": "",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "active": "",
+            "persistent": ""
+        },
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": []
+        }
+    },
+
+  "network": {
+    "tooltip": true,
+    "format-wifi": "{icon}",
+    "tooltip-format": "connected to {essid}",
+    "format-ethernet": "",
+    "format-icons": {"wifi": ["󰤯 ","󰤟 ","󰤢 ","󰤥 ","󰤨 "]},
+    "interval": 30,
+    "on-click": "~/.local/bin/rofi-wifi-menu",
+    "on-click-right": "nm-connection-editor",
+    "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on"
+  },
+
+  "backlight": {
+    "tooltip": false,
+    "format": "{icon} {percent:>2}%",
+    "format-icons": ["","","","","","","","",""],
+    "on-scroll-up": "light -A 5",
+    "on-scroll-down": "light -U 5"
+  },
+
+  "bluetooth": {
+    "format": "{icon}",
+    "format-icons": ["󰂯","󰤾","󰥀","󰥄","󰥈"],
+    "tooltip-format-off": "Bluetooth is off",
+    "tooltip-format-on": "Bluetooth is on",
+    "format-connected": "{icon} {num_connections}",
+    "format-connected-battery": "{icon} {device_battery_percentage}%",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_battery_percentage}%",
+    "on-click": "blueman-manager"
+  },
+
+  "battery": {
+    "states": { "good": 95, "warning": 30, "critical": 10 },
+    "format": "{icon} {capacity}%",
+    "format-charging": "<span color='#456c23'> </span>{capacity}%",
+    "format-plugged": " <span color='#000000'> {capacity}</span>%",
+    "format-alt": "<span color='#F1F1F1'>{time}</span> {icon}",
+    "format-icons": [
+      "<span color='#f7768e'>󰁺</span>",
+      "<span color='#f7768e'>󰁻</span>",        
+      "<span color='#e0af68'>󰁼</span>",
+      "<span color='#e0af68'>󰁽</span>",
+      "<span color='#456c23'>󰁾</span>",
+      "<span color='#456c23'>󰁿</span>",
+      "<span color='#456c23'>󰂀</span>",
+      "<span color='#456c23'>󰂁</span>",
+      "<span color='#456c23'>󰂂</span>",
+      "<span color='#456c23'>󰁹</span>"
+    ]
+  },
+
+  "clock": { "tooltip": false, "interval": 60, "format": "{:%H:%M}", "format-alt": "{:%d-%m-%Y}" },
+  
+  "cpu": { "interval": 15, "format": "<span color='#f7768e'> </span> {}%", "max-length": 10 },
+
+  "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
+
+  "memory": { "interval": 30, "format": "<span color='#1576BB'>󰍛 </span> {used}GiB", "format-alt": "<span color='#1576BB'>󰍛 </span> {percentage}%", "max-length": 10 },
+
+  "custom/media": {
+    "interval": 30,
+    "format": "{icon} {}",
+    "return-type": "json",
+    "max-length": 20,
+    "format-icons": { "spotify": " ", "default": "󰎆 " },
+    "escape": true,
+    "exec": "$HOME/.config/system_scripts/mediaplayer.py 2> /dev/null",
+    "on-click": "playerctl play-pause"
+  },
+
+  "custom/launcher": {"tooltip": false, "format": "", "on-click": "swaync-client -t", "on-click-right": ""},
+
+  "custom/power": { "format": "<span color='#f7768e'>⏻</span>", "on-click": "wlogout" },
+
+  "custom/updates": { "format": "󰏓  {} ", "exec": "checkupdates | wc -l", "interval": 3600, "tooltip-format": "Pacman packages"},
+
+  "custom/pkg-aur": {
+    "exec": "yay -Qua | wc -l",
+    "interval": 3600,
+    "format": " 󰏔  {}",
+    "tooltip": true,
+    "tooltip-format": "AUR packages"
+  },
+
+  "custom/previous": {
+    "format": "󰒮",
+    "on-click": "playerctl --player=spotify previous && playerctl --player=youtube-music previous",
+    "tooltip": false,
+  },
+
+  "custom/pause": {
+    "format": "{icon}",
+    "return-type": "json",
+    // Mapea el "alt" devuelto por el script -> iconos
+    "format-icons": {
+      "playing": "󰏤", // pausa (estado actual: reproduciendo)
+      "paused":  "󰐊", // play   (estado actual: en pausa)
+      "stopped": "󰐊"
+    },
+    // Ejecuta el script para obtener estado
+    "exec": "~/.local/bin/waybar-mpris-state.sh",
+    // Refresco periódico por si cambia sin interacción (opcional)
+    "interval": 2,
+    // Señal para refresco inmediato tras click
+    "signal": 8,
+    // Click: alterna play/pause y pide refrescar al módulo
+    "on-click": "playerctl -p spotify play-pause; pkill -RTMIN+8 waybar",
+    "on-click-right": "playerctl -p spotify stop; pkill -RTMIN+8 waybar",
+    // Scroll opcional
+    "on-scroll-up": "playerctl -p spotify previous; pkill -RTMIN+8 waybar",
+    "on-scroll-down": "playerctl -p spotify next; pkill -RTMIN+8 waybar",
+    "tooltip": true
+  },
+
+  "custom/next": {
+    "format": "󰒭",
+    "on-click": "playerctl --player=spotify next && playerctl --player=youtube-music next",
+    "tooltip": false,
+  },
+
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 14,                  // más pequeño para permitir barra baja
+    "all-outputs": true,
+    "active-only": false,
+    "on-click": "activate",
+    "on-click-right": "minimize",
+    "on-click-middle": "close",
+    "ignore-list": ["xwaylandvideobridge","kitty","waybar","float_kitty"],
+    "app_ids-mapping": {
+      "steam": "steam",
+      "steamwebhelper": "steam",
+      "com.valvesoftware.Steam": "steam",
+      "org.gns3.gui": "gns3"
+    },
+    "tooltip-format": "{app_id}\n{title}"
+  }
+}

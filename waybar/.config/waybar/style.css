@@ -1,0 +1,75 @@
+@import url("file:///home/Rolando/.cache/wallust/colors-waybar.css");
+
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  min-height: 16px;
+}
+
+label.module {
+    color: @foreground;
+    padding: 0 0.25em;
+}
+
+/* Altura baja: reducir márgenes/padding verticales en TODOS los módulos */
+#network, #bluetooth, #pulseaudio, #battery, #backlight, #clock,
+#memory, #disk, #cpu, #workspaces, #taskbar, #bluetooth{
+  margin-top: 1px;
+  margin-bottom: 3px;
+}
+
+#custom-launcher {
+    margin-right: 4px;
+}
+
+#custom-previous, #custom-pause, #custom-next {
+    margin-left: 6px;
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+#tags button.focused {
+    color: @color2;
+    border: 2px solid @color4;
+}
+
+/* La barra en sí */
+window#waybar {
+    background-color: alpha(@background, 0.4); /* Fondo dinámico con tu transparencia del 40% */
+    border-radius: 0px;
+    margin-top: 4px;
+}
+
+/* --- ESPACIOS DE TRABAJO --- */
+#workspaces button {
+  all: initial;
+  min-width: 0;
+  box-shadow: inset 0 -3px transparent;
+  padding: 6px 18px;
+  margin: 6px 3px;
+  border-radius: 4px;
+  background-color: alpha(@color0, 0.5); /* Base oscura/clara dinámica en vez de azul estático */
+  color: @foreground;
+}
+
+#workspaces button.active { 
+    background-color: alpha(@color2, 0.8); /* Color de acento principal del wallpaper */
+    color: @background; /* Invertimos el texto para garantizar contraste perfecto */
+}
+
+/* --- MÓDULOS DE SISTEMA --- */
+#window, #clock, #network, #pulseaudio, #battery, #backlight, #memory, #disk, #cpu, #bluetooth {
+  background-color: alpha(@color0, 0.6); /* Reemplaza tu gris claro estático por uno dinámico */
+  color: @foreground;
+  border-radius: 4px;
+  margin: 6px 3px;
+  padding: 6px 12px;
+}
+
+/* Bluetooth con menos tamaño */
+#bluetooth {
+  font-size: 18px; 
+}

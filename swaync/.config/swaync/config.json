@@ -1,0 +1,63 @@
+{
+  "$schema": "/etc/xdg/swaync/configSchema.json",
+  "positionX": "left",
+  "positionY": "top",
+  "layer": "overlay",
+  "control-center-width": 380,
+  "keyboard-shortcuts": true,
+  "fit-to-screen": true,
+  "control-center-exclusive-zone": true,
+  "widgets": [
+    "title",
+    "dnd",
+    "mpris",
+    "buttons-grid"
+  ],
+  "widget-config": {
+    "title": {
+      "text": "Notifications",
+      "clear-all-button": true,
+      "button-text": "Clear All"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    },
+    "mpris": {
+      "image-size": 96,
+      "image-radius": 12
+    },
+    "buttons-grid": {
+      "actions": [
+        {
+          "label": "󰖩",
+          "type": "toggle",
+          "active": true,
+          "command": "sh -c 'if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi'",
+          "update-command": "sh -c 'if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then echo true; else echo false; fi'"
+        },
+        {
+          "label": "󰂯",
+          "type": "toggle",
+          "command": "sh -c 'if [ \"$(bluetoothctl show | grep -q \"Powered: yes\")\" ]; then bluetoothctl power off; else bluetoothctl power on; fi'",
+          "update-command": "sh -c 'if [ \"$(bluetoothctl show | grep -q \"Powered: yes\")\" ]; then echo true; else echo false; fi'"
+        },
+        {
+          "label": "󰝟",
+          "command": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        },
+        {
+          "label": "󰍭",
+          "command": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        },
+        {
+          "label": "",
+          "command": "hyprlock"
+        },
+        {
+          "label": "󰐥",
+          "command": "wlogout"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,85 @@
+/***** Config *****/
+configuration { 
+  show-icons: false;    /* no reservar columna de iconos (el rectángulo blanco) */
+}
+
+/***** Paleta *****/
+* {
+  font:            "JetBrains Mono Nerd Font 12";
+  bg:              #11111b;
+  bg-alt:          #1e1e2e;
+  fg:              #cdd6f4;
+  fg-dim:          #a6adc8;
+  sel:             #89b4fa;   /* selección */
+  accent:          #a6e3a1;   /* no usado, por si lo quieres */
+}
+
+/***** Ventana *****/
+window {
+  transparency:    "real";
+  location:        center;
+  anchor:          center;
+  width:           40em;
+  border-radius:   10px;
+  background-color:@bg;
+}
+
+/***** Layout *****/
+mainbox {
+  spacing:         0px;
+  background-color:transparent;
+  children:        [ "inputbar", "listview" ];
+}
+
+inputbar {
+  padding:         16px 16px 0 16px;
+  background-color:transparent;
+}
+
+/* Prompt “Wi‑Fi”: sin fondo, color visible */
+prompt {
+  padding:         0px 10px 0 10px;
+  background-color:transparent;
+  text-color:      #89b4fa;  /* azul más vivo para que destaque sin fondo */
+}
+
+/* Entrada (el campo a la derecha del prompt): sin fondo/blanco */
+entry {
+  padding:         0px 0px;
+  background-color:transparent;
+  text-color:      @fg;
+  cursor:          text;
+}
+
+/***** Lista *****/
+listview {
+  lines:           12;
+  margin:          16px;
+  border-radius:   10px;
+  background-color:@bg-alt;
+  scrollbar:       false;
+}
+
+/***** Elementos *****/
+element {
+  padding:         10px 12px;
+  background-color:transparent;
+  text-color:      @fg;
+  border-radius:   8px;
+}
+element selected {
+  background-color:@sel;
+  text-color:      @bg;
+}
+
+/* Desactiva por completo el “cuadro de icono” de cada línea */
+element-icon {
+  size:            0px;
+  background-color:transparent;
+}
+
+/* Texto de cada opción */
+element-text {
+  background-color:transparent;
+  text-color:      inherit;
+}

@@ -1,0 +1,5 @@
+[templates]
+waybar = { template = "colors-waybar.css", target = "~/.cache/wallust/colors-waybar.css" }
+rofi = { template = "colors-rofi-dark.rasi", target = "~/.cache/wallust/colors-rofi-dark.rasi" }
+kitty = { template = "colors-kitty.conf", target = "~/.cache/wallust/colors-kitty.conf" }
+hyprland = { template = "colors-hyprland.conf", target = "~/.cache/wallust/colors-hyprland.conf" }

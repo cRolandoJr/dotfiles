@@ -1,0 +1,76 @@
+/*****----- Configuration -----*****/
+configuration {
+    show-icons:                 true;
+    drun-display-format:        "{name}";
+}
+
+/*****----- Global Properties -----*****/
+* {
+    font:                        "JetBrains Mono Nerd Font 9";
+    background:                  #11111b;
+    background-alt:              #313244;
+    foreground:                  #eff1f5;
+    selected:                    #cba6f7;
+}
+
+/*****----- Main Window -----*****/
+window {
+    fullscreen:                  false;
+    location:                    center;
+    width:                       80%;
+    border-radius:               6px;
+    padding:                     0px;
+    background-color:            transparent;
+}
+
+/*****----- Main Layout -----*****/
+mainbox {
+    border-radius:               6px;
+    spacing:                     0px;
+    orientation:                 vertical;
+    children:                    [ "listbox" ];
+}
+
+listbox {
+    spacing:                     0px;
+    orientation:                 vertical;
+    children:                    [ "listview" ];
+}
+
+/*****----- Listview: Icon Grid -----*****/
+listview {
+    columns:                     5;
+    lines:                       3;
+    layout:                      vertical;
+    fixed-columns:               true;
+    fixed-height:                true;
+    dynamic:                     false;
+    spacing:                     1px;
+    padding:                     6px;
+    border-radius:               6px;
+    background-color:            #2e2e4e;
+}
+
+/*****----- Element Styling -----*****/
+element {
+    padding:                     -35px 0px -35px 50px;
+    border-radius:               6px;
+    background-color:            transparent;
+    horizontal-align:            0.5;
+}
+element selected.normal {
+    background-color:            @selected;
+}
+element-icon {
+    size:                        200px;
+    border-radius:               6px;
+    background-color:            transparent;
+    vertical-align:              0.5;
+    padding:                     1px;
+}
+element-text {
+    text-color:                  transparent;
+    background-color:            transparent;
+    padding:                     0px;
+    font:                        "JetBrains Mono Nerd Font 0";
+}

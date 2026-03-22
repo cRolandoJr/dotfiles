@@ -1,0 +1,54 @@
+@import url("file:///home/Rolando/.cache/wallust/colors-waybar.css");
+
+/* 1. REGLA GLOBAL: Forzar el contraste en todo el panel */
+* {
+    color: @foreground;
+    font-family: "JetBrainsMono Nerd Font", sans-serif; /* Usar la fuente de iconos que instalaste */
+}
+
+/* 2. EL PANEL PRINCIPAL */
+.control-center {
+    background-color: alpha(@background, 0.85);
+    border-radius: 20px;
+    border: 2px solid @color4;
+    margin: 12px;
+}
+
+/* 3. LOS NUEVOS WIDGETS (DND, MPRIS, TÍTULO) */
+.widget-title, .widget-dnd, .widget-mpris {
+    background-color: alpha(@color0, 0.5); /* Usamos un color base de tu wallpaper */
+    border-radius: 12px;
+    margin: 8px;
+}
+
+/* 4. LA CUADRÍCULA DE BOTONES (WiFi, BT, etc.) */
+.widget-buttons-grid {
+    background-color: alpha(@color0, 0.4);
+    border-radius: 12px;
+    margin: 8px;
+    padding: 5px;
+}
+
+.widget-buttons-grid>flowbox>flowboxchild>button {
+    background: transparent;
+    border-radius: 10px;
+    min-width: 60px;
+    min-height: 50px;
+    font-size: 24px; /* Iconos más grandes */
+}
+
+/* Efecto al pasar el ratón por encima de un botón */
+.widget-buttons-grid>flowbox>flowboxchild>button:hover {
+    background-color: alpha(@color2, 0.6); /* Color de acento al iluminarse */
+}
+
+/* 5. LAS NOTIFICACIONES */
+.notification-row {
+    background-color: alpha(@color0, 0.5);
+    border-radius: 12px;
+    margin: 8px;
+}
+
+.notification {
+    background-color: transparent;
+}
