@@ -1,76 +1,90 @@
-/*****----- Configuration -----*****/
+/**
+ * Configuración de Carrusel para Fondos de Pantalla en Rofi
+ */
+
+/* Importamos los colores generados por wallust */
+/* IMPORTANTE: Verifica que esta ruta apunte al archivo generado, NO al template */
+@import "~/.cache/wallust/colors-rofi-dark.rasi"
+
 configuration {
-    show-icons:                 true;
-    drun-display-format:        "{name}";
+    modi: "drun";
+    show-icons: true;
 }
 
-/*****----- Global Properties -----*****/
 * {
-    font:                        "JetBrains Mono Nerd Font 9";
-    background:                  #11111b;
-    background-alt:              #313244;
-    foreground:                  #eff1f5;
-    selected:                    #cba6f7;
+    /* Mapeamos las variables de wallust a nuestro carrusel */
+    bg-base: @background;
+    bg-selected: @color4;    /* Usamos uno de los colores grises/oscuros generados */
+    accent: @color2;         /* Usamos uno de los colores vivos generados para los bordes */
+    fg-text: @foreground;
+    
+    background-color: transparent;
 }
 
-/*****----- Main Window -----*****/
 window {
-    fullscreen:                  false;
-    location:                    center;
-    width:                       80%;
-    border-radius:               6px;
-    padding:                     0px;
-    background-color:            transparent;
+    transparency: "real";
+    location: center;
+    anchor: center;
+    fullscreen: false;
+    width: 85%;
+    
+    enabled: true;
+    border-radius: 12px;
+    border: 2px solid;
+    border-color: @accent;
+    background-color: @bg-base;
 }
 
-/*****----- Main Layout -----*****/
 mainbox {
-    border-radius:               6px;
-    spacing:                     0px;
-    orientation:                 vertical;
-    children:                    [ "listbox" ];
+    enabled: true;
+    spacing: 20px;
+    padding: 30px;
+    children: [ "listview" ];
 }
 
-listbox {
-    spacing:                     0px;
-    orientation:                 vertical;
-    children:                    [ "listview" ];
-}
-
-/*****----- Listview: Icon Grid -----*****/
 listview {
-    columns:                     5;
-    lines:                       3;
-    layout:                      vertical;
-    fixed-columns:               true;
-    fixed-height:                true;
-    dynamic:                     false;
-    spacing:                     1px;
-    padding:                     6px;
-    border-radius:               6px;
-    background-color:            #2e2e4e;
+    enabled: true;
+    columns: 5;
+    lines: 1;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    
+    spacing: 20px;
+    text-color: @fg-text;
 }
 
-/*****----- Element Styling -----*****/
 element {
-    padding:                     -35px 0px -35px 50px;
-    border-radius:               6px;
-    background-color:            transparent;
-    horizontal-align:            0.5;
+    enabled: true;
+    padding: 10px;
+    border-radius: 10px;
+    text-color: @fg-text;
+    cursor: pointer;
+    orientation: vertical;
 }
+
+element normal.normal {
+    background-color: transparent;
+}
+
 element selected.normal {
-    background-color:            @selected;
+    background-color: @transparent;
+    border: 2px solid;
+    border-color: @accent;
 }
+
 element-icon {
-    size:                        200px;
-    border-radius:               6px;
-    background-color:            transparent;
-    vertical-align:              0.5;
-    padding:                     1px;
+    background-color: transparent;
+    text-color: inherit;
+    size: 14em;
+    cursor: inherit;
+    horizontal-align: 0.5;
 }
+
 element-text {
-    text-color:                  transparent;
-    background-color:            transparent;
-    padding:                     0px;
-    font:                        "JetBrains Mono Nerd Font 0";
+    enabled: false;
 }

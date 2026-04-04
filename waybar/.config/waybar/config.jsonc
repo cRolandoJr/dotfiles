@@ -7,9 +7,9 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["hyprland/workspaces"/* "niri/window"/*,"custom/launcher","memory","backlight","custom/previous","custom/pause","custom/next"*/],
-  "modules-center": [/*"hyprland/workspaces"*/"clock"],
-  "modules-right": ["bluetooth","network","pulseaudio","backlight","battery","memory"],
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["temperature","bluetooth","network","pulseaudio","backlight","battery","memory"],
 
   "pulseaudio": {
     "tooltip": false,
@@ -26,14 +26,6 @@
       ]
     }
   },
-
-"niri/window": {
-    "format": "{}",
-	"rewrite": {
-		"(.*) - Mozilla Firefox": "🌎 $1",
-		"(.*) - zsh": "> [$1]"
-	}
-},
 
 "hyprland/workspaces": {
         "on-click": "activate",
@@ -93,6 +85,14 @@
     "on-click": "blueman-manager"
   },
 
+  "temperature": {
+    "critical-threshold": 80,
+    "interval": 2,
+    "format-critical": "{temperatureC}°C {icon}",
+    "format": "{temperatureC}°C {icon}",
+    "format-icons": ["", "", ""]
+  },
+
   "battery": {
     "states": { "good": 95, "warning": 30, "critical": 10 },
     "format": "{icon} {capacity}%",
@@ -121,21 +121,6 @@
 
   "memory": { "interval": 30, "format": "<span color='#1576BB'>󰍛 </span> {used}GiB", "format-alt": "<span color='#1576BB'>󰍛 </span> {percentage}%", "max-length": 10 },
 
-  "custom/media": {
-    "interval": 30,
-    "format": "{icon} {}",
-    "return-type": "json",
-    "max-length": 20,
-    "format-icons": { "spotify": " ", "default": "󰎆 " },
-    "escape": true,
-    "exec": "$HOME/.config/system_scripts/mediaplayer.py 2> /dev/null",
-    "on-click": "playerctl play-pause"
-  },
-
-  "custom/launcher": {"tooltip": false, "format": "", "on-click": "swaync-client -t", "on-click-right": ""},
-
-  "custom/power": { "format": "<span color='#f7768e'>⏻</span>", "on-click": "wlogout" },
-
   "custom/updates": { "format": "󰏓  {} ", "exec": "checkupdates | wc -l", "interval": 3600, "tooltip-format": "Pacman packages"},
 
   "custom/pkg-aur": {
@@ -152,51 +137,4 @@
     "tooltip": false,
   },
 
-  "custom/pause": {
-    "format": "{icon}",
-    "return-type": "json",
-    // Mapea el "alt" devuelto por el script -> iconos
-    "format-icons": {
-      "playing": "󰏤", // pausa (estado actual: reproduciendo)
-      "paused":  "󰐊", // play   (estado actual: en pausa)
-      "stopped": "󰐊"
-    },
-    // Ejecuta el script para obtener estado
-    "exec": "~/.local/bin/waybar-mpris-state.sh",
-    // Refresco periódico por si cambia sin interacción (opcional)
-    "interval": 2,
-    // Señal para refresco inmediato tras click
-    "signal": 8,
-    // Click: alterna play/pause y pide refrescar al módulo
-    "on-click": "playerctl -p spotify play-pause; pkill -RTMIN+8 waybar",
-    "on-click-right": "playerctl -p spotify stop; pkill -RTMIN+8 waybar",
-    // Scroll opcional
-    "on-scroll-up": "playerctl -p spotify previous; pkill -RTMIN+8 waybar",
-    "on-scroll-down": "playerctl -p spotify next; pkill -RTMIN+8 waybar",
-    "tooltip": true
-  },
-
-  "custom/next": {
-    "format": "󰒭",
-    "on-click": "playerctl --player=spotify next && playerctl --player=youtube-music next",
-    "tooltip": false,
-  },
-
-  "wlr/taskbar": {
-    "format": "{icon}",
-    "icon-size": 14,                  // más pequeño para permitir barra baja
-    "all-outputs": true,
-    "active-only": false,
-    "on-click": "activate",
-    "on-click-right": "minimize",
-    "on-click-middle": "close",
-    "ignore-list": ["xwaylandvideobridge","kitty","waybar","float_kitty"],
-    "app_ids-mapping": {
-      "steam": "steam",
-      "steamwebhelper": "steam",
-      "com.valvesoftware.Steam": "steam",
-      "org.gns3.gui": "gns3"
-    },
-    "tooltip-format": "{app_id}\n{title}"
-  }
 }

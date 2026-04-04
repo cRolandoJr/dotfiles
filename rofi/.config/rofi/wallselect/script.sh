@@ -24,12 +24,7 @@ list_wallpapers() {
 # 3. background-color: transparent; -> Para que se vea limpio.
 
 SELECTED=$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" \
-    -theme-str 'window {width: 60%; height: 55%;}' \
-    -theme-str 'listview {columns: 5; lines: 3; cycle: false;}' \
-    -theme-str 'element {orientation: vertical; children: [ element-icon ]; padding: 5px; border-radius: 10px;}' \
-    -theme-str 'element-icon {size: 8em;}' \
-    -theme-str 'element-text {enabled: false;}' \
-    -theme-str 'element selected {background-color: #ffffff33;}' \
+    -theme "$HOME/.config/rofi/wallselect/style.rasi" \
 )
 
 if [[ -z "$SELECTED" ]]; then
@@ -39,14 +34,14 @@ fi
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
 
 echo "Aplicando: $FULL_PATH"
-swww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 1 --transition-fps 60
+awww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 0.5 --transition-fps 60
 
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
 
 echo "Aplicando: $FULL_PATH"
 
 # 1. Cambia el fondo con animación
-swww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-step 90 --transition-fps 60
+awww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-step 90 --transition-fps 60
 
 # 2. NUEVO: Wallust lee la imagen y extrae los colores mágicamente
 wallust run "$FULL_PATH"

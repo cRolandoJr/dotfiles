@@ -50,7 +50,6 @@ list_wifi_menu() {
   ta=$(theme_arg "$LIST_THEME")
   {
     printf "%s\n" "   Disable Wi‑Fi"
-    printf "%s\n" "${connection_status}"
     printf "%s\n" "   Manual Setup"
     printf "%s\n" "────────── Redes ──────────"
     printf "%s\n" "${wifi_list}"
@@ -103,13 +102,20 @@ else
   connection_status=""
 fi
 
-wifi_list=$(nmcli -t -f ssid,security dev wifi list 2>/dev/null | awk -F: '
+wifi_list=$(nmcli -t -f SIGNAL,BARS,SSID,SECURITY dev wifi list 2>/dev/null | sort -rn | awk -F: '
 {
-  ssid=$1; sec=$2;
-  if (ssid=="") next;
+  sig=$1; bars=$2; ssid=$3; sec=$4;
+  
+  # Evitamos SSIDs vacíos o repetidos (nos quedamos con el de mejor señal gracias al sort previo)
+  if (ssid == "" || seen[ssid]++) next;
+  
+  # Definimos el icono según seguridad
   icon = (sec ~ /WPA|WEP|802\.1X/) ? "" : "";
-  printf "%s  %s :::%s\n", icon, ssid, ssid
-}' | sort -u)
+  
+  # Formateamos la línea para Rofi: [Barras] Icono SSID :::SSID
+  # El :::SSID al final es el "truco" para que el script sepa qué conectar después
+  printf "%s  %s  %s :::%s\n", bars, icon, ssid, ssid
+}')
 
 log "Prepared wifi_list (first 20 lines):"
 printf '%s\n' "$wifi_list" | sed -n '1,20p' | tee -a "$LOG"

@@ -1,0 +1,102 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": null,
+    "display": {
+        "separator": "  ",
+        "color": "white",
+        "constants": ["\u001b[37m", "\u001b[38;5;16m", "\u001b[38;5;17m", "\u001b[38;5;18m"]
+    },
+    "modules": [
+        "break",
+        {
+            "type": "custom",
+            "key": "╭───────────────────────────────────╮"
+        },
+        {
+            "type": "os",
+            "key": "│ {$4}󰻀{$1}  distro",
+            "format": "{$4}{pretty-name>22}{$1} │"
+        },
+        {
+            "type": "kernel",
+            "key": "│ {$2}{$1}  kernel",
+            "format": "{$2}{release>22}{$1} │"
+        },
+        {
+            "type": "command",
+            "key": "│   uptime",
+            "text": "uptime -p | cut -d ' ' -f 2-",
+            "format": "{>22} │"
+        },
+        {
+            "type": "shell",
+            "key": "│ {$2}{$1}  shell ",
+            "format": "{$2}{pretty-name>22}{$1} │"
+        },
+        {
+            "type": "terminal",
+            "key": "│   term  ",
+            "format": "{pretty-name>22} │"
+        },
+        {
+            "type": "wm",
+            "key": "│   wm    ",
+            "format": "{pretty-name>22} │"
+        },
+        {
+            "type": "cpu",
+            "key": "│   cpu   ",
+            "format": "{name>22} │"
+        },
+        {
+            "type": "command",
+            "key": "│ {$3}{$1}  mem   ",
+            "text": "free -m | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\",$3/1024,$2/1024}'",
+            "format": "{$3}{>22}{$1} │"
+        },
+        {
+            "type": "command",
+            "key": "│ {$3}󰋊{$1}  root  ",
+            "text": "df -BG / | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
+            "format": "{$3}{>22}{$1} │"
+        },
+        {
+            "type": "command",
+            "key": "│ {$3}󰋊{$1}  home  ",
+            "text": "df -BG /home | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
+            "format": "{$3}{>22}{$1} │"
+        },
+        {
+            "type": "gpu",
+            "key": "│ 󰢮  gpu   ",
+            "format": "{2>22} │" 
+        },
+        {
+            "type": "localip",
+            "key": "│ 󰩟  ip    ",
+            "format": "{>22} │" 
+        },
+        {
+            "type": "packages",
+            "key": "│   pkgs  ",
+            "format": "{all>22} │"
+        },
+        {
+            "type": "command",
+            "key": "│ {$2}{$1}  user  ",
+            "text": "echo $USER",
+            "format": "{$2}{>22}{$1} │"
+        },
+        {
+            "type": "command",
+            "key": "│   hname ",
+            "text": "hostnamectl hostname",
+            "format": "{>22} │"
+        },
+        {
+            "type": "custom",
+            "key": "╰───────────────────────────────────╯"
+        },
+        "break"
+    ]
+}

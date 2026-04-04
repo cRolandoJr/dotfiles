@@ -16,13 +16,18 @@ label.module {
 
 /* Altura baja: reducir márgenes/padding verticales en TODOS los módulos */
 #network, #bluetooth, #pulseaudio, #battery, #backlight, #clock,
-#memory, #disk, #cpu, #workspaces, #taskbar, #bluetooth{
+#memory, #disk, #cpu, #workspaces, #taskbar, #bluetooth, #temperature {
   margin-top: 1px;
   margin-bottom: 3px;
 }
 
 #custom-launcher {
     margin-right: 4px;
+}
+
+#temperature.critical {
+    background-color: #ff0000;
+    color: #ffffff;
 }
 
 #custom-previous, #custom-pause, #custom-next {
@@ -61,7 +66,7 @@ window#waybar {
 }
 
 /* --- MÓDULOS DE SISTEMA --- */
-#window, #clock, #network, #pulseaudio, #battery, #backlight, #memory, #disk, #cpu, #bluetooth {
+#window, #clock, #network, #pulseaudio, #temperature, #battery, #backlight, #memory, #disk, #cpu, #bluetooth {
   background-color: alpha(@color0, 0.6); /* Reemplaza tu gris claro estático por uno dinámico */
   color: @foreground;
   border-radius: 4px;
