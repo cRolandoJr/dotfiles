@@ -1,0 +1,65 @@
+# starship.toml - Versión Final para Rolando
+add_newline = true
+
+# Eliminamos los paréntesis () que envolvían todo el prompt
+# Estructura: OS/User (Blanco) -> Dir (Azul) -> Git (Cian) -> Reloj (Gris)
+format = """
+[](white)\
+$os\
+$username\
+[](fg:white bg:blue)\
+$directory\
+[](fg:blue bg:bright-blue)\
+$git_branch\
+$git_status\
+[](fg:bright-blue bg:black)\
+$time\
+[](fg:black)\
+\n$character"""
+
+# Vacío para que la terminal nunca se "congele" al redimensionar
+right_format = ""
+
+[os]
+disabled = false
+style = "bg:white fg:black"
+# Forzamos el icono de Arch Linux para que no salgan las rayitas raras
+symbols.Arch = "󰣇 " 
+format = "[$symbol]($style)"
+
+[username]
+show_always = true
+style_user = "bg:white fg:black"
+style_root = "bg:white fg:red"
+format = '[$user]($style)'
+
+[directory]
+style = "bg:blue fg:black"
+format = "[ $path ]($style)"
+truncation_length = 3
+
+[git_branch]
+symbol = "󰊢 "
+style = "bg:bright-blue fg:black"
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+style = "bg:bright-blue fg:black"
+format = '([$all_status$ahead_behind]($style))'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:black fg:white"
+format = '[  $time ]($style)'
+
+[character]
+success_symbol = "[󰁔](bold bright-yellow)"
+error_symbol = "[󰁔](bold red)"
+
+# Desactivamos módulos que podrían estar metiendo ruido visual
+[sudo]
+disabled = true
+
+[hostname]
+disabled = true
