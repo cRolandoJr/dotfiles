@@ -1,56 +1,59 @@
 #!/bin/bash
 
 # --- CONFIGURACIÓN ---
-WALLPAPER_DIR="$HOME/Wallpapers/"
-# ---------------------
+# Quitamos la barra final para evitar dobles slashes (//) en las rutas
+WALLPAPER_DIR="$HOME/Wallpapers"
 
 if [[ ! -d "$WALLPAPER_DIR" ]]; then
-    echo "La carpeta $WALLPAPER_DIR no existe."
+    echo "Error: La carpeta $WALLPAPER_DIR no existe."
     exit 1
 fi
 
 list_wallpapers() {
-    # IMPORTANTE: Seguimos enviando el nombre ($filename) para que el script sepa qué elegir,
-    # aunque luego lo ocultemos visualmente.
+    # Usamos fd si lo tienes instalado (es más rápido), sino find está perfecto.
     find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | while read -r file; do
         filename=$(basename "$file")
         echo -en "$filename\0icon\x1f$file\n"
     done
 }
 
-# --- CONFIGURACIÓN DE ROFI ---
-# 1. element-text { enabled: false; } -> Esto OCULTA el texto pero mantiene la data.
-# 2. children: [ element-icon ]; -> Solo dibujamos el icono.
-# 3. background-color: transparent; -> Para que se vea limpio.
-
-SELECTED=$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" \
-    -theme "$HOME/.config/rofi/wallselect/style.rasi" \
-)
+# --- SELECCIÓN DE ROFI ---
+SELECTED=$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" -theme "$HOME/.config/rofi/wallselect/style.rasi")
 
 if [[ -z "$SELECTED" ]]; then
     exit 0
 fi
 
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
-
-echo "Aplicando: $FULL_PATH"
-awww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-duration 0.5 --transition-fps 60
-
-FULL_PATH="$WALLPAPER_DIR/$SELECTED"
-
 echo "Aplicando: $FULL_PATH"
 
-# 1. Cambia el fondo con animación
-awww img "$FULL_PATH" --transition-type grow --transition-pos 0.5,0.5 --transition-step 90 --transition-fps 60
+# --- EJECUCIÓN EFICIENTE ---
 
-# 2. NUEVO: Wallust lee la imagen y extrae los colores mágicamente
-wallust run "$FULL_PATH"
+# 1. Cambiar el fondo en segundo plano (&). 
+# Nota: Si 'awww' era un typo, el estándar moderno es 'swww'. 
+# He ajustado el 'step' a 90 para que el 'grow' sea un barrido rápido y limpio a 60fps.
+awww img "$FULL_PATH" \
+    --transition-type grow \
+    --transition-pos 0.5,0.5 \
+    --transition-step 90 \
+    --transition-fps 60 &
 
-swaync-client -rs
+# 2. Wallust calcula la paleta (Este proceso SÍ bloquea, necesitamos los colores antes de recargar la UI)
+# Usamos -q (quiet) para que no ensucie la salida si lo corres desde terminal
+wallust run "$FULL_PATH" -q
 
-killall waybar
-waybar > /dev/null 2>&1 &
+# 3. Recarga Concurrente del Ecosistema
+# Al envolver esto en { } y ponerle un & al final, recargamos Hyprland, SwayNC, Kitty y Waybar AL MISMO TIEMPO.
+# Esto elimina el efecto "escalera" donde primero cambia una cosa y luego otra.
+{
+    # Recargas ligeras
+    swaync-client -rs
+    killall -q -SIGUSR1 kitty
+    hyprctl reload -q
 
-killall -SIGUSR1 kitty
+    # Reinicio de Waybar (lo matamos silenciosamente y lo levantamos separado de la terminal)
+    killall -q waybar
+    nohup waybar > /dev/null 2>&1 &
+} &
 
-hyprctl reload
+exit 0

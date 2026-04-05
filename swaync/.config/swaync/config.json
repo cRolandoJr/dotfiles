@@ -32,22 +32,22 @@
           "label": "󰖩",
           "type": "toggle",
           "active": true,
-          "command": "sh -c 'if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then nmcli radio wifi off; else nmcli radio wifi on; fi'",
-          "update-command": "sh -c 'if [ \"$(nmcli radio wifi)\" = \"enabled\" ]; then echo true; else echo false; fi'"
+          "command": "sh -c 'nmcli radio wifi | grep -q \"enabled\" && nmcli radio wifi off || nmcli radio wifi on'",
+          "update-command": "sh -c 'nmcli radio wifi | grep -q \"enabled\" && echo true || echo false'"
         },
         {
           "label": "󰂯",
           "type": "toggle",
-          "command": "sh -c 'if [ \"$(bluetoothctl show | grep -q \"Powered: yes\")\" ]; then bluetoothctl power off; else bluetoothctl power on; fi'",
-          "update-command": "sh -c 'if [ \"$(bluetoothctl show | grep -q \"Powered: yes\")\" ]; then echo true; else echo false; fi'"
+          "command": "sh -c 'bluetoothctl show | grep -q \"Powered: yes\" && bluetoothctl power off || bluetoothctl power on'",
+          "update-command": "sh -c 'bluetoothctl show | grep -q \"Powered: yes\" && echo true || echo false'"
         },
         {
           "label": "󰝟",
           "command": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         },
         {
-          "label": "󰍭",
-          "command": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+          "label": "󰑐",
+          "command": "reboot"
         },
         {
           "label": "",
@@ -55,7 +55,7 @@
         },
         {
           "label": "󰐥",
-          "command": "wlogout"
+          "command": "poweroff"
         }
       ]
     }

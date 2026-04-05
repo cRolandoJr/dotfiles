@@ -3,8 +3,8 @@
     "logo": null,
     "display": {
         "separator": "  ",
-        "color": "white",
-        "constants": ["\u001b[37m", "\u001b[38;5;16m", "\u001b[38;5;17m", "\u001b[38;5;18m"]
+        "color": "cyan",
+        "constants": ["\u001b[0m", "\u001b[36m", "\u001b[35m", "\u001b[34m"]
     },
     "modules": [
         "break",
@@ -15,81 +15,81 @@
         {
             "type": "os",
             "key": "│ {$4}󰻀{$1}  distro",
-            "format": "{$4}{pretty-name>22}{$1} │"
+            "format": "{pretty-name>22} │"
         },
         {
             "type": "kernel",
             "key": "│ {$2}{$1}  kernel",
-            "format": "{$2}{release>22}{$1} │"
+            "format": "{release>22} │"
         },
         {
             "type": "command",
-            "key": "│   uptime",
+            "key": "│ {$2}{$1}  uptime",
             "text": "uptime -p | cut -d ' ' -f 2-",
             "format": "{>22} │"
         },
         {
             "type": "shell",
             "key": "│ {$2}{$1}  shell ",
-            "format": "{$2}{pretty-name>22}{$1} │"
+            "format": "{pretty-name>22} │"
         },
         {
             "type": "terminal",
-            "key": "│   term  ",
+            "key": "│ {$2}{$1}  term  ",
             "format": "{pretty-name>22} │"
         },
         {
             "type": "wm",
-            "key": "│   wm    ",
+            "key": "│ {$2}{$1}  wm    ",
             "format": "{pretty-name>22} │"
         },
         {
             "type": "cpu",
-            "key": "│   cpu   ",
+            "key": "│ {$3}{$1}  cpu   ",
             "format": "{name>22} │"
         },
         {
             "type": "command",
             "key": "│ {$3}{$1}  mem   ",
             "text": "free -m | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\",$3/1024,$2/1024}'",
-            "format": "{$3}{>22}{$1} │"
+            "format": "{>22} │"
         },
         {
             "type": "command",
             "key": "│ {$3}󰋊{$1}  root  ",
             "text": "df -BG / | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
-            "format": "{$3}{>22}{$1} │"
+            "format": "{>22} │"
         },
         {
             "type": "command",
             "key": "│ {$3}󰋊{$1}  home  ",
             "text": "df -BG /home | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
-            "format": "{$3}{>22}{$1} │"
+            "format": "{>22} │"
         },
         {
             "type": "gpu",
-            "key": "│ 󰢮  gpu   ",
+            "key": "│ {$3}󰢮{$1}  gpu   ",
             "format": "{2>22} │" 
         },
         {
             "type": "localip",
-            "key": "│ 󰩟  ip    ",
+            "key": "│ {$2}󰩟{$1}  ip    ",
             "format": "{>22} │" 
         },
         {
             "type": "packages",
-            "key": "│   pkgs  ",
+            "key": "│ {$2}{$1}  pkgs  ",
             "format": "{all>22} │"
         },
         {
             "type": "command",
             "key": "│ {$2}{$1}  user  ",
             "text": "echo $USER",
-            "format": "{$2}{>22}{$1} │"
+            "format": "{>22} │"
         },
         {
             "type": "command",
-            "key": "│   hname ",
+            "key": "│ {$2}{$1}  hname ",
             "text": "hostnamectl hostname",
             "format": "{>22} │"
         },
