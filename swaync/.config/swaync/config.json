@@ -38,8 +38,8 @@
         {
           "label": "󰂯",
           "type": "toggle",
-          "command": "sh -c 'bluetoothctl show | grep -q \"Powered: yes\" && bluetoothctl power off || bluetoothctl power on'",
-          "update-command": "sh -c 'bluetoothctl show | grep -q \"Powered: yes\" && echo true || echo false'"
+          "command": "rfkill toggle bluetooth",
+          "update-command": "sh -c 'rfkill list bluetooth | grep -q \"Soft blocked: yes\" && echo false || echo true'"
         },
         {
           "label": "󰝟",

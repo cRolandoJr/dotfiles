@@ -75,9 +75,12 @@
 
   "bluetooth": {
     "format": "{icon}",
+    "format-off": "<span color='#f7768e'>󰂲</span>",
+    "format-disabled": "<span color='#f7768e'>󰂲</span>",
     "format-icons": ["󰂯","󰤾","󰥀","󰥄","󰥈"],
-    "tooltip-format-off": "Bluetooth is off",
-    "tooltip-format-on": "Bluetooth is on",
+    "tooltip-format": "Power on",
+    "tooltip-format-off": "Power off",
+    "tooltip-format-disabled": "Power off",
     "format-connected": "{icon} {num_connections}",
     "format-connected-battery": "{icon} {device_battery_percentage}%",
     "tooltip-format-connected": "{device_enumerate}",

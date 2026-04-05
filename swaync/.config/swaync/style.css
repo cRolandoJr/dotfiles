@@ -8,7 +8,7 @@
 
 /* 2. EL PANEL PRINCIPAL */
 .control-center {
-    background-color: alpha(@background, 0.85);
+    background-color: alpha(@background, 0.75);
     border-radius: 20px;
     border: 2px solid @color2;
     margin: 12px;
