@@ -1,62 +1,77 @@
 add_newline = false
+palette = "hyprnix"
 
-# Eliminamos los paréntesis () que envolvían todo el prompt
-# Estructura: OS/User (Blanco) -> Dir (Azul) -> Git (Cian) -> Reloj (Gris)
 format = """
-[](white)\
+[](fg:base)\
 $os\
-$username\
-[](fg:white bg:blue)\
+[](fg:base bg:dir)\
 $directory\
-[](fg:blue bg:bright-blue)\
+[](fg:dir bg:git)\
 $git_branch\
 $git_status\
-[](fg:bright-blue bg:dimmed_white)\
+[](fg:git bg:time_bg)\
 $time\
-[](fg:dimmed)\
+[](fg:time_bg)\
 \n$character"""
 
-# Vacío para que la terminal nunca se "congele" al redimensionar
 right_format = ""
+
+[palettes.hyprnix]
+# izquierda (OS + user): off-white suave
+base = "#d7e3ff"
+base_fg = "#0b1220"
+
+# tonos hyprland/nix
+dir = "#7aa2f7"     # azul nix
+git = "#9eceff"     # ice blue
+lav = "#bb9af7"     # lavanda (por si querés acento)
+time_bg = "#0f1a2e" # panel oscuro
+time_fg = "#d7e3ff"
+
+# estados
+ok = "#a6e3a1"
+warn = "#ffd166"
+err = "#ff6b6b"
 
 [os]
 disabled = false
-style = "bg:white fg:black"
-# Forzamos el icono de Arch Linux para que no salgan las rayitas raras
-symbols.Arch = "󰣇 " 
+style = "bg:base fg:base_fg bold"
+# si querés que salga Nix sí o sí, usa el símbolo de NixOS:
+ symbols.NixOS = " "
+symbols.Arch = " "
 format = "[$symbol]($style)"
 
 [username]
 show_always = true
-style_user = "bg:white fg:black"
-style_root = "bg:white fg:red"
-format = '[$user]($style)'
+style_user = "bg:base fg:base_fg bold"
+style_root = "bg:base fg:err bold"
+format = "[$user]($style)"
 
 [directory]
-style = "bg:blue fg:black"
+style = "bg:dir fg:base_fg bold"
 format = "[ $path ]($style)"
 truncation_length = 3
+truncation_symbol = "…/"
 
 [git_branch]
 symbol = "󰊢 "
-style = "bg:bright-blue fg:black"
-format = '[ $symbol$branch ]($style)'
+style = "bg:git fg:base_fg bold"
+format = "[ $symbol$branch ]($style)"
 
 [git_status]
-style = "bg:bright-blue fg:black"
-format = '([$all_status$ahead_behind]($style))'
+style = "bg:git fg:base_fg bold"
+format = "([$all_status$ahead_behind]($style))"
 
 [time]
 disabled = false
 time_format = "%R"
-style = "bg:dimmed_white fg:dimmed_white"
-format = '[  $time ]($style)'
+style = "bg:time_bg fg:time_fg bold"
+format = "[  $time ]($style)"
 
 [character]
-success_symbol = "[󰁔](bold bright-yellow)"
-error_symbol = "[󰁔](bold red)"
+success_symbol = "[󰁔](bold warn)"
+error_symbol = "[󰁔](bold err)"
 
-# Desactivamos módulos que podrían estar metiendo ruido visual
 [sudo]
 disabled = true
 

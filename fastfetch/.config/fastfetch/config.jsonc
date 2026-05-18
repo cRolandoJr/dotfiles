@@ -1,102 +1,91 @@
 {
-    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-    "logo": null,
-    "display": {
-        "separator": "  ",
-        "color": "cyan",
-        "constants": ["\u001b[0m", "\u001b[36m", "\u001b[35m", "\u001b[34m"]
-    },
-    "modules": [
-        "break",
-        {
-            "type": "custom",
-            "key": "╭───────────────────────────────────╮"
-        },
-        {
-            "type": "os",
-            "key": "│ {$4}󰻀{$1}  distro",
-            "format": "{pretty-name>22} │"
-        },
-        {
-            "type": "kernel",
-            "key": "│ {$2}{$1}  kernel",
-            "format": "{release>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$2}{$1}  uptime",
-            "text": "uptime -p | cut -d ' ' -f 2-",
-            "format": "{>22} │"
-        },
-        {
-            "type": "shell",
-            "key": "│ {$2}{$1}  shell ",
-            "format": "{pretty-name>22} │"
-        },
-        {
-            "type": "terminal",
-            "key": "│ {$2}{$1}  term  ",
-            "format": "{pretty-name>22} │"
-        },
-        {
-            "type": "wm",
-            "key": "│ {$2}{$1}  wm    ",
-            "format": "{pretty-name>22} │"
-        },
-        {
-            "type": "cpu",
-            "key": "│ {$3}{$1}  cpu   ",
-            "format": "{name>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$3}{$1}  mem   ",
-            "text": "free -m | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\",$3/1024,$2/1024}'",
-            "format": "{>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$3}󰋊{$1}  root  ",
-            "text": "df -BG / | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
-            "format": "{>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$3}󰋊{$1}  home  ",
-            "text": "df -BG /home | awk 'NR==2{printf \"%.1f GiB / %.1f GiB\", $3, $2, $5}'",
-            "format": "{>22} │"
-        },
-        {
-            "type": "gpu",
-            "key": "│ {$3}󰢮{$1}  gpu   ",
-            "format": "{2>22} │" 
-        },
-        {
-            "type": "localip",
-            "key": "│ {$2}󰩟{$1}  ip    ",
-            "format": "{>22} │" 
-        },
-        {
-            "type": "packages",
-            "key": "│ {$2}{$1}  pkgs  ",
-            "format": "{all>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$2}{$1}  user  ",
-            "text": "echo $USER",
-            "format": "{>22} │"
-        },
-        {
-            "type": "command",
-            "key": "│ {$2}{$1}  hname ",
-            "text": "hostnamectl hostname",
-            "format": "{>22} │"
-        },
-        {
-            "type": "custom",
-            "key": "╰───────────────────────────────────╯"
-        },
-        "break"
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+  "logo": { "type": "auto" },
+
+  "display": {
+    "separator": "  ",
+    "constants": [
+      "\u001b[0m",                    // {$1} reset
+      "\u001b[38;2;215;227;255m",     // {$2} fg        #d7e3ff
+      "\u001b[38;2;122;162;247m",     // {$3} blue      #7aa2f7
+      "\u001b[38;2;158;206;255m",     // {$4} ice blue  #9eceff
+      "\u001b[38;2;187;154;247m"      // {$5} lavender  #bb9af7
     ]
+  },
+
+  "modules": [
+    "break",
+
+    {
+      "type": "command",
+      "key": "{$3}{$1} ",
+      "text": "printf '%s@%s  -  %s' \"$USER\" \"$(hostnamectl hostname)\" \"$(. /etc/os-release; echo \"$PRETTY_NAME\")\"",
+      "format": "{$5}{}{$1}"
+    },
+    {
+      "type": "custom",
+      "key": "{$3}────────────────────────────────────────{$1}"
+    },
+
+    { "type": "os",       "key": "{$4}󰻀{$1} distro", "format": "{$2}{pretty-name}{$1}" },
+    { "type": "kernel",   "key": "{$4}{$1} kernel", "format": "{$2}{release}{$1}" },
+    { "type": "shell",    "key": "{$4}{$1} shell ", "format": "{$2}{pretty-name}{$1}" },
+    { "type": "terminal", "key": "{$4}{$1} term  ", "format": "{$2}{pretty-name}{$1}" },
+    { "type": "wm",       "key": "{$4}{$1} wm    ", "format": "{$2}{pretty-name}{$1}" },
+
+
+    { "type": "cpu",    "key": "{$3}{$1} cpu   ", "format": "{$2}{name}{$1}" },
+
+    "break",
+    /* root: command (evita {used}/{total} literal) */
+    {
+      "type": "command",
+      "key": "{$3}{$1} mem   ",
+      "text": "free -b | awk 'NR==2{used=$3/1024/1024/1024; total=$2/1024/1024/1024; pct=(used/total)*100; printf \"%.2f GiB / %.2f GiB (%.0f%%)\", used, total, pct}'",
+      "format": "{$2}{}{$1}"
+    },
+
+    {
+      "type": "command",
+      "key": "{$3}󰋊{$1} root  ",
+      "text": "df -B1 / | awk 'NR==2{used=$3/1024/1024/1024; total=$2/1024/1024/1024; pct=$5; gsub(/%/,\"\",pct); printf \"%.2f GiB / %.2f GiB (%s%%)\", used, total, pct}'",
+      "format": "{$2}{}{$1}"
+    },
+
+    {
+      "type": "command",
+      "key": "{$3}󰓡{$1} swap  ",
+      "text": "swapon --noheadings --bytes --show=SIZE,USED 2>/dev/null | awk '{ts+=$1; tu+=$2} END{if(ts==0){printf \"0.00 GiB / 0.00 GiB (0%%)\"} else {printf \"%.2f GiB / %.2f GiB (%.0f%%)\", tu/1024/1024/1024, ts/1024/1024/1024, (tu/ts)*100}}'",
+      "format": "{$2}{}{$1}"
+    },
+
+    { "type": "gpu", "key": "{$3}󰢮{$1} gpu   ", "format": "{$2}{2}{$1}" },
+
+    "break",
+    /* up: command (evita {pretty} literal) */
+    {
+      "type": "command",
+      "key": "{$4}{$1} up    ",
+      "text": "awk '{s=int($1); d=int(s/86400); h=int((s%86400)/3600); m=int((s%3600)/60); if(d>0) printf \"%dd %dh %dm\", d, h, m; else if(h>0) printf \"%dh %dm\", h, m; else printf \"%dm\", m}' /proc/uptime",
+      "format": "{$2}{}{$1}"
+    },
+
+    { "type": "packages", "key": "{$4}{$1} pkgs  ", "format": "{$2}{all}{$1}" },
+
+    {
+      "type": "command",
+      "key": "{$4}󰩟{$1} ip    ",
+      "text": "ip -o route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i==\"src\") {print $(i+1); exit}}'",
+      "format": "{$2}{}{$1}"
+    },
+
+    {
+      "type": "colors",
+      "paddingLeft": 2,
+      "symbol": "circle"
+    },
+
+    "break"
+  ]
 }

@@ -1,59 +1,106 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# --- CONFIGURACIÓN ---
-# Quitamos la barra final para evitar dobles slashes (//) en las rutas
 WALLPAPER_DIR="$HOME/Wallpapers"
+THEME="$HOME/.config/rofi/wallselect/style.rasi"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/rofi-wallpapers"
+THUMB_SIZE=420   # tamaño real del png (rofi luego lo escala a 260px)
 
-if [[ ! -d "$WALLPAPER_DIR" ]]; then
-    echo "Error: La carpeta $WALLPAPER_DIR no existe."
-    exit 1
+mkdir -p "$CACHE_DIR"
+
+die() { echo "Error: $*" >&2; exit 1; }
+need() { command -v "$1" >/dev/null 2>&1 || die "Missing dependency: $1"; }
+
+need rofi
+need find
+need basename
+
+# Para thumbnails bonitos: ImageMagick (convert/magick) o ffmpegthumbnailer (opcional)
+IM_CONVERT=""
+if command -v magick >/dev/null 2>&1; then
+  IM_CONVERT="magick"
+elif command -v convert >/dev/null 2>&1; then
+  IM_CONVERT="convert"
 fi
 
+if [[ ! -d "$WALLPAPER_DIR" ]]; then
+  die "La carpeta $WALLPAPER_DIR no existe."
+fi
+
+thumb_for() {
+  local file="$1"
+  local base hash out
+  base="$(basename "$file")"
+  hash="$(printf '%s' "$file" | sha1sum | awk '{print $1}')"
+  out="$CACHE_DIR/${hash}-${base}.png"
+
+  # regen si no existe o si wallpaper es más nuevo
+  if [[ -f "$out" && "$out" -nt "$file" ]]; then
+    printf '%s\n' "$out"
+    return 0
+  fi
+
+  # Si no hay ImageMagick, fallback al archivo original
+  if [[ -z "$IM_CONVERT" ]]; then
+    printf '%s\n' "$file"
+    return 0
+  fi
+
+  # square crop centered (cover) + ligero sharpening
+  "$IM_CONVERT" "$file" \
+    -auto-orient \
+    -resize "${THUMB_SIZE}x${THUMB_SIZE}^" \
+    -gravity center \
+    -extent "${THUMB_SIZE}x${THUMB_SIZE}" \
+    -strip \
+    -unsharp 0x0.75+0.75+0.008 \
+    "$out" >/dev/null 2>&1 || {
+      # si falla, usa original
+      printf '%s\n' "$file"
+      return 0
+    }
+
+  printf '%s\n' "$out"
+}
+
 list_wallpapers() {
-    # Usamos fd si lo tienes instalado (es más rápido), sino find está perfecto.
-    find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) | while read -r file; do
-        filename=$(basename "$file")
-        echo -en "$filename\0icon\x1f$file\n"
+  find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" \) \
+  | sort \
+  | while IFS= read -r file; do
+      filename="$(basename "$file")"
+      icon="$(thumb_for "$file")"
+      # rofi icon hint
+      printf '%s\0icon\x1f%s\n' "$filename" "$icon"
     done
 }
 
-# --- SELECCIÓN DE ROFI ---
-SELECTED=$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" -theme "$HOME/.config/rofi/wallselect/style.rasi")
-
-if [[ -z "$SELECTED" ]]; then
-    exit 0
-fi
+SELECTED="$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" -theme "$THEME")"
+[[ -z "$SELECTED" ]] && exit 0
 
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
-echo "Aplicando: $FULL_PATH"
+[[ -f "$FULL_PATH" ]] || die "No existe: $FULL_PATH"
 
-# --- EJECUCIÓN EFICIENTE ---
-
-# 1. Cambiar el fondo en segundo plano (&). 
-# Nota: Si 'awww' era un typo, el estándar moderno es 'swww'. 
-# He ajustado el 'step' a 90 para que el 'grow' sea un barrido rápido y limpio a 60fps.
-awww img "$FULL_PATH" \
+# Cambiar wallpaper con swww (recomendado)
+if command -v swww >/dev/null 2>&1; then
+  swww img "$FULL_PATH" \
     --transition-type grow \
     --transition-pos 0.5,0.5 \
     --transition-step 90 \
     --transition-fps 60 &
+elif command -v awww >/dev/null 2>&1; then
+  awww img "$FULL_PATH" \
+    --transition-type any \
+    --transition-duration 0.6 \
+    --transition-pos 0.5,0.5 \
+    --transition-step 90 \
+    --transition-fps 60 &
+else
+  die "Necesito swww (o awww)."
+fi
 
-# 2. Wallust calcula la paleta (Este proceso SÍ bloquea, necesitamos los colores antes de recargar la UI)
-# Usamos -q (quiet) para que no ensucie la salida si lo corres desde terminal
-wallust run "$FULL_PATH" -q
-
-# 3. Recarga Concurrente del Ecosistema
-# Al envolver esto en { } y ponerle un & al final, recargamos Hyprland, SwayNC, Kitty y Waybar AL MISMO TIEMPO.
-# Esto elimina el efecto "escalera" donde primero cambia una cosa y luego otra.
+# Reload “ecosistema” (sin escalera)
 {
-    # Recargas ligeras
-    swaync-client -rs
-    killall -q -SIGUSR1 kitty
-    hyprctl reload -q
-
-    # Reinicio de Waybar (lo matamos silenciosamente y lo levantamos separado de la terminal)
-    killall -q waybar
-    nohup waybar > /dev/null 2>&1 &
+  pkill -SIGUSR2 waybar >/dev/null 2>&1 || true
 } &
 
 exit 0

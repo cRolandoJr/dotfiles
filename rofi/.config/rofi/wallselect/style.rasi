@@ -1,90 +1,95 @@
-/**
- * Configuración de Carrusel para Fondos de Pantalla en Rofi
+/* ~/.config/rofi/wallselect/style.rasi
+ * Wallpaper carousel (2 filas, cards grandes, look delicado)
+ * Rofi 2.0.0: alpha al final -> #RRGGBBAA
  */
 
-/* Importamos los colores generados por wallust */
-/* IMPORTANTE: Verifica que esta ruta apunte al archivo generado, NO al template */
-@import "~/.cache/wallust/colors-rofi-dark.rasi"
-
 configuration {
-    modi: "drun";
     show-icons: true;
+    drun-display-format: "";
 }
 
 * {
-    /* Mapeamos las variables de wallust a nuestro carrusel */
-    bg-base: @background;
-    bg-selected: @color4;    /* Usamos uno de los colores grises/oscuros generados */
-    accent: @color2;         /* Usamos uno de los colores vivos generados para los bordes */
-    fg-text: @foreground;
-    
+    bg:      #0b1220;
+    bg2:     #0f1a2e;
+    fg:      #d7e3ff;
+
+    accent:  #7aa2f7;
+    accent2: #9eceff;
+
+    bg-alpha:     #0b1220b3;
+    card:         #0f1a2e80;   /* un poco más suave */
+    card-sel:     #0f1a2ecc;
+
     background-color: transparent;
+    text-color: transparent;
+
+    font: "JetBrainsMono Nerd Font 1";
 }
 
+/* Ventana */
 window {
-    transparency: "real";
     location: center;
     anchor: center;
     fullscreen: false;
-    width: 85%;
-    
-    enabled: true;
-    border-radius: 12px;
-    border: 2px solid;
+
+    width: 1400px;
+    background-color: @bg-alpha;
+
+    border: 0px;
     border-color: @accent;
-    background-color: @bg-base;
+    border-radius: 22px;
 }
 
+/* 2 filas -> listview */
 mainbox {
-    enabled: true;
-    spacing: 20px;
-    padding: 30px;
+    padding: 26px;
     children: [ "listview" ];
 }
 
+/* Grid 2 filas */
 listview {
-    enabled: true;
-    columns: 5;
-    lines: 1;
-    cycle: true;
-    dynamic: true;
-    scrollbar: false;
-    layout: vertical;
-    reverse: false;
+    columns: 6;
+    lines: 2;
     fixed-height: true;
-    fixed-columns: true;
-    
-    spacing: 20px;
-    text-color: @fg-text;
+
+    spacing: 18px;
+    padding: 8px;
+    scrollbar: false;
+    background-color: transparent;
 }
 
+/* Card */
 element {
-    enabled: true;
-    padding: 10px;
-    border-radius: 10px;
-    text-color: @fg-text;
-    cursor: pointer;
+    background-color: @card;
+    border-radius: 20px;
+
+    padding: 16px;
+    border: 1px;
+    border-color: transparent;
+}
+
+/* Icono/preview grande y centrado */
+element-icon {
+    size: 260px;         /* más grande */
+    border-radius: 16px;
+}
+
+/* “centrado” visual del icono: esto ayuda mucho */
+element {
     orientation: vertical;
 }
-
-element normal.normal {
-    background-color: transparent;
-}
-
-element selected.normal {
-    background-color: @transparent;
-    border: 2px solid;
-    border-color: @accent;
-}
-
 element-icon {
-    background-color: transparent;
-    text-color: inherit;
-    size: 14em;
-    cursor: inherit;
     horizontal-align: 0.5;
+    vertical-align: 0.5;
 }
 
+/* Sin texto */
 element-text {
     enabled: false;
+}
+
+/* Seleccionado */
+element selected.normal {
+    background-color: @card-sel;
+    border-color: @accent2;
 }

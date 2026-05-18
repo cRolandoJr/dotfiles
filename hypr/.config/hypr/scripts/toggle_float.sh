@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Obtener el estado flotante de la ventana activa
 is_floating=$(hyprctl activewindow -j | jq '.floating')

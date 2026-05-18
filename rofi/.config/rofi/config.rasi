@@ -1,108 +1,175 @@
-@import "~/.cache/wallust/colors-rofi-dark.rasi"
+/* Global Rofi theme (Rofi 2.0.0)
+ * - Azul Nix, limpio, moderno
+ * - Corrige selector: element-icon (no "element icon")
+ * - Alpha al final: #RRGGBBAA (según tu rofi 2.0.0)
+ * - Mantiene launcher normal (con texto). Tu wallpaper picker debe usar su propio -theme.
+ */
+
 configuration {
     display-drun: "Applications:";
+    display-run:  "Run:";
     display-window: "Windows:";
     drun-display-format: "{icon} {name}";
     font: "JetBrainsMono Nerd Font Medium 10";
-    modi: "window,run,drun,ssh,keys,filebrowser,ssh";
+    modi: "window,run,drun,ssh,keys,filebrowser";
     show-icons: true;
-    icon-themes: "Papirus";
+    icon-theme: "Papirus";
     terminal: "kitty";
 }
 
-@theme "/dev/null"
-
 * {
-    bg: #11121D;
-    bg-alt: #444b6a;
+    /* Palette */
+    bg:         #0b1220;
+    bg-alt:     #0f1a2e;
+    fg:         #d7e3ff;
+    fg-alt:     #9fb4d9;
 
-    fg: #FFFFFF;
-    fg-alt: #787c99;
-    
-    background-color: @bg;
+    accent:     #7aa2f7;
+    accent2:    #00A2FF;
 
-    border: 0;
+    /* Transparent variants (RGBA: #RRGGBBAA) */
+    win-bg:     #0b1220cc;
+    panel-bg:   #0f1a2ecc;
+    sel-bg:     #0f1a2ee6;
+    hint-bg:    #0f1a2e99;
+
+    background-color: transparent;
+    text-color: @fg;
+
+    /* Spacing defaults */
     margin: 0;
     padding: 0;
     spacing: 0;
 }
 
-/*window {
-    background-color: @background;
-    border: 2px solid;
-    border-color: @color4;
-    border-radius: 15px;
-    padding: 15px;
-    width: 40%; }
-
-mainbox, listview, element {
-    background-color: transparent;
-}
-
-element {
-    padding: 12;
-    border-radius: 8px;
-    text-color: @foreground;
-}
-
-element selected {
-    background-color: @color2; 
-    text-color: @background; 
-}
-
-entry {
-    text-color: @foreground;
-    placeholder: " Buscar...";
-    placeholder-color: @color8;
-}*/
-
+/* Window */
 window {
-    width: 45%;
+    location: center;
+    anchor: center;
+    fullscreen: false;
+
+    width: 40%;
+    border: 0px;
+    border-color: @accent;
+    border-radius: 16px;
+
+    background-color: @win-bg;
 }
 
-element {
-    padding: 12;
-    text-color: @fg-alt;
-}
-
-element selected {
-    text-color: @fg;
-}
-
-element-text {
-    background-color: inherit;
-    text-color: inherit;
-    vertical-align: 0.5;
-}
-
-element icon {
-    size: 30;
-}
-
-entry {
-    background-color: @bg-alt;
-    padding: 12;
-    text-color: @fg;
-}
-
-inputbar {
-    children: [prompt, entry];
-}
-
-listview {
-    background-color: @bg;
-    columns: 1;
-    lines: 8;
-}
-
+/* Main layout */
 mainbox {
-    background-color: @bg;
-    children: [inputbar, listview];
+    padding: 14px;
+    spacing: 12px;
+    children: [ "inputbar", "message", "listview" ];
+}
+
+/* Input */
+inputbar {
+    background-color: @panel-bg;
+    border-radius: 14px;
+    padding: 10px;
+    spacing: 10px;
+    children: [ "prompt", "entry" ];
 }
 
 prompt {
-    background-color: @bg-alt;
     enabled: true;
-    padding: 12 0 0 12;
+    text-color: @accent2;
+    background-color: transparent;
+}
+
+entry {
+    background-color: transparent;
     text-color: @fg;
+    placeholder: "Buscar…";
+    placeholder-color: @fg-alt;
+    padding: 0px;
+}
+
+/* Optional message line */
+message {
+    background-color: transparent;
+}
+
+textbox {
+    background-color: @hint-bg;
+    text-color: @fg-alt;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* List */
+listview {
+    background-color: transparent;
+    columns: 1;
+    lines: 8;
+    fixed-height: true;
+
+    spacing: 6px;
+    scrollbar: true;
+    padding: 2px;
+}
+
+/* Elements */
+element {
+    background-color: transparent;
+    border-radius: 12px;
+    padding: 10px;
+    spacing: 10px;
+
+    border: 1px;
+    border-color: transparent;
+}
+
+element normal.normal {
+    background-color: transparent;
+}
+
+element selected.normal {
+    background-color: @sel-bg;
+    border-color: @accent2;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: @fg;
+    vertical-align: 0.5;
+}
+
+element-text selected.normal {
+    text-color: @fg;
+}
+
+element-icon {
+    size: 22px;
+}
+
+/* Scrollbar */
+scrollbar {
+    width: 6px;
+    handle-width: 6px;
+    background-color: transparent;
+    handle-color: @hint-bg;
+    border-radius: 10px;
+}
+
+/* Separators (if enabled by mode) */
+separator {
+    background-color: transparent;
+    text-color: @fg-alt;
+}
+
+/* Buttons (some scripts/modes use them) */
+button {
+    background-color: @panel-bg;
+    text-color: @fg;
+    border-radius: 12px;
+    padding: 8px 10px;
+}
+
+button selected {
+    background-color: @sel-bg;
+    text-color: @fg;
+    border: 2px;
+    border-color: @accent2;
 }

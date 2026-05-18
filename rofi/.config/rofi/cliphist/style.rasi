@@ -1,0 +1,99 @@
+/* ~/.config/rofi/cliphist/style.rasi
+ * Compact clipboard w/ thumbnails
+ */
+
+configuration {
+  show-icons: true;
+  drun-display-format: "";
+}
+
+* {
+  bg: #0b1220;
+  bg2: #0f1a2e;
+  fg: #d7e3ff;
+
+  accent: #7aa2f7;
+  accent2: #9eceff;
+
+  bg-alpha: #0b1220cc;
+  card: #0f1a2e99;
+
+  background-color: transparent;
+  text-color: @fg;
+
+  font: "JetBrainsMono Nerd Font 11";
+}
+
+/* Ventana más chica */
+window {
+  location: southeast;
+  anchor: center;
+  fullscreen: false;
+  height: 400px;
+  width: 450px;
+  border: 0px;
+  border-color: @accent;
+  border-radius: 18px;
+  x-offset: -10px;
+  y-offset: -10px;
+
+  background-color: @bg-alpha;
+}
+
+mainbox {
+  padding: 12px;
+  children: [ "inputbar", "listview" ];
+}
+
+inputbar {
+  padding: 8px 10px;
+  margin: 0px 0px 10px 0px;
+  border-radius: 14px;
+  background-color: @card;
+}
+
+prompt {
+  enabled: true;
+  text-color: @accent2;
+  padding: 0px 8px 0px 0px;
+}
+
+entry {
+  placeholder: "Buscar…";
+  placeholder-color: #d7e3ff88;
+  text-color: @fg;
+}
+
+/* Menos líneas -> más alto por fila (iconos se ven bien sin agrandar ventana) */
+listview {
+  lines: 5;
+  fixed-height: true;
+  spacing: 9px;
+  scrollbar: true;
+
+  background-color: transparent;
+}
+
+element {
+  padding: 8px 10px;
+  border-radius: 14px;
+  background-color: @card;
+
+  border: 1px;
+  border-color: transparent;
+}
+
+element-icon {
+  size: 66px;
+  border-radius: 12px;
+}
+
+element-text {
+  text-color: @fg;
+  padding: 0px 0px 0px 10px;
+}
+
+element selected.normal {
+  border-color: @accent2;
+  background-color: #0f1a2ecc;
+}
