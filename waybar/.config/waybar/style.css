@@ -70,12 +70,13 @@ window#waybar {
   box-shadow: 0 0 12px rgba(255, 107, 107, 0.50);
 }
 
-/* ========= CENTER: clock as island ========= */
-#clock {
+/* ========= CENTER: window title as island ========= */
+#window {
   background: @island-bg;
   margin: 6px 0 6px 0;
-  padding: 7px 16px;
+  padding: 7px 18px;
   border-radius: 16px;
+  color: @fg;
 
   box-shadow:
     -2px -2px 0 0 rgba(217, 70, 239, 0.90),
@@ -83,8 +84,15 @@ window#waybar {
      0px  0px 24px 0px rgba(217, 70, 239, 0.12);
 }
 
+/* Cuando no hay ventana activa — ocultar island */
+#window.empty {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
 /* ========= RIGHT: ONE island container ========= */
-/* Importante: el contenedor es .modules-right */
 .modules-right {
   background: @island-bg;
   margin: 6px 10px 6px 0;
@@ -100,7 +108,7 @@ window#waybar {
 .modules-right > widget > * {
   background: transparent;
   margin: 0;
-  padding: 0 10px;   /* spacing interno entre módulos */
+  padding: 0 10px;
   border-radius: 0;
   box-shadow: none;
 }
@@ -110,7 +118,14 @@ window#waybar {
   border-right: 1px solid rgba(215, 227, 255, 0.12);
 }
 
-/* Ajustes puntuales para que no se “rompa” el padding */
+/* El reloj dentro de la isla derecha — resaltado sutil */
+#clock {
+  color: rgba(0, 162, 255, 0.95);
+  font-weight: 800;
+  padding: 0 14px 0 10px;
+}
+
+/* Ajustes puntuales */
 #temperature, #network, #bluetooth, #pulseaudio, #backlight, #battery, #memory {
   color: @fg;
 }
@@ -121,7 +136,6 @@ window#waybar {
 
 #temperature.critical {
   color: rgba(255, 220, 220, 1.0);
-  /* no cambiamos el fondo de toda la isla; solo resaltamos el texto */
 }
 
 /* Tooltip coherente */

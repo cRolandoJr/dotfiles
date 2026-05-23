@@ -1,0 +1,47 @@
+* {
+  background-image: none;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+window {
+  background-color: rgba(11, 18, 32, 0.85);
+}
+
+button {
+  color: #d7e3ff;
+  background-color: rgba(11, 18, 32, 0.72);
+  border: none;
+  border-radius: 16px;
+  margin: 12px;
+  padding: 20px;
+  transition: all 0.25s ease;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 64px;
+  box-shadow:
+    -2px -2px 0 0 rgba(217, 70, 239, 0.75),
+     2px  2px 0 0 rgba(0, 162, 255, 0.75);
+}
+
+button:hover {
+  background-color: rgba(0, 162, 255, 0.10);
+  color: #ffffff;
+  box-shadow:
+    -2px -2px 0 0 rgba(217, 70, 239, 0.95),
+     2px  2px 0 0 rgba(0, 162, 255, 0.95),
+     0px  0px 24px 0px rgba(0, 162, 255, 0.20);
+}
+
+button label {
+  margin-top: 80px;
+  font-size: 13px;
+}
+
+#lock     { background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/lock.png"); }
+#logout   { background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/logout.png"); }
+#suspend  { background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/suspend.png"); }
+#hibernate{ background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/hibernate.png"); }
+#shutdown { background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/shutdown.png"); }
+#reboot   { background-image: url("/nix/store/6rkhi5d63s4153jkknihgxanl55nqnwp-wlogout-1.2.2/share/wlogout/icons/reboot.png"); }

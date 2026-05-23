@@ -8,24 +8,8 @@
   "reload_style_on_change": true,
 
   "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["hyprland/window"],
-  "modules-right": ["clock","temperature","network","pulseaudio","backlight","battery","memory","custom/power"],
-
-  "hyprland/window": {
-    "max-length": 60,
-    "separate-outputs": true,
-    "tooltip": false,
-    "rewrite": {
-      "(.*) — Mozilla Firefox": "󰈹  $1",
-      "(.*) — Chromium": "󰊯  $1",
-      "(.*)kitty(.*)": "terminal",
-      "(.*)nvim(.*)": "nvim",
-      "(.*)Code(.*)": "󰨞  code",
-      "(.*)Discord(.*)": "󰙯  discord",
-      "(.*)Telegram(.*)": "telegram",
-      "": "escritorio"
-    }
-  },
+  "modules-center": ["clock"],
+  "modules-right": ["temperature","network","pulseaudio","backlight","battery","memory"],
 
   "pulseaudio": {
     "tooltip": false,
@@ -37,44 +21,44 @@
     "format-icons": {
       "default": [
         "<span color='#1e1e2e'>󰝟 </span>",
-        "<span color='#1576BB'> </span>",
-        "<span color='#1576BB'> </span>",
-        "<span color='#1576BB'> </span>"
+        "<span color='#1576BB'> </span>",
+        "<span color='#1576BB'> </span>",
+        "<span color='#1576BB'> </span>"
       ]
     }
   },
 
-  "hyprland/workspaces": {
-    "on-click": "activate",
-    "format": "{icon}",
-    "format-icons": {
-      "default": "",
-      "1": "1",
-      "2": "2",
-      "3": "3",
-      "4": "4",
-      "5": "5",
-      "6": "6",
-      "7": "7",
-      "8": "8",
-      "9": "9",
-      "10": "10",
-      "active": "",
-      "persistent": ""
+"hyprland/workspaces": {
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "default": "",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
+            "active": "",
+            "persistent": ""
+        },
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": [],
+            "10": []
+        }
     },
-    "persistent-workspaces": {
-      "1": [],
-      "2": [],
-      "3": [],
-      "4": [],
-      "5": [],
-      "6": [],
-      "7": [],
-      "8": [],
-      "9": [],
-      "10": []
-    }
-  },
 
   "network": {
     "tooltip": true,
@@ -91,7 +75,7 @@
   "backlight": {
     "tooltip": false,
     "format": "{icon} {percent:>2}%",
-    "format-icons": ["","","","","","","","",""],
+    "format-icons": ["","","","","","","","",""],
     "device": "intel_backlight",
     "on-scroll-up": "swayosd-client --brightness raise",
     "on-scroll-down": "swayosd-client --brightness lower"
@@ -117,17 +101,18 @@
     "interval": 2,
     "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
-    "format-icons": ["", "", ""]
+    "format-icons": ["", "", ""]
   },
 
   "battery": {
     "states": { "good": 95, "warning": 30, "critical": 10 },
     "format": "{icon} {capacity}%",
-    "format-charging": "<span color='#456c23'> </span>{capacity}%",
+    "format-charging": "<span color='#456c23'> </span>{capacity}%",
+    /*"format-plugged": " <span color='#000000'> {capacity}</span>%",*/
     "format-alt": "<span color='#F1F1F1'>{time}</span> {icon}",
     "format-icons": [
       "<span color='#f7768e'>󰁺</span>",
-      "<span color='#f7768e'>󰁻</span>",
+      "<span color='#f7768e'>󰁻</span>",        
       "<span color='#e0af68'>󰁼</span>",
       "<span color='#e0af68'>󰁽</span>",
       "<span color='#456c23'>󰁾</span>",
@@ -139,25 +124,28 @@
     ]
   },
 
-  "clock": {
-    "tooltip": false,
-    "interval": 60,
-    "format": "󰥔 {:%H:%M}",
-    "format-alt": "{:%d-%m-%Y}"
-  },
+  "clock": { "tooltip": false, "interval": 60, "format": "{:%H:%M}", "format-alt": "{:%d-%m-%Y}" },
+  
+  "cpu": { "interval": 15, "format": "<span color='#f7768e'> </span> {}%", "max-length": 10 },
 
-  "cpu": { "interval": 15, "format": "<span color='#f7768e'> </span> {}%", "max-length": 10 },
-
-  "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
+  "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
 
   "memory": { "interval": 30, "format": "<span color='#1576BB'>󰍛 </span> {used}GiB", "format-alt": "<span color='#1576BB'>󰍛 </span> {percentage}%", "max-length": 10 },
 
   "custom/updates": { "format": "󰏓  {} ", "exec": "checkupdates | wc -l", "interval": 3600, "tooltip-format": "Pacman packages"},
 
+  "custom/pkg-aur": {
+    "exec": "yay -Qua | wc -l",
+    "interval": 3600,
+    "format": " 󰏔  {}",
+    "tooltip": true,
+    "tooltip-format": "AUR packages"
+  },
+
   "custom/previous": {
     "format": "󰒮",
     "on-click": "playerctl --player=spotify previous && playerctl --player=youtube-music previous",
-    "tooltip": false
-  }
+    "tooltip": false,
+  },
 
 }
