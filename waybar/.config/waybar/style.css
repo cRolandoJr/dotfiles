@@ -138,6 +138,25 @@ window#waybar {
   color: rgba(255, 220, 220, 1.0);
 }
 
+/* Layout de teclado (us / es). Click cicla layout. */
+#custom-layout {
+  color: @fg;
+  padding: 0 6px;
+  min-width: 22px;
+}
+#custom-layout.us { color: @blue; }
+#custom-layout.es { color: @pink; }
+#custom-layout.unknown { color: @muted; }
+
+/* Power profiles daemon: ícono cambia + color según perfil. Click cicla. */
+#power-profiles-daemon {
+  color: @fg;
+  padding: 0 8px;
+}
+#power-profiles-daemon.performance { color: @pink; }
+#power-profiles-daemon.balanced { color: @blue; }
+#power-profiles-daemon.power-saver { color: @muted; }
+
 /* Tooltip coherente */
 tooltip {
   background: rgba(11, 18, 32, 0.92);

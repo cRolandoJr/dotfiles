@@ -1,7 +1,7 @@
 {
   "layer": "top",
   "width": 1920,
-  "height": 36,
+  "height": 45,
   "margin-top": 0,
   "margin-bottom": 0,
   "reload_on_change": true,
@@ -9,7 +9,7 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["hyprland/window"],
-  "modules-right": ["clock","temperature","network","pulseaudio","backlight","battery","memory","custom/power"],
+  "modules-right": ["clock","custom/layout","temperature","network","bluetooth","pulseaudio","backlight","power-profiles-daemon","battery","memory"],
 
   "hyprland/window": {
     "max-length": 60,
@@ -36,10 +36,10 @@
     "on-scroll-down": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-",
     "format-icons": {
       "default": [
-        "<span color='#1e1e2e'>󰝟 </span>",
-        "<span color='#1576BB'> </span>",
-        "<span color='#1576BB'> </span>",
-        "<span color='#1576BB'> </span>"
+        "<span color='#1e1e2e'>󰝟</span>",
+        "<span color='#1576BB'>󰕿</span>",
+        "<span color='#1576BB'>󰖀</span>",
+        "<span color='#1576BB'>󰕾</span>"
       ]
     }
   },
@@ -81,7 +81,7 @@
     "format-wifi": "{icon}",
     "tooltip-format": "connected to {essid}",
     "format-ethernet": "",
-    "format-icons": {"wifi": ["󰤯 ","󰤟 ","󰤢 ","󰤥 ","󰤨 "]},
+    "format-icons": {"wifi": ["󰤯","󰤟","󰤢","󰤥","󰤨"]},
     "interval": 30,
     "on-click": "~/.local/bin/rofi-wifi-menu",
     "on-click-right": "nm-connection-editor",
@@ -91,7 +91,7 @@
   "backlight": {
     "tooltip": false,
     "format": "{icon} {percent:>2}%",
-    "format-icons": ["","","","","","","","",""],
+    "format-icons": ["󰃚","󰃛","󰃜","󰃝","󰃞","󰃟","󰃠","󰃠","󰃠"],
     "device": "intel_backlight",
     "on-scroll-up": "swayosd-client --brightness raise",
     "on-scroll-down": "swayosd-client --brightness lower"
@@ -109,7 +109,8 @@
     "format-connected-battery": "{icon} {device_battery_percentage}%",
     "tooltip-format-connected": "{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_battery_percentage}%",
-    "on-click": "blueman-manager"
+    "on-click": "blueman-manager",
+    "on-click-middle": "bluetoothctl power off || bluetoothctl power on"
   },
 
   "temperature": {
@@ -117,13 +118,13 @@
     "interval": 2,
     "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
-    "format-icons": ["", "", ""]
+    "format-icons": ["", "", ""]
   },
 
   "battery": {
     "states": { "good": 95, "warning": 30, "critical": 10 },
     "format": "{icon} {capacity}%",
-    "format-charging": "<span color='#456c23'> </span>{capacity}%",
+    "format-charging": "<span color='#456c23'>󰂄 </span>{capacity}%",
     "format-alt": "<span color='#F1F1F1'>{time}</span> {icon}",
     "format-icons": [
       "<span color='#f7768e'>󰁺</span>",
@@ -142,6 +143,7 @@
   "clock": {
     "tooltip": false,
     "interval": 60,
+    "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
     "format-alt": "{:%d-%m-%Y}"
   },
@@ -150,14 +152,27 @@
 
   "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
 
-  "memory": { "interval": 30, "format": "<span color='#1576BB'>󰍛 </span> {used}GiB", "format-alt": "<span color='#1576BB'>󰍛 </span> {percentage}%", "max-length": 10 },
+  "memory": { "interval": 30, "format": "<span color='#1576BB'></span> {used}GiB", "format-alt": "<span color='#1576BB'></span> {percentage}%", "max-length": 10 },
 
   "custom/updates": { "format": "󰏓  {} ", "exec": "checkupdates | wc -l", "interval": 3600, "tooltip-format": "Pacman packages"},
 
-  "custom/previous": {
-    "format": "󰒮",
-    "on-click": "playerctl --player=spotify previous && playerctl --player=youtube-music previous",
-    "tooltip": false
+  "custom/layout": {
+    "exec": "stdbuf -oL /home/rolando/.config/hypr/scripts/waybar-layout.sh",
+    "return-type": "json",
+    "format": "{}",
+    "restart-interval": 3,
+    "on-click": "hyprctl switchxkblayout current next"
+  },
+
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "format-icons": {
+      "default": "󰐦",
+      "performance": "󱓞",
+      "balanced": "󰌪",
+      "power-saver": "󰁾"
+    }
   }
 
 }

@@ -1,0 +1,51 @@
+# mako — daemon de notificaciones
+# Paleta: Catppuccin Mocha (consistente con waybar)
+
+# Posición y tamaño
+anchor=top-right
+margin=10
+padding=12
+width=380
+height=120
+border-size=2
+border-radius=10
+icons=1
+max-icon-size=48
+
+# Tipografía
+font=JetBrainsMono Nerd Font 10
+
+# Capa: overlay para que aparezca sobre Hyprland sin ser bloqueado
+layer=overlay
+
+# Historial
+max-history=20
+sort=-time
+
+# Colores base (Catppuccin Mocha)
+background-color=#1e1e2eee
+text-color=#cdd6f4
+border-color=#89b4fa
+progress-color=over #585b70
+
+# Defaults por urgency — las clave: auto-dismiss
+default-timeout=4000
+ignore-timeout=0
+
+[urgency=low]
+default-timeout=2500
+border-color=#7f849c
+
+[urgency=normal]
+default-timeout=4000
+border-color=#89b4fa
+
+[urgency=critical]
+default-timeout=0
+border-color=#f38ba8
+text-color=#f38ba8
+
+# Reemplazo de notif "sincronizadas" (ej: capa de teclado, volumen)
+# Las notif con hint x-canonical-private-synchronous reemplazan la anterior
+[synchronous]
+default-timeout=1500
