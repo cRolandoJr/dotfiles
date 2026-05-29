@@ -25,13 +25,15 @@ button {
      2px  2px 0 0 rgba(0, 162, 255, 0.75);
 }
 
-button:hover {
+button:hover,
+button:focus {
   background-color: rgba(0, 162, 255, 0.10);
   color: #ffffff;
   box-shadow:
     -2px -2px 0 0 rgba(217, 70, 239, 0.95),
      2px  2px 0 0 rgba(0, 162, 255, 0.95),
      0px  0px 24px 0px rgba(0, 162, 255, 0.20);
+  outline: none;
 }
 
 button label {

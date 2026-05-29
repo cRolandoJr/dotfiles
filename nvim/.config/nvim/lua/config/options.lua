@@ -44,6 +44,13 @@ opt.backup     = false
 -- Búsqueda
 opt.inccommand = "split"
 
+-- Folds: existen pero arrancan todos abiertos.
+-- `foldlevelstart = 99` es el "nivel inicial" al empezar a editar un buffer;
+-- 99 es alto suficiente para que ningún pliegue arranque cerrado.
+-- Igual podés colapsar manualmente con zc/zM, etc.
+opt.foldlevelstart = 99
+opt.foldenable     = true
+
 -- Diagnostics
 vim.diagnostic.config({
     virtual_text = { prefix = "●", spacing = 2 },
