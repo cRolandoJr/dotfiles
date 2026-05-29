@@ -1,51 +1,61 @@
 # mako — daemon de notificaciones
-# Paleta: Catppuccin Mocha (consistente con waybar)
+# Look: "Neon islands" — coherente con waybar y borde activo de Hyprland
+#   - background: rgba(11,18,32,*) (mismo tono que waybar islands, +opacidad por legibilidad)
+#   - foreground: #d7e3ff (fg de waybar)
+#   - acentos: azul #00A2FF (col.active_border de hyprland) / pink #D946EF / crit #FF6B6B
+#   - border-radius 15 (igual a `decoration.rounding` de hyprland)
+#
+# Posición: top-right pero debajo del waybar (height=45 + gap=10 → outer-margin top=55).
+# Layer top (no overlay) para que respete la exclusive zone y bordes de hyprland.
 
-# Posición y tamaño
+# === Geometría / posición ===
 anchor=top-right
+layer=top
+outer-margin=0,0
 margin=10
-padding=12
+padding=14
 width=380
-height=120
+height=160
 border-size=2
-border-radius=10
+border-radius=15
 icons=1
 max-icon-size=48
 
-# Tipografía
-font=JetBrainsMono Nerd Font 10
+# === Tipografía ===
+font=JetBrainsMono Nerd Font 11
 
-# Capa: overlay para que aparezca sobre Hyprland sin ser bloqueado
-layer=overlay
-
-# Historial
-max-history=20
+# === Historial ===
+max-history=30
 sort=-time
 
-# Colores base (Catppuccin Mocha)
-background-color=#1e1e2eee
-text-color=#cdd6f4
-border-color=#89b4fa
-progress-color=over #585b70
+# === Colores base (Neon islands) ===
+background-color=#0b1220ec
+text-color=#d7e3ff
+border-color=#00a2ffbf
+progress-color=over #1f2a44
 
-# Defaults por urgency — las clave: auto-dismiss
+# === Defaults ===
 default-timeout=4000
 ignore-timeout=0
 
+# === Por urgency ===
+# low: gris fg muted, borde más tenue
 [urgency=low]
 default-timeout=2500
-border-color=#7f849c
+border-color=#7f849c99
+text-color=#d7e3ffb3
 
+# normal: azul neón (acento principal)
 [urgency=normal]
 default-timeout=4000
-border-color=#89b4fa
+border-color=#00a2ffbf
 
+# critical: coral, no auto-dismiss
 [urgency=critical]
 default-timeout=0
-border-color=#f38ba8
-text-color=#f38ba8
+border-color=#ff6b6be6
+text-color=#ffd7d7
 
-# Reemplazo de notif "sincronizadas" (ej: capa de teclado, volumen)
-# Las notif con hint x-canonical-private-synchronous reemplazan la anterior
-[synchronous]
-default-timeout=1500
+# Modo Do-Not-Disturb (activar con `makomode DND` → `makoctl mode -s DND`)
+[mode=do-not-disturb]
+invisible=1

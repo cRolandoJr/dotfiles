@@ -51,3 +51,17 @@ vim.api.nvim_create_autocmd("VimResized", {
         vim.cmd("tabnext " .. current_tab)
     end,
 })
+
+-- nvim-treesitter rama "main": highlight, folds e indent ya no se activan
+-- desde `setup()`. Acá los enchufamos por FileType. `pcall` silencia el caso
+-- de filetypes sin parser instalado (e.g. un .conf raro).
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup("treesitter_features"),
+    callback = function(args)
+        if pcall(vim.treesitter.start) then
+            vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+            vim.wo[0][0].foldmethod = "expr"
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+    end,
+})

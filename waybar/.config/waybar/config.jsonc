@@ -9,7 +9,18 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["hyprland/window"],
-  "modules-right": ["clock","custom/layout","temperature","network","bluetooth","pulseaudio","backlight","power-profiles-daemon","battery","memory"],
+  "modules-right": [
+    "clock",
+    "custom/layout",
+    "temperature",
+    "network",
+    "bluetooth",
+    "pulseaudio",
+    "backlight",
+    "power-profiles-daemon",
+    "battery",
+    "memory",
+  ],
 
   "hyprland/window": {
     "max-length": 60,
@@ -23,8 +34,8 @@
       "(.*)Code(.*)": "󰨞  code",
       "(.*)Discord(.*)": "󰙯  discord",
       "(.*)Telegram(.*)": "telegram",
-      "": "escritorio"
-    }
+      "": "escritorio",
+    },
   },
 
   "pulseaudio": {
@@ -39,9 +50,9 @@
         "<span color='#1e1e2e'>󰝟</span>",
         "<span color='#1576BB'>󰕿</span>",
         "<span color='#1576BB'>󰖀</span>",
-        "<span color='#1576BB'>󰕾</span>"
-      ]
-    }
+        "<span color='#1576BB'>󰕾</span>",
+      ],
+    },
   },
 
   "hyprland/workspaces": {
@@ -60,7 +71,7 @@
       "9": "9",
       "10": "10",
       "active": "",
-      "persistent": ""
+      "persistent": "",
     },
     "persistent-workspaces": {
       "1": [],
@@ -72,8 +83,8 @@
       "7": [],
       "8": [],
       "9": [],
-      "10": []
-    }
+      "10": [],
+    },
   },
 
   "network": {
@@ -81,27 +92,27 @@
     "format-wifi": "{icon}",
     "tooltip-format": "connected to {essid}",
     "format-ethernet": "",
-    "format-icons": {"wifi": ["󰤯","󰤟","󰤢","󰤥","󰤨"]},
+    "format-icons": { "wifi": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"] },
     "interval": 30,
     "on-click": "~/.local/bin/rofi-wifi-menu",
     "on-click-right": "nm-connection-editor",
-    "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on"
+    "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on",
   },
 
   "backlight": {
     "tooltip": false,
     "format": "{icon} {percent:>2}%",
-    "format-icons": ["󰃚","󰃛","󰃜","󰃝","󰃞","󰃟","󰃠","󰃠","󰃠"],
+    "format-icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠", "󰃠", "󰃠"],
     "device": "intel_backlight",
     "on-scroll-up": "swayosd-client --brightness raise",
-    "on-scroll-down": "swayosd-client --brightness lower"
+    "on-scroll-down": "swayosd-client --brightness lower",
   },
 
   "bluetooth": {
     "format": "{icon}",
     "format-off": "<span color='#f7768e'>󰂲</span>",
     "format-disabled": "<span color='#f7768e'>󰂲</span>",
-    "format-icons": ["󰂯","󰤾","󰥀","󰥄","󰥈"],
+    "format-icons": ["󰂯", "󰤾", "󰥀", "󰥄", "󰥈"],
     "tooltip-format": "Power on",
     "tooltip-format-off": "Power off",
     "tooltip-format-disabled": "Power off",
@@ -110,7 +121,7 @@
     "tooltip-format-connected": "{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_battery_percentage}%",
     "on-click": "blueman-manager",
-    "on-click-middle": "bluetoothctl power off || bluetoothctl power on"
+    "on-click-middle": "bluetoothctl power off || bluetoothctl power on",
   },
 
   "temperature": {
@@ -122,7 +133,7 @@
     "interval": 2,
     "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
-    "format-icons": ["", "", ""]
+    "format-icons": ["", "", ""],
   },
 
   "battery": {
@@ -140,8 +151,8 @@
       "<span color='#456c23'>󰂀</span>",
       "<span color='#456c23'>󰂁</span>",
       "<span color='#456c23'>󰂂</span>",
-      "<span color='#456c23'>󰁹</span>"
-    ]
+      "<span color='#456c23'>󰁹</span>",
+    ],
   },
 
   "clock": {
@@ -149,23 +160,37 @@
     "interval": 60,
     "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
-    "format-alt": "{:%d-%m-%Y}"
+    "format-alt": "{:%d-%m-%Y}",
   },
 
-  "cpu": { "interval": 15, "format": "<span color='#f7768e'> </span> {}%", "max-length": 10 },
+  "cpu": {
+    "interval": 15,
+    "format": "<span color='#f7768e'> </span> {}%",
+    "max-length": 10,
+  },
 
   "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
 
-  "memory": { "interval": 30, "format": "<span color='#1576BB'></span> {used}GiB", "format-alt": "<span color='#1576BB'></span> {percentage}%", "max-length": 10 },
+  "memory": {
+    "interval": 30,
+    "format": "<span color='#1576BB'></span> {percentage}%",
+    "format-alt": "<span color='#1576BB'></span> {used}GiB",
+    "max-length": 10,
+  },
 
-  "custom/updates": { "format": "󰏓  {} ", "exec": "checkupdates | wc -l", "interval": 3600, "tooltip-format": "Pacman packages"},
+  "custom/updates": {
+    "format": "󰏓  {} ",
+    "exec": "checkupdates | wc -l",
+    "interval": 3600,
+    "tooltip-format": "Pacman packages",
+  },
 
   "custom/layout": {
     "exec": "stdbuf -oL /home/rolando/.config/hypr/scripts/waybar-layout.sh",
     "return-type": "json",
     "format": "{}",
     "restart-interval": 3,
-    "on-click": "hyprctl switchxkblayout current next"
+    "on-click": "hyprctl switchxkblayout current next",
   },
 
   "power-profiles-daemon": {
@@ -175,8 +200,7 @@
       "default": "󰐦",
       "performance": "󱓞",
       "balanced": "󰌪",
-      "power-saver": "󰁾"
-    }
-  }
-
+      "power-saver": "󰁾",
+    },
+  },
 }
