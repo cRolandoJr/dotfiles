@@ -160,7 +160,9 @@
     "interval": 60,
     "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
-    "format-alt": "{:%d-%m-%Y}",
+    // Click izq → toggle popup eww con calendario.
+    // (Antes había `format-alt` para mostrar la fecha; el popup ya la incluye.)
+    "on-click": "eww open --toggle calendar",
   },
 
   "cpu": {

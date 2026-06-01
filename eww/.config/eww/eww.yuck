@@ -1,0 +1,62 @@
+;; eww widgets — Neon islands theme
+;; Reload: eww reload
+;;
+;; ---------------------------------------------------------------------------
+;; CONCEPTOS RÁPIDOS DE YUCK (sintaxis tipo Lisp / s-expressions)
+;; ---------------------------------------------------------------------------
+;; (defpoll NAME :interval "60s" "shell-cmd")  -> variable que se refresca con
+;;                                                la salida del comando.
+;; (defwidget NAME [args] (...))               -> componente reutilizable.
+;; (defwindow NAME :prop ... (contenido))      -> ventana real que eww abre.
+;; (box :orientation "v" :class "...") (...)   -> contenedor (h | v).
+;; (label :text "..." :class "...")            -> texto.
+;; (calendar :class "...")                     -> widget GTK built-in.
+;;
+;; Para abrir/cerrar desde shell:  eww open --toggle calendar
+;; ---------------------------------------------------------------------------
+
+
+;; Fecha del header, refresco cada 60s.
+;; LC_TIME=es_AR fuerza nombres de meses/días en español aunque el sistema
+;; corra en otra locale.
+(defpoll date_header
+  :interval "60s"
+  :initial "..."
+  "LC_TIME=es_AR.UTF-8 date '+%A, %d de %B'")
+
+
+;; Container del popup — solo calendar GTK con header de fecha.
+(defwidget calendar-popup []
+  (box :class "calendar-popup"
+       :orientation "v"
+       :spacing 10
+       :space-evenly false
+    (label :class "calendar-header"
+           :text date_header)
+    (calendar :class "calendar-grid"
+              :show-week-numbers false
+              :show-heading true
+              :show-day-names true)))
+
+
+;; La ventana en sí. Se abre con `eww open --toggle calendar`.
+;;
+;; geometry:
+;;   anchor "top right"  -> ancla a esa esquina del monitor.
+;;   x "-20px" y "60px"  -> offset hacia adentro+abajo, queda debajo de waybar
+;;                          (waybar height=45 + margin-top=6 ≈ 51, dejamos 60).
+;;   width "320px"       -> ancho fijo; height crece con el contenido.
+;;
+;; stacking "fg"      -> encima de ventanas normales.
+;; focusable false    -> NO roba foco a la ventana activa (clave en Hyprland).
+;; exclusive false    -> no reserva espacio (es popup, no panel).
+(defwindow calendar
+  :monitor 0
+  :geometry (geometry :x "340px"
+                      :y "10px"
+                      :width "320px"
+                      :anchor "top right")
+  :stacking "fg"
+  :focusable false
+  :exclusive false
+  (calendar-popup))

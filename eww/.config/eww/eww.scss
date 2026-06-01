@@ -1,0 +1,103 @@
+// eww styles — Neon islands theme
+// Reload: eww reload
+//
+// Misma paleta que waybar/style.css. Si cambiamos colores allá,
+// los reflejamos acá manualmente (eww no comparte @define-color con waybar).
+
+// ─── Paleta ────────────────────────────────────────────────────────────────
+$fg:        #d7e3ff;
+$muted:     rgba(215, 227, 255, 0.70);
+$island-bg: rgba(11, 18, 32, 0.92);   // más opaco que waybar (0.72) porque
+                                       // el popup necesita más legibilidad.
+$blue:      rgba(0, 162, 255, 0.95);
+$pink:      rgba(217, 70, 239, 0.85);
+$blue-soft: rgba(0, 162, 255, 0.25);
+$pink-soft: rgba(217, 70, 239, 0.18);
+
+
+// ─── Container del popup ───────────────────────────────────────────────────
+// Mismo patrón "neon island" que .modules-right en waybar:
+//   - bg semitransparente oscuro
+//   - border-radius 16px
+//   - double box-shadow offset pink/blue (la firma del theme)
+.calendar-popup {
+  background: $island-bg;
+  color: $fg;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 6px;
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow:
+    -2px -2px 0 0 $pink,
+     2px  2px 0 0 $blue,
+     0px  0px 28px 0px $pink-soft;
+}
+
+
+// ─── Header (fecha en español) ─────────────────────────────────────────────
+.calendar-header {
+  color: $blue;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  // %A devuelve "lunes" en lowercase; lo capitalizamos vía CSS para no tocar
+  // el formato del shell command.
+  // (GTK no soporta text-transform; lo dejamos como está y queda "lunes, 29
+  // de mayo" — argentino y casual. Si lo quieres "Lunes...", lo cambiamos
+  // en el `date` del .yuck.)
+}
+
+
+// ─── GTK calendar widget ───────────────────────────────────────────────────
+// Selectores GTK3 reales: no son "div"; son los nombres internos del widget.
+// Si algo no responde, eww reload + GTK_DEBUG=interactive para inspeccionar.
+calendar {
+  background: transparent;
+  color: $fg;
+  padding: 4px;
+  font-weight: 700;
+
+  // Día seleccionado (= hoy por defecto si nadie clickeó otro)
+  &:selected {
+    background: $blue;
+    color: #0b1220;
+    border-radius: 8px;
+    font-weight: 800;
+  }
+
+  // Días del mes anterior/siguiente (los grises de los bordes)
+  &.other-month {
+    color: rgba(215, 227, 255, 0.22);
+  }
+
+  // Etiquetas L M M J V S D
+  &.day-name {
+    color: $pink;
+    font-weight: 800;
+  }
+
+  // Header con flechas << mes año >>
+  &.header {
+    color: $fg;
+    font-weight: 800;
+    padding-bottom: 6px;
+  }
+
+  // Botones (flechas del header)
+  &.button {
+    color: $pink;
+
+    &:hover {
+      color: $blue;
+    }
+  }
+
+  // Hover sobre días
+  &.highlight {
+    background: $blue-soft;
+    border-radius: 6px;
+  }
+}

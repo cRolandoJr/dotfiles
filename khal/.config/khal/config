@@ -1,0 +1,49 @@
+# khal — config local-only (sin vdirsyncer / sin sync remoto).
+#
+# Storage: cada subdir bajo ~/.local/share/calendars/ es UN calendar.
+# Estructura:
+#   ~/.local/share/calendars/
+#   ├── personal/   ← eventos manuales (vos)
+#   └── pedco/      ← eventos scrapados (el bot)
+#
+# Con khal 0.14, `type = discover` apuntando al dir padre detecta
+# automáticamente cada subdir como un calendar separado, usando el
+# nombre del subdir como nombre del calendar (personal, pedco).
+#
+# (En versiones viejas se usaba una sección por calendar con
+# `type = filesystem`, pero eso quedó deprecated.)
+#
+# Comandos básicos:
+#   khal list today 30d        → próximos 30 días
+#   khal calendar              → vista mes
+#   khal new 15-06 "Examen"    → crea evento en default_calendar
+#   khal new -a pedco ...      → forza calendar destino
+#   ikhal                      → TUI interactiva
+
+
+[calendars]
+
+[[mycals]]
+path = ~/.local/share/calendars/*
+type = discover
+
+
+[locale]
+local_timezone = America/Argentina/Buenos_Aires
+default_timezone = America/Argentina/Buenos_Aires
+
+# Formato AR: día-mes-año.
+dateformat = %d-%m-%Y
+longdateformat = %d-%m-%Y
+timeformat = %H:%M
+datetimeformat = %d-%m-%Y %H:%M
+longdatetimeformat = %d-%m-%Y %H:%M
+
+# 0 = lunes en khal (ojo, en otros tools 0 = domingo).
+firstweekday = 0
+
+
+[default]
+default_calendar = personal
+timedelta = 30d
+show_all_days = False
