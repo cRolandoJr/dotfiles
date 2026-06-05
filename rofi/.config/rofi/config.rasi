@@ -18,20 +18,20 @@ configuration {
 }
 
 * {
-    /* Palette */
-    bg:         #0b1220;
-    bg-alt:     #0f1a2e;
-    fg:         #d7e3ff;
-    fg-alt:     #9fb4d9;
+    /* Palette — Deep Ocean */
+    bg:         #0a0e17;
+    bg-alt:     #0f1623;
+    fg:         #cdd6f4;
+    fg-alt:     #7a8ba8;
 
-    accent:     #7aa2f7;
-    accent2:    #00A2FF;
+    accent:     #3b82f6;   /* azul NixOS */
+    accent2:    #00b4d8;   /* cyan Deep Ocean */
 
     /* Transparent variants (RGBA: #RRGGBBAA) */
-    win-bg:     #0b1220cc;
-    panel-bg:   #0f1a2ecc;
-    sel-bg:     #0f1a2ee6;
-    hint-bg:    #0f1a2e99;
+    win-bg:     #0a0e17e6;
+    panel-bg:   #0f1623e6;
+    sel-bg:     #151e2df0;
+    hint-bg:    #0f162399;
 
     background-color: transparent;
     text-color: @fg;

@@ -3,10 +3,10 @@ configuration { show-icons: false; }
 
 * {
   font:            "JetBrains Mono Nerd Font 12";
-  bg:              #11111b;
-  bg-alt:          #1e1e2e;
+  bg:              #0a0e17;
+  bg-alt:          #0f1623;
   fg:              #cdd6f4;
-  sel:             #89b4fa;
+  sel:             #00b4d8;
 }
 
 window {
@@ -29,7 +29,7 @@ inputbar {
 prompt {
   padding:         0 10px 0 10px;
   background-color:transparent;
-  text-color:      #89b4fa;
+  text-color:      #00b4d8;
 }
 
 /* Campo de entrada: sin fondo blanco */

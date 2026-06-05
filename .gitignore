@@ -1,0 +1,5 @@
+# Backups: git es el backup canónico, los .bak son deuda.
+*.bak
+*.bak.*
+*.backup
+*~

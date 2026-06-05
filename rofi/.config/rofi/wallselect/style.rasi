@@ -9,16 +9,16 @@ configuration {
 }
 
 * {
-    bg:      #0b1220;
-    bg2:     #0f1a2e;
-    fg:      #d7e3ff;
+    bg:      #0a0e17;
+    bg2:     #0f1623;
+    fg:      #cdd6f4;
 
-    accent:  #7aa2f7;
-    accent2: #9eceff;
+    accent:  #3b82f6;
+    accent2: #00b4d8;
 
-    bg-alpha:     #0b1220b3;
-    card:         #0f1a2e80;   /* un poco más suave */
-    card-sel:     #0f1a2ecc;
+    bg-alpha:     #0a0e17b3;
+    card:         #0f162380;   /* un poco más suave */
+    card-sel:     #0f1623cc;
 
     background-color: transparent;
     text-color: transparent;

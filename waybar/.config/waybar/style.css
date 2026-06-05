@@ -1,20 +1,29 @@
-/* Waybar - Neon islands (right side as ONE island)
+/* Waybar - Deep Ocean
  * Reload: pkill -SIGUSR2 waybar
+ *
+ * Paleta:
+ *   bg-bar      #0a0e17   transparent bar
+ *   bg-surface  #0f1623   island bg
+ *   border      #1a2744
+ *   fg          #cdd6f4   fg-dim #7a8ba8
+ *   cyan        #00b4d8   cyan-glow rgba(0,180,216,0.35)
+ *   blue-soft   #3b82f6   navy #1e3a5f
+ *   crit        #f87171   warn #fb923c   ok #34d399
  */
 
-@define-color fg        #d7e3ff;
-@define-color muted     rgba(215, 227, 255, 0.70);
+@define-color fg          #cdd6f4;
+@define-color fg-dim      rgba(122, 139, 168, 0.85);
+@define-color island-bg   rgba(15, 22, 35, 0.90);
+@define-color bar-bg      rgba(10, 14, 23, 0.00);
+@define-color border      rgba(26, 39, 68, 0.90);
 
-@define-color island-bg rgba(11, 18, 32, 0.72); /* pill bg */
-@define-color bar-bg    rgba(11, 18, 32, 0.00); /* transparent bar */
+@define-color cyan        rgba(0, 180, 216, 0.90);
+@define-color cyan-glow   rgba(0, 180, 216, 0.40);
+@define-color cyan-dim    rgba(0, 180, 216, 0.18);
 
-@define-color blue      rgba(0, 162, 255, 0.75);
-@define-color pink      rgba(217, 70, 239, 0.75);
-
-@define-color blueGlow  rgba(0, 162, 255, 0.45);
-@define-color pinkGlow  rgba(217, 70, 239, 0.45);
-
-@define-color crit      rgba(255, 107, 107, 0.90);
+@define-color crit        rgba(248, 113, 113, 0.90);
+@define-color warn        rgba(251, 146, 60, 0.90);
+@define-color ok          rgba(52, 211, 153, 0.90);
 
 * {
   border: none;
@@ -28,66 +37,91 @@
 window#waybar {
   background: @bar-bg;
   color: @fg;
-  margin-top: 6px;
 }
 
-/* ========= LEFT: workspaces as island ========= */
+/* ========= LEFT: NixOS logo + workspaces island ========= */
+
+/* Logo NixOS — chip pequeño a la izquierda del island de workspaces */
+#custom-nixos {
+  background: @island-bg;
+  color: @cyan;
+  font-size: 12px;
+  margin: 2px 0;                  /* pegado al borde izquierdo del bar */
+  padding: 2px 10px;
+  min-height: 20px;
+  border-radius: 14px;            /* capsule completa (Variante A) */
+  border: 1px solid @border;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+#custom-nixos:hover {
+  background: @cyan-dim;
+  color: #ffffff;
+}
+
 #workspaces {
   background: @island-bg;
   color: @fg;
-  margin: 6px 10px 6px 10px;
-  padding: 6px 10px;
-  border-radius: 16px;
+  margin: 2px 0 2px 6px;
+  padding: 2px 8px;
+  min-height: 20px;
+  border-radius: 14px;
+  border: 1px solid @border;
 
+  /* Glow sutil: borde cyan superior-izquierdo, azul navy inferior-derecho */
   box-shadow:
-    -2px -2px 0 0 @pink,
-     2px  2px 0 0 @blue;
+    -1px -1px 0 0 @cyan-dim,
+     1px  1px 0 0 rgba(37, 99, 235, 0.40);
 }
 
-/* Dots */
+/* Dots de workspace */
 #workspaces button {
   all: unset;
-  margin: 0 6px;
-  min-width: 14px;
-  min-height: 14px;
+  margin: 0 5px;
+  min-width: 12px;
+  min-height: 12px;
   border-radius: 999px;
-  background: rgba(215, 227, 255, 0.18);
-  box-shadow: inset 0 0 0 2px rgba(215, 227, 255, 0.18);
-}
-#workspaces button label { font-size: 0px; }
-#workspaces button:hover {
-  background: rgba(122, 162, 247, 0.25);
-  box-shadow: inset 0 0 0 2px rgba(122, 162, 247, 0.45);
-}
-#workspaces button.active {
-  background: rgba(0, 162, 255, 0.95);
-  box-shadow:
-    0 0 12px @blueGlow,
-    inset 0 0 0 2px rgba(255, 255, 255, 0.18);
-}
-#workspaces button.urgent {
-  background: rgba(255, 107, 107, 0.90);
-  box-shadow: 0 0 12px rgba(255, 107, 107, 0.50);
+  background: rgba(205, 214, 244, 0.15);
 }
 
-/* ========= CENTER: window title as island ========= */
+#workspaces button label { font-size: 0px; }
+
+#workspaces button:hover {
+  background: @cyan-dim;
+}
+
+#workspaces button.active {
+  background: @cyan;
+  box-shadow: 0 0 10px @cyan-glow;
+  min-width: 18px;
+}
+
+#workspaces button.urgent {
+  background: @crit;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.50);
+}
+
+/* ========= CENTER: window title island ========= */
 #window {
   background: @island-bg;
-  margin: 6px 0 6px 0;
-  padding: 7px 18px;
-  border-radius: 16px;
+  margin: 2px 0;
+  padding: 2px 16px;
+  min-height: 20px;
+  border-radius: 14px;
   color: @fg;
+  border: 1px solid @border;
 
   box-shadow:
-    -2px -2px 0 0 rgba(217, 70, 239, 0.90),
-     2px  2px 0 0 rgba(0, 162, 255, 0.90),
-     0px  0px 24px 0px rgba(217, 70, 239, 0.12);
+    -1px -1px 0 0 @cyan-dim,
+     1px  1px 0 0 rgba(37, 99, 235, 0.40),
+     0px  0px 18px 0px rgba(0, 180, 216, 0.08);
 }
 
-/* Cuando no hay ventana activa — ocultar island */
+/* Cuando no hay ventana activa */
 #window.empty {
   background: transparent;
   box-shadow: none;
+  border: none;
   padding: 0;
   margin: 0;
 }
@@ -95,76 +129,70 @@ window#waybar {
 /* ========= RIGHT: ONE island container ========= */
 .modules-right {
   background: @island-bg;
-  margin: 6px 10px 6px 0;
-  padding: 6px 10px;
-  border-radius: 16px;
+  margin: 2px 0;                  /* pegado al borde derecho del bar */
+  padding: 2px 8px;
+  min-height: 20px;
+  border-radius: 14px;            /* capsule completa (Variante A) */
+  border: 1px solid @border;
 
   box-shadow:
-    -2px -2px 0 0 @pink,
-     2px  2px 0 0 @blue;
+    -1px -1px 0 0 @cyan-dim,
+     1px  1px 0 0 rgba(37, 99, 235, 0.40);
 }
 
-/* Los módulos de adentro NO son chips: transparentes y sin margen */
+/* Módulos internos: transparentes, sin margin, separadores sutiles */
 .modules-right > widget > * {
   background: transparent;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 8px;
   border-radius: 0;
   box-shadow: none;
 }
 
-/* Separadores sutiles entre módulos (línea vertical) */
 .modules-right > widget > *:not(:last-child) {
-  border-right: 1px solid rgba(215, 227, 255, 0.12);
+  border-right: 1px solid rgba(205, 214, 244, 0.08);
 }
 
-/* El reloj dentro de la isla derecha — resaltado sutil */
+/* Reloj — resaltado con cyan */
 #clock {
-  color: rgba(0, 162, 255, 0.95);
+  color: @cyan;
   font-weight: 800;
-  padding: 0 14px 0 10px;
+  padding: 0 12px 0 8px;
 }
 
-/* Ajustes puntuales */
-#temperature, #network, #bluetooth, #pulseaudio, #backlight, #battery, #memory {
+/* Módulos estándar */
+#temperature, #network, #pulseaudio, #battery {
   color: @fg;
 }
 
 /* Estados */
-#pulseaudio.muted { color: @muted; }
-#network.disconnected { color: rgba(255, 209, 102, 1.0); }
+#pulseaudio.muted { color: @fg-dim; }
+#network.disconnected { color: @warn; }
 
 #temperature.critical {
-  color: rgba(255, 220, 220, 1.0);
+  color: @crit;
+  animation: blink 1s linear infinite;
 }
 
-/* Layout de teclado (us / es). Click cicla layout. */
+@keyframes blink {
+  to { color: rgba(248, 113, 113, 0.40); }
+}
+
+/* Layout de teclado */
 #custom-layout {
   color: @fg;
   padding: 0 6px;
   min-width: 22px;
 }
-#custom-layout.us { color: @blue; }
-#custom-layout.es { color: @pink; }
-#custom-layout.unknown { color: @muted; }
-
-/* Power profiles daemon: ícono cambia + color según perfil. Click cicla. */
-#power-profiles-daemon {
-  color: @fg;
-  padding: 0 8px;
-}
-#power-profiles-daemon.performance { color: @pink; }
-#power-profiles-daemon.balanced { color: @blue; }
-#power-profiles-daemon.power-saver { color: @muted; }
 
 /* Tooltip coherente */
 tooltip {
-  background: rgba(11, 18, 32, 0.92);
+  background: @island-bg;
   color: @fg;
-  border-radius: 12px;
-  padding: 8px 10px;
-  box-shadow:
-    -2px -2px 0 0 @pink,
-     2px  2px 0 0 @blue;
+  border-radius: 10px;
+  border: 1px solid @border;
+  padding: 6px 10px;
+  box-shadow: 0 0 12px @cyan-glow;
 }
+
 tooltip label { color: @fg; }

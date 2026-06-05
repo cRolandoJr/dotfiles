@@ -7,10 +7,10 @@
     "separator": "  ",
     "constants": [
       "\u001b[0m",                    // {$1} reset
-      "\u001b[38;2;215;227;255m",     // {$2} fg        #d7e3ff
-      "\u001b[38;2;122;162;247m",     // {$3} blue      #7aa2f7
-      "\u001b[38;2;158;206;255m",     // {$4} ice blue  #9eceff
-      "\u001b[38;2;187;154;247m"      // {$5} lavender  #bb9af7
+      "\u001b[38;2;205;214;244m",     // {$2} fg        #cdd6f4   Deep Ocean fg
+      "\u001b[38;2;59;130;246m",     // {$3} blue      #3b82f6   azul NixOS
+      "\u001b[38;2;0;180;216m",     // {$4} cyan      #00b4d8   cyan Deep Ocean
+      "\u001b[38;2;125;211;252m"      // {$5} sky       #7dd3fc   sky light (header)
     ]
   },
 

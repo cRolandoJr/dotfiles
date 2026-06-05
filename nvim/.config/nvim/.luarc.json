@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+  "runtime.version": "LuaJIT",
+  "diagnostics.globals": ["vim", "Snacks"],
+  "workspace.checkThirdParty": false,
+  "workspace.library": [
+    "$VIMRUNTIME/lua",
+    "${3rd}/luv/library"
+  ],
+  "telemetry.enable": false,
+  "completion.callSnippet": "Replace",
+  "hint.enable": true
+}

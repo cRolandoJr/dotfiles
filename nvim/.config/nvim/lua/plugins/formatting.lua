@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 return {
     {
         "stevearc/conform.nvim",
@@ -35,6 +36,12 @@ return {
             },
             format_on_save = function(bufnr)
                 if vim.b[bufnr].disable_autoformat or vim.g.disable_autoformat then
+                    return
+                end
+                -- GTK CSS (waybar, gtk.css): prettierd no entiende `@define-color`
+                -- y lo eliminaría al guardar. Saltamos autoformat en esos buffers.
+                -- El flag vim.b.gtk_css lo setea el autocmd gtk_css_lsp en autocmds.lua.
+                if vim.b[bufnr].gtk_css then
                     return
                 end
                 return { timeout_ms = 1500, lsp_format = "fallback" }

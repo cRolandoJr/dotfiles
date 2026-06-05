@@ -1,12 +1,13 @@
 # mako — daemon de notificaciones
-# Look: "Neon islands" — coherente con waybar y borde activo de Hyprland
-#   - background: rgba(11,18,32,*) (mismo tono que waybar islands, +opacidad por legibilidad)
-#   - foreground: #d7e3ff (fg de waybar)
-#   - acentos: azul #00A2FF (col.active_border de hyprland) / pink #D946EF / crit #FF6B6B
-#   - border-radius 15 (igual a `decoration.rounding` de hyprland)
+# Paleta: Deep Ocean
+#   bg-bar      #0a0e17   bg-surface  #0f1623
+#   border      #1a2744   divider     #1e3050
+#   fg          #cdd6f4   fg-dim      #7a8ba8
+#   cyan        #00b4d8   cyan-glow   rgba(0,180,216,0.35)
+#   crit        #f87171   warn        #fb923c
 #
-# Posición: top-right pero debajo del waybar (height=45 + gap=10 → outer-margin top=55).
-# Layer top (no overlay) para que respete la exclusive zone y bordes de hyprland.
+# Posición: top-right, debajo del waybar (height=28 + margin-top=4 ≈ 32).
+# Layer top (no overlay) para respetar exclusive zone.
 
 # === Geometría / posición ===
 anchor=top-right
@@ -17,7 +18,7 @@ padding=14
 width=380
 height=160
 border-size=2
-border-radius=15
+border-radius=12
 icons=1
 max-icon-size=48
 
@@ -28,34 +29,34 @@ font=JetBrainsMono Nerd Font 11
 max-history=30
 sort=-time
 
-# === Colores base (Neon islands) ===
-background-color=#0b1220ec
-text-color=#d7e3ff
-border-color=#00a2ffbf
-progress-color=over #1f2a44
+# === Colores base (Deep Ocean) ===
+background-color=#0f1623ec
+text-color=#cdd6f4
+border-color=#00b4d8bf
+progress-color=over #151e2d
 
 # === Defaults ===
 default-timeout=4000
 ignore-timeout=0
 
 # === Por urgency ===
-# low: gris fg muted, borde más tenue
+# low: borde navy tenue, fg opaco
 [urgency=low]
 default-timeout=2500
-border-color=#7f849c99
-text-color=#d7e3ffb3
+border-color=#1e3a5fff
+text-color=#7a8ba8
 
-# normal: azul neón (acento principal)
+# normal: cyan glow (acento principal Deep Ocean)
 [urgency=normal]
 default-timeout=4000
-border-color=#00a2ffbf
+border-color=#00b4d8bf
 
-# critical: coral, no auto-dismiss
+# critical: rojo, sin auto-dismiss
 [urgency=critical]
 default-timeout=0
-border-color=#ff6b6be6
+border-color=#f87171ff
 text-color=#ffd7d7
 
-# Modo Do-Not-Disturb (activar con `makomode DND` → `makoctl mode -s DND`)
+# Modo Do-Not-Disturb (activar con `makoctl mode -t do-not-disturb`)
 [mode=do-not-disturb]
 invisible=1

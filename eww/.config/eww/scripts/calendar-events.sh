@@ -32,5 +32,6 @@ khal list today 60d \
         time:     .[2],
         title:    .[3]
       })
-    | .[0:8]    # máx 8 eventos para no estirar el popup
+    | map(select(.calendar != "pedco"))   # filtramos el calendar del bot
+    | .[0:8]                              # máx 8 eventos para no estirar el popup
   '

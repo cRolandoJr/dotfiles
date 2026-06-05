@@ -1,26 +1,40 @@
 {
   "layer": "top",
-  "width": 1920,
-  "height": 45,
-  "margin-top": 0,
+  "height": 28,
+  "margin-top": 4,
   "margin-bottom": 0,
+  // margin-left/right: 7 → matchea hyprland gaps_out:7 de las ventanas.
+  // Los chips pegados al borde del bar quedan alineados con el borde de
+  // las ventanas tiled.
+  // OJO: no fijar "width" (waybar lo autocalcula como screen - margins).
+  "margin-left": 7,
+  "margin-right": 7,
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["hyprland/workspaces"],
+  "modules-left": ["custom/nixos", "hyprland/workspaces"],
   "modules-center": ["hyprland/window"],
   "modules-right": [
-    "clock",
     "custom/layout",
     "temperature",
-    "network",
-    "bluetooth",
     "pulseaudio",
-    "backlight",
-    "power-profiles-daemon",
+    "network",
     "battery",
-    "memory",
+    "custom/power-profile",
+    "clock",
   ],
+
+  // ─── NixOS chip — gen + flake status ─────────────────────────────────────
+  //   Click izq → hub | Click der → kitty en el flake dir (para resolver dirty)
+  "custom/nixos": {
+    "exec": "/home/rolando/.config/hypr/scripts/waybar-nixos-status.sh",
+    "return-type": "json",
+    "interval": 10,
+    "format": "{}",
+    "tooltip": true,
+    "on-click": "eww open --toggle hub",
+    "on-click-right": "kitty --working-directory ~/projects/nix-config",
+  },
 
   "hyprland/window": {
     "max-length": 60,
@@ -42,16 +56,13 @@
     "tooltip": false,
     "scroll-step": 5,
     "format": "{icon} {volume}%",
-    "format-muted": "{icon} {volume}%",
+    "format-muted": "󰝟 {volume}%",
+    "on-click": "eww open --toggle hub",
+    "on-click-right": "pavucontrol",
     "on-scroll-up": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
     "on-scroll-down": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-",
     "format-icons": {
-      "default": [
-        "<span color='#1e1e2e'>󰝟</span>",
-        "<span color='#1576BB'>󰕿</span>",
-        "<span color='#1576BB'>󰖀</span>",
-        "<span color='#1576BB'>󰕾</span>",
-      ],
+      "default": ["󰕿", "󰖀", "󰕾"],
     },
   },
 
@@ -90,38 +101,15 @@
   "network": {
     "tooltip": true,
     "format-wifi": "{icon}",
-    "tooltip-format": "connected to {essid}",
+    "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}% ({signaldBm} dBm) @ {frequency} GHz\nIP: {ipaddr}/{cidr}  GW: {gwaddr}\n↓ {bandwidthDownBytes}/s   ↑ {bandwidthUpBytes}/s",
+    "tooltip-format-ethernet": "{ifname}\nIP: {ipaddr}/{cidr}  GW: {gwaddr}\n↓ {bandwidthDownBytes}/s   ↑ {bandwidthUpBytes}/s",
+    "tooltip-format-disconnected": "Disconnected",
     "format-ethernet": "",
     "format-icons": { "wifi": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"] },
-    "interval": 30,
-    "on-click": "~/.local/bin/rofi-wifi-menu",
+    "interval": 2,
+    "on-click": "eww open --toggle hub",
     "on-click-right": "nm-connection-editor",
     "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on",
-  },
-
-  "backlight": {
-    "tooltip": false,
-    "format": "{icon} {percent:>2}%",
-    "format-icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠", "󰃠", "󰃠"],
-    "device": "intel_backlight",
-    "on-scroll-up": "swayosd-client --brightness raise",
-    "on-scroll-down": "swayosd-client --brightness lower",
-  },
-
-  "bluetooth": {
-    "format": "{icon}",
-    "format-off": "<span color='#f7768e'>󰂲</span>",
-    "format-disabled": "<span color='#f7768e'>󰂲</span>",
-    "format-icons": ["󰂯", "󰤾", "󰥀", "󰥄", "󰥈"],
-    "tooltip-format": "Power on",
-    "tooltip-format-off": "Power off",
-    "tooltip-format-disabled": "Power off",
-    "format-connected": "{icon} {num_connections}",
-    "format-connected-battery": "{icon} {device_battery_percentage}%",
-    "tooltip-format-connected": "{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}\t{device_battery_percentage}%",
-    "on-click": "blueman-manager",
-    "on-click-middle": "bluetoothctl power off || bluetoothctl power on",
   },
 
   "temperature": {
@@ -131,28 +119,31 @@
     "input-filename": "temp1_input",
     "critical-threshold": 90,
     "interval": 2,
+    "tooltip": false,
     "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
-    "format-icons": ["", "", ""],
+    "format-icons": ["", "", ""],
+    "on-click": "eww open --toggle hub",
   },
 
   "battery": {
     "states": { "good": 95, "warning": 30, "critical": 10 },
     "format": "{icon} {capacity}%",
-    "format-charging": "<span color='#456c23'>󰂄 </span>{capacity}%",
-    "format-alt": "<span color='#F1F1F1'>{time}</span> {icon}",
+    "format-charging": "<span color='#34d399'>󰂄 </span>{capacity}%",
+    "format-alt": "<span color='#cdd6f4'>{time}</span> {icon}",
     "format-icons": [
-      "<span color='#f7768e'>󰁺</span>",
-      "<span color='#f7768e'>󰁻</span>",
-      "<span color='#e0af68'>󰁼</span>",
-      "<span color='#e0af68'>󰁽</span>",
-      "<span color='#456c23'>󰁾</span>",
-      "<span color='#456c23'>󰁿</span>",
-      "<span color='#456c23'>󰂀</span>",
-      "<span color='#456c23'>󰂁</span>",
-      "<span color='#456c23'>󰂂</span>",
-      "<span color='#456c23'>󰁹</span>",
+      "<span color='#f87171'>󰁺</span>",
+      "<span color='#f87171'>󰁻</span>",
+      "<span color='#fb923c'>󰁼</span>",
+      "<span color='#fb923c'>󰁽</span>",
+      "<span color='#00B4D8E6'>󰁾</span>",
+      "<span color='#00B4D8E6'>󰁿</span>",
+      "<span color='#00B4D8E6'>󰂀</span>",
+      "<span color='#00B4D8E6'>󰂁</span>",
+      "<span color='#00B4D8E6'>󰂂</span>",
+      "<span color='#00B4D8E6'>󰁹</span>",
     ],
+    "on-click": "eww open --toggle hub",
   },
 
   "clock": {
@@ -160,31 +151,7 @@
     "interval": 60,
     "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
-    // Click izq → toggle popup eww con calendario.
-    // (Antes había `format-alt` para mostrar la fecha; el popup ya la incluye.)
-    "on-click": "eww open --toggle calendar",
-  },
-
-  "cpu": {
-    "interval": 15,
-    "format": "<span color='#f7768e'> </span> {}%",
-    "max-length": 10,
-  },
-
-  "disk": { "format": "<span color='#e0af68'> </span> {used}", "interval": 1 },
-
-  "memory": {
-    "interval": 30,
-    "format": "<span color='#1576BB'></span> {percentage}%",
-    "format-alt": "<span color='#1576BB'></span> {used}GiB",
-    "max-length": 10,
-  },
-
-  "custom/updates": {
-    "format": "󰏓  {} ",
-    "exec": "checkupdates | wc -l",
-    "interval": 3600,
-    "tooltip-format": "Pacman packages",
+    "on-click": "eww open --toggle hub",
   },
 
   "custom/layout": {
@@ -195,14 +162,14 @@
     "on-click": "hyprctl switchxkblayout current next",
   },
 
-  "power-profiles-daemon": {
-    "format": "{icon}",
-    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
-    "format-icons": {
-      "default": "󰐦",
-      "performance": "󱓞",
-      "balanced": "󰌪",
-      "power-saver": "󰁾",
-    },
+  // power-profile custom: ícono refleja el modo activo; click cicla los 3 perfiles.
+  // Refresh inmediato vía signal SIGRTMIN+10 (script emite pkill al final).
+  "custom/power-profile": {
+    "exec": "case $(powerprofilesctl get) in performance) echo '<span color=\"#f87171\">󱓞</span>';; power-saver) echo '<span color=\"#34d399\">󰁾</span>';; *) echo '<span color=\"#00b4d8\">󰌪</span>';; esac",
+    "interval": 5,
+    "signal": 10,
+    "tooltip": true,
+    "tooltip-format": "Power profile",
+    "on-click": "/home/rolando/.config/hypr/scripts/toggle-power-profile.sh",
   },
 }

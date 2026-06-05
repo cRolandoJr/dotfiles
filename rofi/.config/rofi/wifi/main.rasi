@@ -6,12 +6,12 @@ configuration {
 /***** Paleta *****/
 * {
   font:            "JetBrains Mono Nerd Font 12";
-  bg:              #11111b;
-  bg-alt:          #1e1e2e;
+  bg:              #0a0e17;
+  bg-alt:          #0f1623;
   fg:              #cdd6f4;
-  fg-dim:          #a6adc8;
-  sel:             #89b4fa;   /* selección */
-  accent:          #a6e3a1;   /* no usado, por si lo quieres */
+  fg-dim:          #7a8ba8;
+  sel:             #00b4d8;   /* selección */
+  accent:          #3b82f6;   /* no usado, por si lo quieres */
 }
 
 /***** Ventana *****/
@@ -40,7 +40,7 @@ inputbar {
 prompt {
   padding:         0px 10px 0 10px;
   background-color:transparent;
-  text-color:      #89b4fa;  /* azul más vivo para que destaque sin fondo */
+  text-color:      #00b4d8;  /* azul más vivo para que destaque sin fondo */
 }
 
 /* Entrada (el campo a la derecha del prompt): sin fondo/blanco */

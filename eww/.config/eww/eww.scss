@@ -1,103 +1,529 @@
-// eww styles — Neon islands theme
+// eww styles — Deep Ocean theme
 // Reload: eww reload
 //
-// Misma paleta que waybar/style.css. Si cambiamos colores allá,
-// los reflejamos acá manualmente (eww no comparte @define-color con waybar).
+// Paleta Deep Ocean (coherente con waybar/style.css):
+//   bg-bar      #0a0e17   bg-surface  #0f1623   bg-surface2 #151e2d
+//   border      #1a2744   divider     #1e3050
+//   fg          #cdd6f4   fg-dim      #7a8ba8
+//   cyan        #00b4d8   cyan-glow   rgba(0,180,216,0.35)  cyan-dim rgba(0,180,216,0.15)
+//   blue        #2563eb   blue-soft   #3b82f6   navy        #1e3a5f
+//   crit        #f87171   warn        #fb923c   ok          #34d399
 
 // ─── Paleta ────────────────────────────────────────────────────────────────
-$fg:        #d7e3ff;
-$muted:     rgba(215, 227, 255, 0.70);
-$island-bg: rgba(11, 18, 32, 0.92);   // más opaco que waybar (0.72) porque
-                                       // el popup necesita más legibilidad.
-$blue:      rgba(0, 162, 255, 0.95);
-$pink:      rgba(217, 70, 239, 0.85);
-$blue-soft: rgba(0, 162, 255, 0.25);
-$pink-soft: rgba(217, 70, 239, 0.18);
+$fg: #cdd6f4;
+$fg-dim: #7a8ba8;
+$island-bg: rgba(15, 22, 35, 0.95); // bg-surface + alta opacidad
+$surface2: #151e2d;
+$border: #1a2744;
+$divider: rgba(30, 48, 80, 0.8);
 
+$cyan: #00b4d8;
+$cyan-glow: rgba(0, 180, 216, 0.35);
+$cyan-dim: rgba(0, 180, 216, 0.15);
+$cyan-soft: rgba(0, 180, 216, 0.08);
 
-// ─── Container del popup ───────────────────────────────────────────────────
-// Mismo patrón "neon island" que .modules-right en waybar:
-//   - bg semitransparente oscuro
-//   - border-radius 16px
-//   - double box-shadow offset pink/blue (la firma del theme)
-.calendar-popup {
+$blue: #2563eb;
+$blue-soft: rgba(59, 130, 246, 0.18);
+$navy: #1e3a5f;
+
+$ok: #34d399;
+$warn: #fb923c;
+$crit: #f87171;
+$crit-soft: rgba(248, 113, 113, 0.18);
+
+// Alias legacy para código que aún use $pink/$purple (power-btn destructive, etc.)
+$pink: $crit;
+$pink-soft: $crit-soft;
+$red: $crit;
+$red-soft: $crit-soft;
+$purple: $cyan;
+$purple-soft: $cyan-dim;
+
+// ─── HUB (Dashboard ancho) ─────────────────────────────────────────────────
+// Container exterior FLAT (sin border-radius): coincide con el rectángulo
+// de la wayland surface, eliminando los wedges transparentes en las esquinas.
+.hub-container {
   background: $island-bg;
   color: $fg;
-  border-radius: 16px;
-  padding: 18px 20px;
-  margin: 6px;
+  border-radius: 0;
+  margin: 0;
   font-family: "JetBrainsMono Nerd Font", sans-serif;
   font-size: 13px;
-  font-weight: 700;
-
-  box-shadow:
-    -2px -2px 0 0 $pink,
-     2px  2px 0 0 $blue,
-     0px  0px 28px 0px $pink-soft;
+  border: 1px solid $border;
 }
 
+.hub-col {
+  padding: 22px 24px;
+}
 
-// ─── Header (fecha en español) ─────────────────────────────────────────────
+.hub-divider {
+  min-width: 1px;
+  background: $divider;
+}
+
+.hub-placeholder {
+  color: $fg-dim;
+  font-size: 12px;
+}
+
+// ─── Hub: header (columna derecha) ─────────────────────────────────────────
+.hub-header {
+  .header-avatar {
+    color: $cyan;
+    font-size: 24px;
+  }
+  .header-name {
+    color: $fg;
+    font-size: 15px;
+    font-weight: 800;
+  }
+  .header-uptime {
+    color: $fg-dim;
+    font-size: 11px;
+    padding-left: 34px; // alinea bajo el nombre (avatar 24+spacing 10)
+  }
+  .header-close {
+    background: $cyan-dim;
+    border: none;
+    border-radius: 100px;
+    color: $cyan;
+    font-size: 12px;
+    padding: 2px 10px;
+    min-width: 28px;
+    min-height: 28px;
+    transition: background 120ms ease;
+    &:hover {
+      background: $cyan-glow;
+      color: #ffffff;
+    }
+  }
+}
+
+// ─── Hub: power grid ───────────────────────────────────────────────────────
+.power-grid {
+  margin-top: 4px;
+}
+
+.power-btn {
+  background: $cyan-soft;
+  border: 1px solid $cyan-dim;
+  border-radius: 14px;
+  padding: 10px 6px;
+  min-width: 64px;
+  transition: all 120ms ease;
+
+  .power-icon {
+    color: $cyan;
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  .power-label {
+    color: $fg;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  &:hover {
+    background: $cyan-dim;
+    border-color: $cyan;
+  }
+
+  &.destructive {
+    background: $crit-soft;
+    border-color: rgba(248, 113, 113, 0.35);
+
+    .power-icon,
+    .power-label {
+      color: $crit;
+    }
+    &:hover {
+      background: rgba(248, 113, 113, 0.35);
+      border-color: $crit;
+      .power-icon,
+      .power-label {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+// ─── Tooltips (GTK native) ─────────────────────────────────────────────────
+tooltip {
+  background-color: $island-bg;
+  color: $fg;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 12px;
+}
+
+tooltip label {
+  color: $fg;
+  padding: 0;
+}
+
+tooltip decoration {
+  background-color: transparent;
+}
+
+// ─── Hub: WiFi / Bluetooth rows ────────────────────────────────────────────
+.net-controls {
+  margin-top: 4px;
+}
+
+.net-row {
+  background: $cyan-soft;
+  border-radius: 14px;
+  padding: 10px 14px;
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease;
+
+  .net-chip {
+    background: $cyan-dim;
+    border-radius: 50%;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 6px;
+    transition: background 140ms ease;
+  }
+  .net-icon {
+    color: $fg-dim;
+    font-size: 16px;
+    transition: color 140ms ease;
+  }
+  .net-label {
+    color: $fg;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .net-value {
+    color: $fg-dim;
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+  .net-chevron {
+    color: rgba(205, 214, 244, 0.35);
+    font-size: 20px;
+    font-weight: 400;
+    padding: 0 4px 4px 0;
+    transition:
+      color 140ms ease,
+      padding 140ms ease;
+  }
+
+  &.active {
+    background: $cyan-dim;
+
+    .net-chip {
+      background: $cyan-glow;
+    }
+    .net-icon {
+      color: $cyan;
+    }
+    .net-value {
+      color: $fg;
+    }
+  }
+
+  &:hover {
+    background: rgba(0, 180, 216, 0.18);
+
+    .net-chip {
+      background: $cyan-glow;
+    }
+    .net-icon {
+      color: $cyan;
+    }
+    .net-chevron {
+      color: $cyan;
+      padding: 0 2px 4px 6px;
+    }
+  }
+}
+
+// ─── Hub: sliders ──────────────────────────────────────────────────────────
+.sliders {
+  margin-top: 6px;
+}
+
+.slider-row {
+  padding: 4px 0;
+
+  .slider-icon {
+    color: $cyan;
+    font-size: 14px;
+    min-width: 22px;
+  }
+  .slider-label {
+    color: $fg;
+    font-size: 12px;
+    min-width: 60px;
+  }
+  .slider-percent {
+    color: $fg-dim;
+    font-size: 11px;
+    font-weight: 800;
+    min-width: 36px;
+  }
+}
+
+// El widget GTK Scale (eww :scale) tiene 2 partes visuales: trough y slider.
+scale {
+  // pista
+  trough {
+    background: $cyan-dim;
+    border-radius: 6px;
+    min-height: 6px;
+
+    // porción rellena hasta el valor actual
+    highlight {
+      background: $cyan;
+      border-radius: 6px;
+      min-height: 6px;
+    }
+  }
+  // knob
+  slider {
+    background: #ffffff;
+    border-radius: 100px;
+    min-width: 12px;
+    min-height: 12px;
+    margin: -4px;
+    box-shadow: 0 0 6px $cyan-glow;
+  }
+}
+
+// ─── Hub: quick-toggles ────────────────────────────────────────────────────
+// Fila de 3 botones toggle: DND / Night Light / Power Profile.
+// Estado inactivo: fondo navy sutil, icono fg-dim.
+// Estado activo (.active): fondo cyan-dim, icono cyan brillante.
+.quick-toggles {
+  margin-top: 4px;
+}
+
+.qtoggle-btn {
+  background: $cyan-soft;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 8px 6px;
+  min-width: 68px;
+  transition: all 120ms ease;
+
+  .qtoggle-icon {
+    color: $fg-dim;
+    font-size: 18px;
+    margin-bottom: 2px;
+    transition: color 120ms ease;
+  }
+  .qtoggle-label {
+    color: $fg-dim;
+    font-size: 10px;
+    font-weight: 700;
+    transition: color 120ms ease;
+  }
+
+  &:hover {
+    background: $cyan-dim;
+    border-color: $cyan;
+
+    .qtoggle-icon,
+    .qtoggle-label {
+      color: $fg;
+    }
+  }
+
+  &.active {
+    background: $cyan-dim;
+    border-color: $cyan;
+    box-shadow: 0 0 8px $cyan-glow;
+
+    .qtoggle-icon {
+      color: $cyan;
+    }
+    .qtoggle-label {
+      color: $cyan;
+    }
+  }
+}
+
+// ─── Hub: system stats ─────────────────────────────────────────────────────
+.system-stats {
+  margin-top: 8px;
+}
+
+.stat-card {
+  background: $cyan-soft;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 8px 6px;
+
+  .stat-icon {
+    color: $cyan;
+    font-size: 18px;
+  }
+  .stat-value {
+    color: $fg;
+    font-size: 15px;
+    font-weight: 800;
+  }
+  .stat-label {
+    color: $fg-dim;
+    font-size: 10px;
+  }
+}
+
+// ─── Section titles dentro del hub ─────────────────────────────────────────
+.section-title {
+  color: $cyan;
+  font-size: 11px;
+  font-weight: 800;
+  text-shadow: none;
+  margin-top: 6px;
+  margin-bottom: 4px;
+  padding: 0;
+}
+
+// ─── Upcoming events ───────────────────────────────────────────────────────
+.upcoming-list {
+  margin-top: 4px;
+}
+
+.event-row {
+  padding: 2px 0;
+
+  .event-bullet {
+    color: $cyan;
+    font-size: 12px;
+  }
+  .event-cal-personal {
+    color: $cyan;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 60px;
+  }
+  .event-cal-pedco {
+    color: $warn;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 60px;
+  }
+  .event-time {
+    color: $fg-dim;
+    font-size: 11px;
+    min-width: 50px;
+  }
+  .event-title {
+    color: $fg;
+    font-size: 12px;
+  }
+}
+
+.event-empty {
+  color: $fg-dim;
+  font-size: 11px;
+  font-style: italic;
+  padding: 4px 0;
+}
+
+// ─── Notifications row (counter inferior) ──────────────────────────────────
+.notifications-row {
+  padding: 8px 0 2px 0;
+  border-top: 1px solid $divider;
+  margin-top: 8px;
+
+  .notif-icon {
+    color: $cyan;
+    font-size: 14px;
+  }
+  .notif-label {
+    color: $fg;
+    font-size: 12px;
+  }
+  .notif-count {
+    color: $fg-dim;
+    font-size: 12px;
+    font-weight: 800;
+  }
+}
+
+// ─── Weather line ──────────────────────────────────────────────────────────
+.weather-line {
+  margin-top: 2px;
+  margin-bottom: 6px;
+
+  .weather-icon {
+    color: $cyan;
+    font-size: 18px;
+  }
+  .weather-temp {
+    color: $fg;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .weather-desc {
+    color: $fg;
+    font-size: 13px;
+  }
+  .weather-city {
+    color: $fg-dim;
+    font-size: 12px;
+  }
+}
+
+// ─── GTK calendar widget (dentro del hub) ──────────────────────────────────
+// Selectores GTK3 internos del widget calendar.
+.calendar-card {
+  // sin padding propio — lo maneja hub-col
+}
+
 .calendar-header {
-  color: $blue;
+  color: $cyan;
   font-size: 14px;
   font-weight: 800;
   margin-bottom: 8px;
-  // %A devuelve "lunes" en lowercase; lo capitalizamos vía CSS para no tocar
-  // el formato del shell command.
-  // (GTK no soporta text-transform; lo dejamos como está y queda "lunes, 29
-  // de mayo" — argentino y casual. Si lo quieres "Lunes...", lo cambiamos
-  // en el `date` del .yuck.)
 }
 
-
-// ─── GTK calendar widget ───────────────────────────────────────────────────
-// Selectores GTK3 reales: no son "div"; son los nombres internos del widget.
-// Si algo no responde, eww reload + GTK_DEBUG=interactive para inspeccionar.
 calendar {
   background: transparent;
   color: $fg;
   padding: 4px;
   font-weight: 700;
 
-  // Día seleccionado (= hoy por defecto si nadie clickeó otro)
   &:selected {
-    background: $blue;
-    color: #0b1220;
+    background: $cyan;
+    color: #0a0e17;
     border-radius: 8px;
     font-weight: 800;
   }
 
-  // Días del mes anterior/siguiente (los grises de los bordes)
   &.other-month {
-    color: rgba(215, 227, 255, 0.22);
+    color: rgba(205, 214, 244, 0.22);
   }
 
-  // Etiquetas L M M J V S D
   &.day-name {
-    color: $pink;
+    color: $cyan-glow;
     font-weight: 800;
   }
 
-  // Header con flechas << mes año >>
   &.header {
     color: $fg;
     font-weight: 800;
     padding-bottom: 6px;
   }
 
-  // Botones (flechas del header)
   &.button {
-    color: $pink;
+    color: $cyan;
 
     &:hover {
-      color: $blue;
+      color: $fg;
     }
   }
 
-  // Hover sobre días
   &.highlight {
-    background: $blue-soft;
+    background: $cyan-dim;
     border-radius: 6px;
   }
 }

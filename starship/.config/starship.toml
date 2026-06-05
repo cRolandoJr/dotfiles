@@ -17,21 +17,21 @@ $time\
 right_format = ""
 
 [palettes.hyprnix]
-# izquierda (OS + user): off-white suave
-base = "#d7e3ff"
-base_fg = "#0b1220"
+# Paleta Deep Ocean — coherente con waybar/eww/mako/kitty/rofi/hyprland borders.
+base = "#cdd6f4"     # fg principal
+base_fg = "#0a0e17"  # bg-bar para texto sobre la "base"
 
-# tonos hyprland/nix
-dir = "#7aa2f7"     # azul nix
-git = "#9eceff"     # ice blue
-lav = "#bb9af7"     # lavanda (por si querés acento)
-time_bg = "#0f1a2e" # panel oscuro
-time_fg = "#d7e3ff"
+# Acentos
+dir = "#3b82f6"      # azul NixOS
+git = "#00b4d8"      # cyan Deep Ocean
+lav = "#5eead4"      # teal (acento sin purple)
+time_bg = "#0f1623"  # bg-surface
+time_fg = "#cdd6f4"  # fg
 
-# estados
-ok = "#a6e3a1"
-warn = "#ffd166"
-err = "#ff6b6b"
+# Estados semánticos
+ok = "#34d399"       # verde Deep Ocean
+warn = "#fb923c"     # naranja Deep Ocean (no yellow chillón)
+err = "#f87171"      # rojo Deep Ocean
 
 [os]
 disabled = false
@@ -69,7 +69,7 @@ style = "bg:time_bg fg:time_fg bold"
 format = "[  $time ]($style)"
 
 [character]
-success_symbol = "[󰁔](bold warn)"
+success_symbol = "[󰁔](bold white)"
 error_symbol = "[󰁔](bold err)"
 
 [sudo]
