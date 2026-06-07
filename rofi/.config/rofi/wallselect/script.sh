@@ -74,9 +74,37 @@ list_wallpapers() {
     done
 }
 
-SELECTED="$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" -theme "$THEME")"
-[[ -z "$SELECTED" ]] && exit 0
+# Loop: permite borrar varios (Alt+D) sin salir; Enter aplica; Esc cierra.
+# Alt+D (no Shift+D) porque las letras van al filtro de texto del grid;
+# Alt no compite con el typing y dispara el keybind limpio.
+# rofi exit codes: 0=Enter, 1=Esc/cancel, 10=kb-custom-1 (Alt+D).
+SELECTED=""
+while true; do
+  set +e
+  SELECTED="$(list_wallpapers | rofi -dmenu -i -show-icons -p "Wallpaper" -theme "$THEME" \
+    -kb-custom-1 "Alt+d" \
+    -mesg "Enter: aplicar  •  Alt+D: borrar")"
+  ec=$?
+  set -e
 
+  case $ec in
+    1) exit 0 ;;                       # Esc → salir sin cambios
+    10)                                # Alt+D → borrar el resaltado (rm) y re-abrir
+      [[ -z "$SELECTED" ]] && continue
+      del_path="$WALLPAPER_DIR/$SELECTED"
+      if [[ -f "$del_path" ]]; then
+        rm -f "$del_path"
+        # limpiar el thumbnail cacheado del borrado
+        rm -f "$CACHE_DIR"/*"$SELECTED".png 2>/dev/null || true
+        notify-send -u low -t 1500 "󰸉 Wallpaper" "Borrado: $SELECTED"
+      fi
+      continue ;;                      # vuelve a mostrar la lista actualizada
+    0) break ;;                        # Enter → aplicar
+    *) exit 0 ;;
+  esac
+done
+
+[[ -z "$SELECTED" ]] && exit 0
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
 [[ -f "$FULL_PATH" ]] || die "No existe: $FULL_PATH"
 

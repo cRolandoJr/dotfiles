@@ -1,91 +1,77 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
 
-  "logo": { "type": "auto" },
+  // ── Logo: imagen NixOS via kitty graphics protocol ─────────────────────────
+  // type "kitty-direct" usa el protocolo nativo de kitty (TERM=xterm-kitty).
+  // Si algún día corres fastfetch fuera de kitty, cambiar a "auto" o "chafa".
+  "logo": {
+    "type": "kitty",
+    "source": "~/.config/fastfetch/logos/nixos_logo_1.png",
+    "width": 38,
+    "height": 19,
+    "padding": { "top": 1, "left": 2, "right": 3 }
+  },
 
   "display": {
     "separator": "  ",
     "constants": [
       "\u001b[0m",                    // {$1} reset
-      "\u001b[38;2;205;214;244m",     // {$2} fg        #cdd6f4   Deep Ocean fg
-      "\u001b[38;2;59;130;246m",     // {$3} blue      #3b82f6   azul NixOS
-      "\u001b[38;2;0;180;216m",     // {$4} cyan      #00b4d8   cyan Deep Ocean
-      "\u001b[38;2;125;211;252m"      // {$5} sky       #7dd3fc   sky light (header)
-    ]
+      "\u001b[38;2;205;214;244m",     // {$2} fg        #cdd6f4
+      "\u001b[38;2;59;130;246m",      // {$3} azul NixOS #3b82f6
+      "\u001b[38;2;0;180;216m",       // {$4} cyan      #00b4d8
+      "\u001b[38;2;125;211;252m",     // {$5} sky       #7dd3fc (headers)
+      "\u001b[38;2;122;139;168m"      // {$6} fg-dim    #7a8ba8 (detalles tenues)
+    ],
+    // percent colorizado para mem/disk/swap, en paleta Deep Ocean.
+    "percent": {
+      "type": 9,
+      "color": { "green": "#34d399", "yellow": "#fb923c", "red": "#f87171" }
+    },
+    "key": { "width": 13 }
   },
 
   "modules": [
     "break",
 
+    // ── Cabecera: user@host ──────────────────────────────────────────────────
     {
       "type": "command",
-      "key": "{$3}{$1} ",
-      "text": "printf '%s@%s  -  %s' \"$USER\" \"$(hostnamectl hostname)\" \"$(. /etc/os-release; echo \"$PRETTY_NAME\")\"",
+      "key": "{$3}{$1} ",
+      "text": "printf '%s@%s' \"$USER\" \"$(hostnamectl hostname)\"",
       "format": "{$5}{}{$1}"
     },
-    {
-      "type": "custom",
-      "key": "{$3}────────────────────────────────────────{$1}"
-    },
 
-    { "type": "os",       "key": "{$4}󰻀{$1} distro", "format": "{$2}{pretty-name}{$1}" },
-    { "type": "kernel",   "key": "{$4}{$1} kernel", "format": "{$2}{release}{$1}" },
-    { "type": "shell",    "key": "{$4}{$1} shell ", "format": "{$2}{pretty-name}{$1}" },
-    { "type": "terminal", "key": "{$4}{$1} term  ", "format": "{$2}{pretty-name}{$1}" },
-    { "type": "wm",       "key": "{$4}{$1} wm    ", "format": "{$2}{pretty-name}{$1}" },
-
-
-    { "type": "cpu",    "key": "{$3}{$1} cpu   ", "format": "{$2}{name}{$1}" },
-
-    "break",
-    /* root: command (evita {used}/{total} literal) */
+    // ── SOFTWARE ─────────────────────────────────────────────────────────────
+    { "type": "custom", "format": "{$4}╭─ {$5}󰊠 SOFTWARE {$4}───────────────╮{$1}" },
+    { "type": "os",        "key": "{$4}│ 󰻀{$1} distro", "format": "{$2}{name} {version}{$1}" },
+    { "type": "kernel",    "key": "{$4}│ 󰣇{$1} kernel", "format": "{$2}{release}{$1}" },
+    { "type": "packages",  "key": "{$4}│ 󰏖{$1} pkgs  ", "format": "{$2}{all}{$1}" },
+    { "type": "shell",     "key": "{$4}│ 󰆍{$1} shell ", "format": "{$2}{pretty-name}{$1}" },
+    { "type": "wm",        "key": "{$4}│ 󰖟{$1} wm    ", "format": "{$2}{pretty-name}{$1}" },
+    { "type": "terminal",  "key": "{$4}│ 󰍹{$1} term  ", "format": "{$2}{pretty-name}{$1}" },
     {
       "type": "command",
-      "key": "{$3}{$1} mem   ",
-      "text": "free -b | awk 'NR==2{used=$3/1024/1024/1024; total=$2/1024/1024/1024; pct=(used/total)*100; printf \"%.2f GiB / %.2f GiB (%.0f%%)\", used, total, pct}'",
-      "format": "{$2}{}{$1}"
-    },
-
-    {
-      "type": "command",
-      "key": "{$3}󰋊{$1} root  ",
-      "text": "df -B1 / | awk 'NR==2{used=$3/1024/1024/1024; total=$2/1024/1024/1024; pct=$5; gsub(/%/,\"\",pct); printf \"%.2f GiB / %.2f GiB (%s%%)\", used, total, pct}'",
-      "format": "{$2}{}{$1}"
-    },
-
-    {
-      "type": "command",
-      "key": "{$3}󰓡{$1} swap  ",
-      "text": "swapon --noheadings --bytes --show=SIZE,USED 2>/dev/null | awk '{ts+=$1; tu+=$2} END{if(ts==0){printf \"0.00 GiB / 0.00 GiB (0%%)\"} else {printf \"%.2f GiB / %.2f GiB (%.0f%%)\", tu/1024/1024/1024, ts/1024/1024/1024, (tu/ts)*100}}'",
-      "format": "{$2}{}{$1}"
-    },
-
-    { "type": "gpu", "key": "{$3}󰢮{$1} gpu   ", "format": "{$2}{2}{$1}" },
-
-    "break",
-    /* up: command (evita {pretty} literal) */
-    {
-      "type": "command",
-      "key": "{$4}{$1} up    ",
+      "key": "{$4}╰ 󰅐{$1} uptime",
       "text": "awk '{s=int($1); d=int(s/86400); h=int((s%86400)/3600); m=int((s%3600)/60); if(d>0) printf \"%dd %dh %dm\", d, h, m; else if(h>0) printf \"%dh %dm\", h, m; else printf \"%dm\", m}' /proc/uptime",
       "format": "{$2}{}{$1}"
     },
 
-    { "type": "packages", "key": "{$4}{$1} pkgs  ", "format": "{$2}{all}{$1}" },
+    // ── HARDWARE ─────────────────────────────────────────────────────────────
+    { "type": "custom", "format": "{$4}╭─ {$5}󰍛 HARDWARE {$4}───────────────╮{$1}" },
+    { "type": "cpu",     "key": "{$4}│ 󰻠{$1} cpu   ", "format": "{$2}{name}{$1}" },
+    { "type": "gpu",     "key": "{$4}│ 󰢮{$1} gpu   ", "format": "{$2}{name}{$1}" },
+    { "type": "memory",  "key": "{$4}│ 󰍛{$1} ram   ", "format": "{$2}{used} / {total} {$6}({percentage}){$1}" },
+    { "type": "disk",    "key": "{$4}│ 󰋊{$1} disk  ", "format": "{$2}{size-used} / {size-total} {$6}({size-percentage}){$1}", "folders": "/" },
+    { "type": "swap",    "key": "{$4}│ 󰓡{$1} swap  ", "format": "{$2}{used} / {total} {$6}({percentage}){$1}" },
+    { "type": "battery", "key": "{$4}╰ 󰁹{$1} batt  ", "format": "{$2}{capacity} {$6}({status}){$1}" },
 
-    {
-      "type": "command",
-      "key": "{$4}󰩟{$1} ip    ",
-      "text": "ip -o route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i==\"src\") {print $(i+1); exit}}'",
-      "format": "{$2}{}{$1}"
-    },
+    // ── NETWORK ──────────────────────────────────────────────────────────────
+    { "type": "custom", "format": "{$4}╭─ {$5}󰛳 NETWORK {$4}────────────────╮{$1}" },
+    { "type": "localip", "key": "{$4}│ 󰩟{$1} local ", "format": "{$2}{ipv4}{$1}" },
+    { "type": "wifi",    "key": "{$4}╰ 󰖩{$1} wifi  ", "format": "{$2}{ssid} {$6}({signal-quality}){$1}" },
 
-    {
-      "type": "colors",
-      "paddingLeft": 2,
-      "symbol": "circle"
-    },
-
+    "break",
+    { "type": "colors", "paddingLeft": 2, "symbol": "circle" },
     "break"
   ]
 }

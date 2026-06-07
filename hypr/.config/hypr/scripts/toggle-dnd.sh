@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 # toggle-dnd.sh — Activa/desactiva modo Do-Not-Disturb en mako.
-#
-# Usa `makoctl mode -t do-not-disturb`:
-#   - Si el modo NO está activo, lo agrega → mako invisible.
-#   - Si el modo SÍ está activo, lo quita → mako vuelve a normal.
-#
-# Luego envía una notificación de feedback con el nuevo estado.
-# notify-send usa urgency=low para que se vea brevemente y desaparezca sola.
 
 makoctl mode -t do-not-disturb
 
