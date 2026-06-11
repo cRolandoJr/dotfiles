@@ -2,7 +2,7 @@
 # Descarga artwork de Spotify a /tmp/eww-spotify-art.png.
 # Llamar periódicamente o desde un defpoll que refresca la URL.
 DEST="/tmp/eww-spotify-art.png"
-PLACEHOLDER="/home/rolando/.config/eww/scripts/no-art.png"
+PLACEHOLDER="$HOME/.config/eww/scripts/no-art.png"
 
 PLAYER="${1:-spotify}"
 

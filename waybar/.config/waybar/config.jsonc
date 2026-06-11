@@ -27,7 +27,7 @@
   // ─── NixOS chip — gen + flake status ─────────────────────────────────────
   //   Click izq → hub | Click der → kitty en el flake dir (para resolver dirty)
   "custom/nixos": {
-    "exec": "/home/rolando/.config/hypr/scripts/waybar-nixos-status.sh",
+    "exec": "$HOME/.config/hypr/scripts/waybar-nixos-status.sh",
     "return-type": "json",
     "interval": 10,
     "format": "{}",
@@ -76,7 +76,7 @@
     "max-length": 28,
     "tooltip-format": "{title}\n{artist} · {album}",
     "on-click": "playerctl --player=spotify play-pause",
-    "on-click-right": "/home/rolando/.config/hypr/scripts/spotify-toggle.sh",
+    "on-click-right": "$HOME/.config/hypr/scripts/spotify-toggle.sh",
     "on-scroll-up": "playerctl --player=spotify next",
     "on-scroll-down": "playerctl --player=spotify previous",
   },
@@ -149,7 +149,7 @@
   },
 
   "custom/layout": {
-    "exec": "stdbuf -oL /home/rolando/.config/hypr/scripts/waybar-layout.sh",
+    "exec": "stdbuf -oL $HOME/.config/hypr/scripts/waybar-layout.sh",
     "return-type": "json",
     "format": "{}",
     "restart-interval": 3,
@@ -164,6 +164,6 @@
     "signal": 10,
     "tooltip": true,
     "tooltip-format": "Power profile",
-    "on-click": "/home/rolando/.config/hypr/scripts/toggle-power-profile.sh",
+    "on-click": "$HOME/.config/hypr/scripts/toggle-power-profile.sh",
   },
 }

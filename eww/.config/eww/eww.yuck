@@ -11,7 +11,7 @@
 (defpoll weather
   :interval "5m"
   :initial '{"temp":"--","desc":"...","icon":"󰖑","city":""}'
-  "/home/rolando/.config/eww/scripts/weather.sh")
+  "$HOME/.config/eww/scripts/weather.sh")
 
 (defpoll notif_count
   :interval "10s"
@@ -21,12 +21,12 @@
 (defpoll uptime
   :interval "60s"
   :initial "..."
-  "/home/rolando/.config/eww/scripts/uptime.sh")
+  "$HOME/.config/eww/scripts/uptime.sh")
 
 (defpoll network
   :interval "2s"
   :initial '{"wifi_enabled":"false","wifi_ssid":"","wifi_signal":"","bt_powered":"false","bt_device":"","bt_battery":""}'
-  "/home/rolando/.config/eww/scripts/net-status.sh")
+  "$HOME/.config/eww/scripts/net-status.sh")
 
 (defpoll brillo
   :interval "3s"
@@ -56,7 +56,7 @@
 (defpoll mpris_art
   :interval "3s"
   :initial ""
-  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"\" && exit 0; /home/rolando/.config/eww/scripts/mpris-art.sh \"$P\" && [ -f /tmp/eww-spotify-art.png ] && echo /tmp/eww-spotify-art.png || echo \"\"'")
+  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"\" && exit 0; $HOME/.config/eww/scripts/mpris-art.sh \"$P\" && [ -f /tmp/eww-spotify-art.png ] && echo /tmp/eww-spotify-art.png || echo \"\"'")
 
 (defvar ram_mode "pct")
 
@@ -274,8 +274,8 @@
                           ? "${network.wifi_ssid} · ${network.wifi_signal}%"
                           : "Sin conexión")
                       : "Apagado"}
-             :click_cmd "setsid -f /home/rolando/.config/rofi/wifi/wifi_manager.sh"
-             :right_cmd "/home/rolando/.config/eww/scripts/net-toggle.sh wifi")
+             :click_cmd "setsid -f $HOME/.config/rofi/wifi/wifi_manager.sh"
+             :right_cmd "$HOME/.config/eww/scripts/net-toggle.sh wifi")
     (net-row :icon "󰂯"
              :label "Bluetooth"
              :active {network.bt_powered}
@@ -287,7 +287,7 @@
                           : "Sin dispositivo")
                       : "Apagado"}
              :click_cmd "~/.config/hypr/scripts/open-bt.sh"
-             :right_cmd "/home/rolando/.config/eww/scripts/net-toggle.sh bt")))
+             :right_cmd "$HOME/.config/eww/scripts/net-toggle.sh bt")))
 
 
 ;; ── Power ─────────────────────────────────────────────────────────────────────
@@ -371,13 +371,13 @@
          :space-evenly true
          :spacing 8
       (button :class "qtoggle ${dnd_active == 'true' ? 'qtoggle-on' : ''}"
-              :onclick "/home/rolando/.config/hypr/scripts/toggle-dnd.sh"
+              :onclick "$HOME/.config/hypr/scripts/toggle-dnd.sh"
         (box :orientation "h" :space-evenly false :spacing 8
           (label :class "qtoggle-icon"
                  :text {dnd_active == "true" ? "󰂛" : "󰂚"})
           (label :class "qtoggle-label" :text "No molestar")))
       (button :class "qtoggle"
-              :onclick "/home/rolando/.config/hypr/scripts/toggle-nightlight.sh"
+              :onclick "$HOME/.config/hypr/scripts/toggle-nightlight.sh"
         (box :orientation "h" :space-evenly false :spacing 8
           (label :class "qtoggle-icon" :text "󰖔")
           (label :class "qtoggle-label" :text "Night light"))))))
