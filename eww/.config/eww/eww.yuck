@@ -1,73 +1,33 @@
-;; eww widgets — Deep Ocean theme
-;; Reload: eww reload
-;;
-;; ---------------------------------------------------------------------------
-;; CONCEPTOS RÁPIDOS DE YUCK (sintaxis tipo Lisp / s-expressions)
-;; ---------------------------------------------------------------------------
-;; (defpoll NAME :interval "60s" "shell-cmd")  -> variable que se refresca con
-;;                                                la salida del comando.
-;; (defwidget NAME [args] (...))               -> componente reutilizable.
-;; (defwindow NAME :prop ... (contenido))      -> ventana real que eww abre.
-;; (box :orientation "v" :class "...") (...)   -> contenedor (h | v).
-;; (label :text "..." :class "...")            -> texto.
-;; (calendar :class "...")                     -> widget GTK built-in.
-;;
-;; Para abrir/cerrar el hub desde shell:  eww open --toggle hub
-;; ---------------------------------------------------------------------------
+;; eww hub — Deep Ocean / bento grid
+;; Reload: eww reload | Open: eww open hub
 
+;; ── Polls ────────────────────────────────────────────────────────────────────
 
-;; Fecha del header, refresco cada 60s.
-;; LC_TIME=es_AR fuerza nombres de meses/días en español aunque el sistema
-;; corra en otra locale.
 (defpoll date_header
   :interval "60s"
   :initial "..."
   "LC_TIME=es_AR.UTF-8 date '+%A, %d de %B'")
 
-;; Clima vía Open-Meteo. Cache de lat/lon en ~/.cache/eww/location.json.
-;; Output JSON: {temp, code, desc, icon, city} — accesible con notación punto.
-;;
-;; NOTA: cuando `:initial` está seteado, eww 0.6 NO corre el primer poll;
-;; espera al primer intervalo. Trigger inicial vía autostart con `eww poll`.
-;; OJO: eww no expande `~` en el comando — usar path absoluto.
 (defpoll weather
   :interval "5m"
   :initial '{"temp":"--","desc":"...","icon":"󰖑","city":""}'
   "/home/rolando/.config/eww/scripts/weather.sh")
 
-;; Upcoming events — script ya existente, devuelve array [{calendar,date,time,title}]
-;; Refresca cada 2 min (el bot escribe .ics esporádicamente).
-(defpoll events
-  :interval "2m"
-  :initial "[]"
-  "/home/rolando/.config/eww/scripts/calendar-events.sh")
-
-;; Notificaciones activas en mako (cuenta las actualmente desplegadas).
-;; Como el user no usa historial, esto suele ser 0 salvo cuando una notif
-;; está en pantalla.
 (defpoll notif_count
   :interval "10s"
   :initial "0"
   "makoctl list -j 2>/dev/null | jq 'length' || echo 0")
 
-;; Uptime — "4 hours, 34 minutes" (sin el "up " prefix)
 (defpoll uptime
   :interval "60s"
   :initial "..."
-  "uptime -p | sed 's/^up //'")
+  "/home/rolando/.config/eww/scripts/uptime.sh")
 
-;; Estado de WiFi y Bluetooth — JSON con flags y nombres de SSID/device.
-;; Interval 2s: refresca SSID/señal/device casi en tiempo real mientras el
-;; popup está abierto. El script encadena nmcli + bluetoothctl (~50ms total),
-;; carga aceptable para un poll de 2s.
 (defpoll network
   :interval "2s"
-  :initial '{"wifi_enabled":"false","wifi_ssid":"","bt_powered":"false","bt_device":""}'
+  :initial '{"wifi_enabled":"false","wifi_ssid":"","wifi_signal":"","bt_powered":"false","bt_device":"","bt_battery":""}'
   "/home/rolando/.config/eww/scripts/net-status.sh")
 
-;; Sliders bidireccionales. Interval 3s para refresh tras cambios externos
-;; (teclado, swayosd). brightnessctl pendiente de rebuild — guard explícito
-;; para no devolver string vacío (eww parsea :value como f64, empty = error).
 (defpoll brillo
   :interval "3s"
   :initial "50"
@@ -78,153 +38,213 @@
   :initial "50"
   "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}'")
 
-;; System stats (CPU% RAM% Bat%). 5s suficiente; CPU% se calcula como 100-idle.
-(defpoll cpu_pct
-  :interval "5s"
-  :initial "0"
-  "top -bn1 | grep '^%Cpu' | awk '{print int(100 - $8)}'")
-
-(defpoll ram_pct
-  :interval "5s"
-  :initial "0"
-  "free | awk '/^Mem:/ {printf \"%d\", $3/$2*100}'")
-
-;; RAM usada en GiB (formato "X.Y"); usado como format-alt al click.
-(defpoll ram_used_gib
-  :interval "5s"
-  :initial "0.0"
-  "free -m | awk '/^Mem:/ {printf \"%.1f\", $3/1024}'")
-
-;; Toggle del stat-card de RAM: "pct" muestra %, "gib" muestra GiB.
-;; Se alterna con click en el card (ver stat-card-ram).
-(defvar ram_mode "pct")
-
 (defpoll battery
   :interval "30s"
-  :initial '{"capacity":"--","status":"unknown"}'
+  :initial '{"capacity":"0","status":"unknown"}'
   "jq -n --arg c \"$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo 0)\" --arg s \"$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo unknown)\" '{capacity: $c, status: $s}'")
 
-;; Estado DND de mako. Refresca cada 5s.
-;; makoctl mode devuelve líneas; si hay "do-not-disturb" → true.
 (defpoll dnd_active
   :interval "5s"
   :initial "false"
   "makoctl mode | grep -q 'do-not-disturb' && echo true || echo false")
 
-;; ─── Hub: calendar block (col izquierda) ──────────────────────────────────
-;; Incluye fecha, weather line y grid GTK calendar.
-(defwidget hub-calendar-block []
-  (box :class "calendar-card"
+(defpoll mpris_meta
+  :interval "2s"
+  :initial '{"title":"Nada sonando","artist":"","status":"stopped","player":""}'
+  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"{\\\"title\\\":\\\"Nada sonando\\\",\\\"artist\\\":\\\"\\\",\\\"status\\\":\\\"stopped\\\",\\\"player\\\":\\\"\\\"}\" && exit 0; T=$(playerctl --player=\"$P\" metadata --format \"{{title}}\" 2>/dev/null); A=$(playerctl --player=\"$P\" metadata --format \"{{artist}}\" 2>/dev/null); S=$(playerctl --player=\"$P\" status 2>/dev/null | tr A-Z a-z); jq -n --arg t \"$T\" --arg a \"$A\" --arg s \"$S\" --arg p \"$P\" \"{title:\\$t,artist:\\$a,status:\\$s,player:\\$p}\"'")
+
+(defpoll mpris_art
+  :interval "3s"
+  :initial ""
+  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"\" && exit 0; /home/rolando/.config/eww/scripts/mpris-art.sh \"$P\" && [ -f /tmp/eww-spotify-art.png ] && echo /tmp/eww-spotify-art.png || echo \"\"'")
+
+(defvar ram_mode "pct")
+
+
+;; ── Header ───────────────────────────────────────────────────────────────────
+
+(defwidget header-card []
+  (box :class "header-card"
+       :orientation "h"
+       :space-evenly false
+       :spacing 12
+    (label :class "header-avatar" :text "◉")
+    (box :orientation "v"
+         :space-evenly false
+         :spacing 2
+         :hexpand true
+         :valign "center"
+      (label :class "header-name" :text "rolando" :halign "start")
+      (label :class "header-sub"  :text "Uptime · ${uptime}" :halign "start"))
+    (box :class "notif-badge-wrap"
+         :visible {notif_count != "0"}
+         :valign "center"
+      (label :class "notif-badge" :text notif_count))
+    (button :class "header-close"
+            :onclick "eww close hub"
+            :valign "center"
+      (label :text "✕"))))
+
+
+;; ── Calendar + clima ─────────────────────────────────────────────────────────
+
+(defwidget calendar-card []
+  (box :class "card calendar-card"
        :orientation "v"
        :space-evenly false
-       :spacing 10
-    (label :class "calendar-header" :text date_header)
-    (weather-line)
-    (calendar :class "calendar-grid"
+       :spacing 8
+       :hexpand false
+    (label :class "card-title" :text date_header :halign "start")
+    (box :class "weather-row"
+         :orientation "h"
+         :space-evenly false
+         :spacing 8
+      (label :class "weather-icon" :text {weather.icon})
+      (label :class "weather-temp" :text "${weather.temp}°")
+      (label :class "weather-desc" :text {weather.desc})
+      (label :class "weather-city" :text "· ${weather.city}"))
+    (calendar :class "hub-calendar"
               :show-week-numbers false
               :show-heading true
               :show-day-names true)))
 
 
-;; Weather line — usado adentro del bloque calendar del hub.
-;; Lee del defpoll `weather` (JSON, dot access).
-(defwidget weather-line []
-  (box :class "weather-line"
-       :orientation "h"
-       :space-evenly false
-       :spacing 8
-    (label :class "weather-icon" :text {weather.icon})
-    (label :class "weather-temp" :text "${weather.temp}°")
-    (label :class "weather-desc" :text {weather.desc})
-    (label :class "weather-city" :text "· ${weather.city}")))
+;; ── Media (MPRIS / Spotify) ───────────────────────────────────────────────────
 
-
-;; Una fila de upcoming event. Se itera vía (for) en upcoming-list.
-(defwidget event-row [event]
-  (box :class "event-row"
-       :orientation "h"
-       :space-evenly false
-       :spacing 8
-    (label :class "event-bullet" :text "▸")
-    (label :class {event.calendar == "pedco" ? "event-cal-pedco" : "event-cal-personal"}
-           :text {event.calendar})
-    (label :class "event-time" :text "${event.time}")
-    (label :class "event-title"
-           :text {event.title}
-           :limit-width 32
-           :show-truncated true)))
-
-
-;; ─── Hub: header (columna derecha, primera fila) ──────────────────────────
-(defwidget hub-header []
-  (box :class "hub-header"
+(defwidget media-card []
+  (box :class "card media-card"
        :orientation "v"
        :space-evenly false
-       :spacing 4
+       :spacing 8
+       :hexpand true
     (box :orientation "h"
          :space-evenly false
          :spacing 10
-      (label :class "header-avatar" :text "◉")
-      (label :class "header-name"
-             :text "rolando"
-             :hexpand true
-             :halign "start")
-      (button :class "header-close"
-              :onclick "eww close hub"
-        (label :text "✕")))
-    (label :class "header-uptime"
-           :text "Uptime · ${uptime}"
-           :halign "start")))
+      (box :class "media-art-box"
+           :valign "start"
+        (image :class "media-art"
+               :path mpris_art
+               :image-width 116
+               :image-height 116
+               :visible {mpris_art != ""})
+        (label :class "media-art-empty"
+               :text "󰎈"
+               :visible {mpris_art == ""}))
+      (box :orientation "v"
+           :space-evenly false
+           :spacing 6
+           :hexpand true
+           :valign "center"
+        (label :class "media-title"
+               :text {mpris_meta.title}
+               :wrap true
+               :limit-width 18
+               :lines 2
+               :halign "start")
+        (label :class "media-artist"
+               :text {mpris_meta.artist}
+               :limit-width 22
+               :show-truncated true
+               :halign "start")
+        (label :class {mpris_meta.status == "playing" ? "media-status playing" : "media-status"}
+               :text {mpris_meta.status == "playing" ? "● reproduciendo" : "● pausado"}
+               :halign "start")))
+    (box :class "media-controls"
+         :orientation "h"
+         :space-evenly false
+         :halign "center"
+         :spacing 22
+      (button :class "media-btn"
+              :onclick "playerctl --player='${mpris_meta.player}' previous"
+        (label :text "󰒮"))
+      (button :class "media-btn media-btn-play"
+              :onclick "playerctl --player='${mpris_meta.player}' play-pause"
+        (label :text {mpris_meta.status == "playing" ? "󰏤" : "󰐊"}))
+      (button :class "media-btn"
+              :onclick "playerctl --player='${mpris_meta.player}' next"
+        (label :text "󰒭")))))
 
 
-;; ─── Hub: power grid 2×3 ──────────────────────────────────────────────────
-;; cls "destructive" tiñe el botón en rojo (acción peligrosa: Apagar).
-(defwidget power-button [icon ?label ?cls ?cmd]
-  (button :class "power-btn ${cls ?: ''}"
-          :onclick "${cmd ?: 'true'}"
-    (box :orientation "v"
+;; ── Stats con circular progress ───────────────────────────────────────────────
+
+(defwidget circ-stat [value label icon cls]
+  (box :class "circ-stat-wrap"
+       :orientation "v"
+       :space-evenly false
+       :spacing 4
+       :hexpand true
+       :halign "center"
+    (circular-progress
+      :value value
+      :class "circ ${cls}"
+      :thickness 6
+      :width 60
+      :height 60
+      (label :class "circ-icon" :text icon))
+    (box :orientation "v" :space-evenly false :spacing 2
+      (label :class "circ-value" :text "${value}%" :halign "center")
+      (label :class "circ-label" :text label :halign "center"))))
+
+(defwidget circ-stat-ram []
+  (eventbox :cursor "pointer"
+            :onclick "eww update ram_mode=${ram_mode == 'pct' ? 'gib' : 'pct'}"
+    (box :class "circ-stat-wrap"
+         :orientation "v"
          :space-evenly false
          :spacing 4
-      (label :class "power-icon" :text icon)
-      (label :class "power-label" :text {label ?: ""}))))
+         :hexpand true
+         :halign "center"
+      (circular-progress
+        :value {EWW_RAM.used_mem_perc}
+        :class "circ circ-ram"
+        :thickness 6
+        :width 60
+        :height 60
+        (label :class "circ-icon" :text "󰘚"))
+      (box :orientation "v" :space-evenly false :spacing 2
+        (label :class "circ-value"
+               :text {ram_mode == "pct"
+                       ? "${round(EWW_RAM.used_mem_perc, 0)}%"
+                       : "${round(EWW_RAM.used_mem / 1073741824, 1)}G"}
+               :halign "center")
+        (label :class "circ-label" :text "RAM" :halign "center")))))
 
-
-(defwidget power-grid []
-  (box :class "power-grid"
+(defwidget stats-card []
+  (box :class "card stats-card"
        :orientation "v"
        :space-evenly false
        :spacing 8
+       :hexpand true
     (box :orientation "h"
          :space-evenly true
          :spacing 8
-      (power-button :icon "󰌾" :label "Lock"    :cmd "loginctl lock-session")
-      (power-button :icon "󰒲" :label "Suspend" :cmd "systemctl suspend")
-      (power-button :icon "󰈲" :label "Logout"  :cmd "hyprctl dispatch exit"))
-    (box :orientation "h"
-         :space-evenly true
-         :spacing 8
-      (power-button :icon "󰜗" :label "Hibernar"  :cmd "systemctl hibernate")
-      (power-button :icon "󰜉" :label "Reiniciar" :cmd "systemctl reboot")
-      (power-button :icon "󰐥" :label "Apagar" :cls "destructive" :cmd "systemctl poweroff"))))
+      (circ-stat :value {round(EWW_CPU.avg, 0)}
+                 :label "CPU"
+                 :icon "󰻠"
+                 :cls "circ-cpu")
+      (circ-stat-ram)
+      (circ-stat :value {battery.capacity}
+                 :label {battery.status == "Charging" ? "Cargando"
+                          : battery.status == "Full" ? "Llena"
+                          : "Batería"}
+                 :icon {battery.status == "Charging" ? "󰂄"
+                         : battery.status == "Full" ? "󰂅"
+                         : "󰁹"}
+                 :cls {battery.capacity < "20" ? "circ-bat-crit"
+                        : battery.status == "Charging" ? "circ-bat-ok"
+                        : "circ-bat"}))))
 
 
-;; ─── Hub: WiFi / Bluetooth rows ───────────────────────────────────────────
-;; Card clickeable: chip circular con icono + label/value en dos líneas +
-;; chevron derecho. Click izquierdo → gestor; right-click → toggle radio.
-;; Sin tooltip: el value debajo del label ya muestra SSID/device/señal
-;; refrescados cada 2s (ver defpoll network arriba).
-;;
-;; Los click_cmd se lanzan con `setsid -f`: desprende el manager del grupo
-;; de procesos de eww. Sin esto, blueman/nm-connection-editor pueden morir
-;; o quedar sin foco cuando el popup pierde el focus.
-(defwidget net-row [icon label value click_cmd right_cmd active]
-  (eventbox :class "net-row ${active == 'true' ? 'active' : 'inactive'}"
+;; ── Network ───────────────────────────────────────────────────────────────────
+
+(defwidget net-row [icon label value active click_cmd right_cmd]
+  (eventbox :class "net-row ${active == 'true' ? 'net-active' : ''}"
             :onclick click_cmd
             :onrightclick right_cmd
             :cursor "pointer"
     (box :orientation "h"
          :space-evenly false
-         :spacing 12
+         :spacing 10
       (box :class "net-chip" :valign "center"
         (label :class "net-icon" :text icon))
       (box :orientation "v"
@@ -236,22 +256,22 @@
         (label :class "net-value"
                :text value
                :halign "start"
-               :limit-width 30
+               :limit-width 20
                :show-truncated true))
       (label :class "net-chevron" :text "›" :valign "center"))))
 
-
-(defwidget net-controls []
-  (box :class "net-controls"
+(defwidget network-card []
+  (box :class "card network-card"
        :orientation "v"
        :space-evenly false
-       :spacing 6
+       :spacing 8
+       :hexpand true
     (net-row :icon "󰖩"
              :label "WiFi"
              :active {network.wifi_enabled}
              :value {network.wifi_enabled == "true"
                       ? (network.wifi_ssid != ""
-                          ? "${network.wifi_ssid} · ${network.wifi_signal}% · ${network.wifi_freq} GHz"
+                          ? "${network.wifi_ssid} · ${network.wifi_signal}%"
                           : "Sin conexión")
                       : "Apagado"}
              :click_cmd "setsid -f /home/rolando/.config/rofi/wifi/wifi_manager.sh"
@@ -266,202 +286,150 @@
                               : network.bt_device)
                           : "Sin dispositivo")
                       : "Apagado"}
-             :click_cmd "setsid -f blueman-manager"
+             :click_cmd "~/.config/hypr/scripts/open-bt.sh"
              :right_cmd "/home/rolando/.config/eww/scripts/net-toggle.sh bt")))
 
 
-;; ─── Hub: sliders brillo y volumen ────────────────────────────────────────
-;; onchange usa {} como placeholder del valor actual del slider.
-;; El defpoll de cada variable refresca cada 3s para reflejar cambios externos.
-(defwidget sliders []
-  (box :class "sliders"
-       :orientation "v"
-       :space-evenly false
-       :spacing 6
-    (box :class "slider-row" :orientation "h" :space-evenly false :spacing 10
-      (label :class "slider-icon" :text "󰃝")
-      (label :class "slider-label" :text "Brillo")
-      (scale :class "slider"
-             :min 0 :max 100
-             :value brillo
-             :onchange "brightnessctl s {}% >/dev/null"
-             :hexpand true)
-      (label :class "slider-percent" :text "${brillo}%"))
-    (box :class "slider-row" :orientation "h" :space-evenly false :spacing 10
-      (label :class "slider-icon" :text "󰕾")
-      (label :class "slider-label" :text "Volumen")
-      (scale :class "slider"
-             :min 0 :max 100
-             :value volume
-             :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
-             :hexpand true)
-      (label :class "slider-percent" :text "${volume}%"))))
+;; ── Power ─────────────────────────────────────────────────────────────────────
 
-
-;; ─── Hub: quick-toggles row ───────────────────────────────────────────────
-;; 3 botones de toggle rápido: DND / Night Light / Power Profile.
-;; El estado activo cambia la clase CSS → el estilo refleja el estado actual.
-;; Los polls dnd_active y power_profile se refrescan periódicamente para
-;; mantener la UI sincronizada con cambios hechos desde el teclado.
-(defwidget quick-toggle-btn [icon label active cmd]
-  (button :class "qtoggle-btn ${active == 'true' ? 'active' : ''}"
+(defwidget power-btn [icon label cls cmd]
+  (button :class "power-btn ${cls}"
           :onclick cmd
     (box :orientation "v"
          :space-evenly false
          :spacing 4
-      (label :class "qtoggle-icon" :text icon)
-      (label :class "qtoggle-label" :text label))))
+      (label :class "power-icon" :text icon)
+      (label :class "power-label" :text label))))
 
-
-(defwidget quick-toggles []
-  (box :class "quick-toggles"
-       :orientation "h"
-       :space-evenly true
-       :spacing 8
-    (quick-toggle-btn
-      :icon {dnd_active == "true" ? "󰂛" : "󰂚"}
-      :label "DND"
-      :active dnd_active
-      :cmd "/home/rolando/.config/hypr/scripts/toggle-dnd.sh")
-    (quick-toggle-btn
-      :icon "󰖔"
-      :label "Night"
-      :active "false"
-      :cmd "/home/rolando/.config/hypr/scripts/toggle-nightlight.sh")))
-
-
-;; ─── Hub: system stats ────────────────────────────────────────────────────
-;; 3 mini-cards horizontales: CPU%, RAM%, Batería % + status icon.
-(defwidget stat-card [icon value label cls]
-  (box :class "stat-card ${cls}"
+(defwidget power-card []
+  (box :class "card power-card"
        :orientation "v"
        :space-evenly false
-       :spacing 2
+       :spacing 8
        :hexpand true
-    (label :class "stat-icon" :text icon)
-    (label :class "stat-value" :text "${value}%")
-    (label :class "stat-label" :text label)))
+    (box :orientation "h"
+         :space-evenly true
+         :spacing 8
+      (power-btn :icon "󰌾" :label "Lock"     :cls ""            :cmd "loginctl lock-session")
+      (power-btn :icon "󰒲" :label "Suspend"  :cls ""            :cmd "systemctl suspend")
+      (power-btn :icon "󰈲" :label "Logout"   :cls ""            :cmd "hyprctl dispatch exit"))
+    (box :orientation "h"
+         :space-evenly true
+         :spacing 8
+      (power-btn :icon "󰜗" :label "Hibernar" :cls ""            :cmd "systemctl hibernate")
+      (power-btn :icon "󰜉" :label "Reiniciar":cls ""            :cmd "systemctl reboot")
+      (power-btn :icon "󰐥" :label "Apagar"   :cls "destructive" :cmd "systemctl poweroff"))))
 
-;; Variante de stat-card para RAM: click alterna entre % y GiB.
-;; Estado en defvar ram_mode ("pct" | "gib"). Persiste hasta eww kill.
-(defwidget stat-card-ram []
-  (eventbox :cursor "pointer"
-            :tooltip {ram_mode == "pct" ? "Click: ver en GiB" : "Click: ver en %"}
-            :onclick "eww update ram_mode=${ram_mode == 'pct' ? 'gib' : 'pct'}"
-    (box :class "stat-card"
+
+;; ── Sliders modernos (pill + gradient) ──────────────────────────────────────
+;; eww no soporta widgets como args → cada slider se construye inline
+
+(defwidget sliders-card []
+  (box :class "card sliders-card"
+       :orientation "v"
+       :space-evenly false
+       :spacing 14
+       :hexpand true
+    ;; — Brillo —
+    (box :class "slider-block"
          :orientation "v"
          :space-evenly false
-         :spacing 2
-         :hexpand true
-      (label :class "stat-icon" :text "󰘚")
-      (label :class "stat-value"
-             :text {ram_mode == "pct" ? "${ram_pct}%" : "${ram_used_gib}G"})
-      (label :class "stat-label" :text "RAM"))))
-
-
-(defwidget system-stats []
-  (box :class "system-stats"
-       :orientation "h"
-       :space-evenly true
-       :spacing 8
-    (stat-card :icon "󰍛" :value cpu_pct :label "CPU" :cls "")
-    (stat-card-ram)
-    (stat-card :icon {battery.status == "Charging" ? "󰂄"
-                      : battery.status == "Full" ? "󰂅"
-                      : "󰁹"}
-               :value {battery.capacity}
-               :label {battery.status == "Charging" ? "Cargando"
-                       : battery.status == "Full" ? "Llena"
-                       : "Batería"}
-               :cls "")))
-
-
-;; Notifications row — un solo renglón con icono + count.
-(defwidget notifications-row []
-  (box :class "notifications-row"
-       :orientation "h"
-       :space-evenly false
-       :spacing 8
-    (label :class "notif-icon" :text "󰂚")
-    (label :class "notif-label" :text "Notificaciones")
-    (label :class "notif-count" :text notif_count)))
-
-
-;; Lista de upcoming events. Si no hay eventos muestra placeholder.
-(defwidget upcoming-list []
-  (box :class "upcoming-list"
-       :orientation "v"
-       :space-evenly false
-       :spacing 4
-    (label :class "section-title" :text "Próximos eventos")
-    (box :orientation "v"
+         :spacing 4
+      (box :orientation "h"
+           :space-evenly false
+           :spacing 8
+           :valign "center"
+        (label :class "slider-icon-modern"
+               :text {brillo < "30" ? "󰃞" : brillo < "70" ? "󰃝" : "󰃠"})
+        (label :class "slider-name" :text "Brillo"
+               :hexpand true :halign "start"))
+      (scale :class "hub-slider slider-brightness"
+             :min 1 :max 100
+             :value brillo
+             :onchange "brightnessctl s {}% >/dev/null"
+             :hexpand true))
+    ;; — Volumen —
+    (box :class "slider-block"
+         :orientation "v"
          :space-evenly false
-         :spacing 2
-         :visible {arraylength(events) > 0}
-      (for event in events
-        (event-row :event event)))
-    (label :class "event-empty"
-           :text "Sin eventos en los próximos 60 días"
-           :visible {arraylength(events) == 0})))
+         :spacing 4
+      (box :orientation "h"
+           :space-evenly false
+           :spacing 8
+           :valign "center"
+        (label :class "slider-icon-modern"
+               :text {volume < "10" ? "󰸈" : "󰕾"})
+        (label :class "slider-name" :text "Volumen"
+               :hexpand true :halign "start"))
+      (scale :class "hub-slider slider-volume"
+             :min 0 :max 100
+             :value volume
+             :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
+             :hexpand true))
+    ;; — Toggles integrados —
+    (box :orientation "h"
+         :space-evenly true
+         :spacing 8
+      (button :class "qtoggle ${dnd_active == 'true' ? 'qtoggle-on' : ''}"
+              :onclick "/home/rolando/.config/hypr/scripts/toggle-dnd.sh"
+        (box :orientation "h" :space-evenly false :spacing 8
+          (label :class "qtoggle-icon"
+                 :text {dnd_active == "true" ? "󰂛" : "󰂚"})
+          (label :class "qtoggle-label" :text "No molestar")))
+      (button :class "qtoggle"
+              :onclick "/home/rolando/.config/hypr/scripts/toggle-nightlight.sh"
+        (box :orientation "h" :space-evenly false :spacing 8
+          (label :class "qtoggle-icon" :text "󰖔")
+          (label :class "qtoggle-label" :text "Night light"))))))
 
 
-;; ═══════════════════════════════════════════════════════════════════════════
-;; HUB — Dashboard ancho que absorbe módulos de waybar
-;; Trigger: SUPER+grave  o click en cualquier módulo del panel derecho.
-;; Estructura 2 columnas:
-;;   ┌──────────────────────┬───────────────────────┐
-;;   │ INFO                 │ CONTROLES             │
-;;   │ - calendar + clima   │ - header + power      │
-;;   │ - upcoming events    │ - wifi / BT toggles   │
-;;   │ - notificaciones     │ - brillo / vol slider │
-;;   │                      │ - quick-toggles       │
-;;   │                      │ - cpu/ram/batería     │
-;;   └──────────────────────┴───────────────────────┘
-;; ═══════════════════════════════════════════════════════════════════════════
+
+
+;; ═════════════════════════════════════════════════════════════════════════════
+;; HUB — layout 2 columnas (bottom-right)
+;;
+;;  ┌── IZQUIERDA ──────────┐  ┌── DERECHA ────────────────────────────────┐
+;;  │  calendar-card        │  │  header-card                              │
+;;  │  media-card           │  │  stats-card  (CPU / RAM / Bat)            │
+;;  │                       │  │  network-card                             │
+;;  │                       │  │  power-card                               │
+;;  │                       │  │  sliders-card + toggles                   │
+;;  └───────────────────────┘  └───────────────────────────────────────────┘
+;; ═════════════════════════════════════════════════════════════════════════════
 
 (defwidget hub-content []
-  (box :class "hub-container"
+  (box :class "hub-root"
        :orientation "h"
        :space-evenly false
-       :spacing 0
-    ;; ─── Columna izquierda: información ───────────────────────────────
-    (box :class "hub-col hub-col-left"
+       :spacing 10
+    ;; ── Col izquierda: info ──────────────────────────────────────────────
+    (box :class "hub-col-left"
          :orientation "v"
          :space-evenly false
-         :spacing 16
-         :hexpand true
-      (hub-calendar-block)
-      (upcoming-list)
-      (notifications-row))
-    ;; ─── Divisor sutil ────────────────────────────────────────────────
-    (box :class "hub-divider")
-    ;; ─── Columna derecha: controles ──────────────────────────────────
-    (box :class "hub-col hub-col-right"
+         :spacing 8
+      (calendar-card)
+      (media-card)
+      (stats-card))
+    ;; ── Col derecha: controles ───────────────────────────────────────────
+    (box :class "hub-col-right"
          :orientation "v"
          :space-evenly false
-         :spacing 12
-         :hexpand true
-      (hub-header)
-      (power-grid)
-      (net-controls)
-      (sliders)
-      (quick-toggles)
-      (system-stats)
-      (box :orientation "v" :vexpand true))))
+         :spacing 8
+      (header-card)
+      (network-card)
+      (power-card)
+      (sliders-card))))
 
 
-;; Ventana del hub.
-;; focusable true: necesario para sliders y toggles interactivos.
-;; Sin focusable los clicks pasan a través al desktop.
 (defwindow hub
   :monitor 0
-  :geometry (geometry :x "20px"
+  :geometry (geometry :x "5px"
                       :y "20px"
-                      :width "720px"
-                      :height "540px"
+                      :width "820px"
+                      :height "620px"
                       :anchor "bottom right")
   :stacking "fg"
   :focusable true
   :exclusive false
-  :namespace "hub"        ; matchea layerrule en rules.conf
+  :namespace "hub"
   (hub-content))

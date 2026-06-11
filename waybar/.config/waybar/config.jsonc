@@ -12,7 +12,7 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["custom/nixos", "hyprland/workspaces"],
+  "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
   "modules-center": ["hyprland/window"],
   "modules-right": [
     "custom/layout",
@@ -32,7 +32,7 @@
     "interval": 10,
     "format": "{}",
     "tooltip": true,
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
     "on-click-right": "kitty --working-directory ~/projects/nix-config",
   },
 
@@ -57,7 +57,7 @@
     "scroll-step": 5,
     "format": "{icon} {volume}%",
     "format-muted": "󰝟 {volume}%",
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
     "on-click-right": "pavucontrol",
     "on-scroll-up": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
     "on-scroll-down": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%-",
@@ -66,35 +66,29 @@
     },
   },
 
+  // Control de Spotify. Click=play/pause, scroll=next/prev, der=abrir Spotify.
+  // Desaparece sin player (format-stopped vacío).
+  "mpris": {
+    "player": "spotify",
+    "format": "󰐊  {title}",
+    "format-paused": "󰏤  {title}",
+    "format-stopped": "",
+    "max-length": 28,
+    "tooltip-format": "{title}\n{artist} · {album}",
+    "on-click": "playerctl --player=spotify play-pause",
+    "on-click-right": "/home/rolando/.config/hypr/scripts/spotify-toggle.sh",
+    "on-scroll-up": "playerctl --player=spotify next",
+    "on-scroll-down": "playerctl --player=spotify previous",
+  },
+
+  // Sin persistent-workspaces: muestra solo los ocupados + el activo (dinámico).
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
       "default": "",
-      "1": "1",
-      "2": "2",
-      "3": "3",
-      "4": "4",
-      "5": "5",
-      "6": "6",
-      "7": "7",
-      "8": "8",
-      "9": "9",
-      "10": "10",
       "active": "",
-      "persistent": "",
-    },
-    "persistent-workspaces": {
-      "1": [],
-      "2": [],
-      "3": [],
-      "4": [],
-      "5": [],
-      "6": [],
-      "7": [],
-      "8": [],
-      "9": [],
-      "10": [],
+      "urgent": "",
     },
   },
 
@@ -107,7 +101,7 @@
     "format-ethernet": "",
     "format-icons": { "wifi": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"] },
     "interval": 2,
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
     "on-click-right": "nm-connection-editor",
     "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on",
   },
@@ -123,7 +117,7 @@
     "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
     "format-icons": ["", "", ""],
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
   },
 
   "battery": {
@@ -143,7 +137,7 @@
       "<span color='#00B4D8E6'>󰂂</span>",
       "<span color='#00B4D8E6'>󰁹</span>",
     ],
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
   },
 
   "clock": {
@@ -151,7 +145,7 @@
     "interval": 60,
     "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
-    "on-click": "eww open --toggle hub",
+    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
   },
 
   "custom/layout": {

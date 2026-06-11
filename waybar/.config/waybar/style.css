@@ -20,6 +20,7 @@
 @define-color cyan        rgba(0, 180, 216, 0.90);
 @define-color cyan-glow   rgba(0, 180, 216, 0.40);
 @define-color cyan-dim    rgba(0, 180, 216, 0.18);
+@define-color blue-soft   #3b82f6;
 
 @define-color crit        rgba(248, 113, 113, 0.90);
 @define-color warn        rgba(251, 146, 60, 0.90);
@@ -168,6 +169,19 @@ window#waybar {
 /* Estados */
 #pulseaudio.muted { color: @fg-dim; }
 #network.disconnected { color: @warn; }
+
+/* MPRIS: island propio al lado de workspaces (canción actual) */
+#mpris {
+  background: @island-bg;
+  color: @fg;
+  margin: 2px 0 2px 6px;
+  padding: 0 12px;
+  min-height: 20px;
+  border-radius: 14px;
+  border: 1px solid @border;
+}
+#mpris.playing { color: @blue-soft; }
+#mpris.paused { color: @fg-dim; font-style: italic; }
 
 #temperature.critical {
   color: @crit;
