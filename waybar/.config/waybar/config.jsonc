@@ -12,7 +12,7 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
+  "modules-left": ["custom/nixos", "hyprland/workspaces", "custom/wscount", "mpris"],
   "modules-center": ["hyprland/window"],
   "modules-right": [
     "custom/layout",
@@ -84,12 +84,19 @@
   // Sin persistent-workspaces: muestra solo los ocupados + el activo (dinámico).
   "hyprland/workspaces": {
     "on-click": "activate",
-    "format": "{icon}",
-    "format-icons": {
-      "default": "",
-      "active": "",
-      "urgent": "",
-    },
+    // {id} = número del ws. El CSS oculta el label en los inactivos (quedan
+    // dots) y solo lo revela en el activo.
+    "format": "{id}",
+  },
+
+  // Cantidad de ventanas del workspace activo (el tape en scrolling).
+  // Event-driven vía socket Hyprland; ver waybar-wscount.sh.
+  "custom/wscount": {
+    "exec": "stdbuf -oL $HOME/.config/hypr/scripts/waybar-wscount.sh",
+    "return-type": "json",
+    "format": "{}",
+    "restart-interval": 3,
+    "tooltip": true,
   },
 
   "network": {

@@ -85,6 +85,7 @@ window#waybar {
   background: rgba(205, 214, 244, 0.15);
 }
 
+/* Label oculto por defecto → cada ws inactivo queda como dot */
 #workspaces button label { font-size: 0px; }
 
 #workspaces button:hover {
@@ -94,12 +95,30 @@ window#waybar {
 #workspaces button.active {
   background: @cyan;
   box-shadow: 0 0 10px @cyan-glow;
-  min-width: 18px;
+  min-height: 16px;               /* altura suficiente para que el número centre */
+  padding: 0 8px;                 /* sin min-width: el padding define el ancho y el dígito no se recorta */
+}
+
+/* Solo el activo muestra su número, en navy oscuro sobre el cyan */
+#workspaces button.active label {
+  font-size: 11px;
+  color: #0a0e17;
 }
 
 #workspaces button.urgent {
   background: @crit;
   box-shadow: 0 0 10px rgba(248, 113, 113, 0.50);
+}
+
+/* Contador de ventanas del workspace activo (tape en scrolling) */
+#custom-wscount {
+  background: @island-bg;
+  color: @cyan;
+  margin: 2px 0 2px 6px;
+  padding: 0 11px;                /* vertical 0 → min-height centra el texto (igual que #mpris) */
+  min-height: 20px;
+  border-radius: 14px;
+  border: 1px solid @border;
 }
 
 /* ========= CENTER: window title island ========= */
