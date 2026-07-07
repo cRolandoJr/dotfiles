@@ -12,7 +12,7 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["custom/nixos", "hyprland/workspaces", "custom/wscount", "mpris"],
+  "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
   "modules-center": ["hyprland/window"],
   "modules-right": [
     "custom/layout",
