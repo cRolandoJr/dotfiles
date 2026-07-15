@@ -41,12 +41,6 @@ style = "bg:base fg:base_fg bold"
 symbols.Arch = " "
 format = "[$symbol]($style)"
 
-[username]
-show_always = true
-style_user = "bg:base fg:base_fg bold"
-style_root = "bg:base fg:err bold"
-format = "[$user]($style)"
-
 [directory]
 style = "bg:dir fg:base_fg bold"
 format = "[ $path ]($style)"

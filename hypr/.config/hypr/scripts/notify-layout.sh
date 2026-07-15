@@ -8,7 +8,8 @@ set -euo pipefail
 
 SOCKET="${XDG_RUNTIME_DIR}/hypr/${HYPRLAND_INSTANCE_SIGNATURE}/.socket2.sock"
 
-exec socat -U - "UNIX-CONNECT:${SOCKET}" | while IFS= read -r line; do
+# ncat -U (socat no está en el PATH del usuario, ncat sí).
+exec ncat -U "${SOCKET}" | while IFS= read -r line; do
   case "$line" in
     activelayout\>\>*)
       # Formato del evento: activelayout>>device_name,layout_name

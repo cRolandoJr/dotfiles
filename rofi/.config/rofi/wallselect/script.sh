@@ -108,22 +108,23 @@ done
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
 [[ -f "$FULL_PATH" ]] || die "No existe: $FULL_PATH"
 
-# Cambiar wallpaper con swww (recomendado)
-if command -v swww >/dev/null 2>&1; then
-  swww img "$FULL_PATH" \
-    --transition-type grow \
-    --transition-pos 0.5,0.5 \
-    --transition-step 90 \
-    --transition-fps 60 &
-elif command -v awww >/dev/null 2>&1; then
+# Cambiar wallpaper con awww (el daemon del setup; ver memoria wallpaper-stack).
+# swww queda como fallback por si algún día se migra, pero NO es el elegido.
+if command -v awww >/dev/null 2>&1; then
   awww img "$FULL_PATH" \
     --transition-type any \
     --transition-duration 0.6 \
     --transition-pos 0.5,0.5 \
     --transition-step 90 \
     --transition-fps 60 &
+elif command -v swww >/dev/null 2>&1; then
+  swww img "$FULL_PATH" \
+    --transition-type grow \
+    --transition-pos 0.5,0.5 \
+    --transition-step 90 \
+    --transition-fps 60 &
 else
-  die "Necesito swww (o awww)."
+  die "Necesito awww (o swww)."
 fi
 
 # Reload “ecosistema” (sin escalera)

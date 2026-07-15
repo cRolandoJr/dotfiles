@@ -43,9 +43,10 @@ current=$(hyprctl devices -j 2>/dev/null \
   | head -n1)
 emit "${current:-Unknown}"
 
-# Stream de cambios. Si socat muere por cualquier razón, el script termina y waybar
-# reintenta gracias a `restart-interval` del módulo.
-socat -U - "UNIX-CONNECT:${SOCKET}" 2>/dev/null | while IFS= read -r line; do
+# Stream de cambios. ncat -U (socat no está en el PATH del usuario, ncat sí).
+# Si ncat muere por cualquier razón, el script termina y waybar reintenta
+# gracias a `restart-interval` del módulo.
+ncat -U "${SOCKET}" 2>/dev/null | while IFS= read -r line; do
   case "$line" in
     activelayout\>\>*)
       layout="${line#*,}"

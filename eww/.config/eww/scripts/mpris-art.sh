@@ -2,14 +2,14 @@
 # Descarga artwork de Spotify a /tmp/eww-spotify-art.png.
 # Llamar periódicamente o desde un defpoll que refresca la URL.
 DEST="/tmp/eww-spotify-art.png"
-PLACEHOLDER="$HOME/.config/eww/scripts/no-art.png"
 
 PLAYER="${1:-spotify}"
 
 URL=$(playerctl --player="$PLAYER" metadata mpris:artUrl 2>/dev/null)
 
+# Sin artwork → borrar el DEST para que el hub muestre el glyph 󰎈 (poll devuelve "").
 if [[ -z "$URL" ]]; then
-  [[ -f "$PLACEHOLDER" ]] && cp "$PLACEHOLDER" "$DEST"
+  rm -f "$DEST"
   exit 0
 fi
 

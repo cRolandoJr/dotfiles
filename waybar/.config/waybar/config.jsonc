@@ -1,7 +1,7 @@
 {
   "layer": "top",
   "height": 28,
-  "margin-top": 4,
+  "margin-top": 2,
   "margin-bottom": 0,
   // margin-left/right: 7 → matchea hyprland gaps_out:7 de las ventanas.
   // Los chips pegados al borde del bar quedan alineados con el borde de

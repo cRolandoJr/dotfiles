@@ -101,7 +101,7 @@ dotfiles/
 │                     # scripts/ (lock, spotify-toggle, wallhaven-fetch, keybinds-viewer, …)
 │                     # shaders/ (lock-vignette.glsl, reading_mode.glsl)
 ├── waybar/           # config.jsonc + style.css (Deep Ocean)
-├── eww/              # eww.yuck + eww.scss + scripts/ (weather, calendar-events, net-status, …)
+├── eww/              # eww.yuck + eww.scss + scripts/ (weather, net-status, …)
 ├── kitty/            # kitty.conf + current-theme.conf
 ├── rofi/             # config.rasi + temas por menú (wallselect, wifi, cliphist, keybinds)
 ├── mako/             # config
