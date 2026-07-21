@@ -247,6 +247,7 @@ window {
 .circ-bat   { color: $ok;   background-color: $ok-dim; }
 .circ-bat-ok  { color: $ok;  background-color: $ok-dim; }
 .circ-bat-crit { color: $crit; background-color: $crit-dim; }
+.circ-disk  { color: $warn; background-color: $warn-dim; }
 
 .circ-icon {
   font-size: 18px;

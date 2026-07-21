@@ -232,7 +232,11 @@
                          : "󰁹"}
                  :cls {battery.capacity < "20" ? "circ-bat-crit"
                         : battery.status == "Charging" ? "circ-bat-ok"
-                        : "circ-bat"}))))
+                        : "circ-bat"})
+      (circ-stat :value {round(EWW_DISK["/"].used_perc, 0)}
+                 :label "Disco"
+                 :icon "󰋊"
+                 :cls "circ-disk"))))
 
 
 ;; ── Network ───────────────────────────────────────────────────────────────────
