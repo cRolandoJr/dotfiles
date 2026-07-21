@@ -14,18 +14,21 @@
 
   "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
   "modules-center": ["hyprland/window"],
+  // Orden: controles interactivos (layout/volumen/idle/perfil) → estado
+  // pasivo (temp/batería) → reloj como ancla → tray al borde.
   "modules-right": [
     "custom/layout",
-    "temperature",
     "pulseaudio",
-    "network",
-    "battery",
+    "idle_inhibitor",
     "custom/power-profile",
+    "temperature",
+    "battery",
     "clock",
+    "tray",
   ],
 
   // ─── NixOS chip — gen + flake status ─────────────────────────────────────
-  //   Click izq → hub | Click der → kitty en el flake dir (para resolver dirty)
+  //   Click izq → hub | Click der → foot en el flake dir (para resolver dirty)
   "custom/nixos": {
     "exec": "$HOME/.config/hypr/scripts/waybar-nixos-status.sh",
     "return-type": "json",
@@ -33,7 +36,7 @@
     "format": "{}",
     "tooltip": true,
     "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
-    "on-click-right": "kitty --working-directory ~/projects/nix-config",
+    "on-click-right": "foot --working-directory ~/projects/nix-config",
   },
 
   "hyprland/window": {
@@ -43,7 +46,7 @@
     "rewrite": {
       "(.*) — Mozilla Firefox": "󰈹  $1",
       "(.*) — Chromium": "󰊯  $1",
-      "(.*)kitty(.*)": "terminal",
+      "(.*)foot(.*)": "terminal",
       "(.*)nvim(.*)": "nvim",
       "(.*)Code(.*)": "󰨞  code",
       "(.*)Discord(.*)": "󰙯  discord",
@@ -89,30 +92,6 @@
     "format": "{id}",
   },
 
-  // Cantidad de ventanas del workspace activo (el tape en scrolling).
-  // Event-driven vía socket Hyprland; ver waybar-wscount.sh.
-  "custom/wscount": {
-    "exec": "stdbuf -oL $HOME/.config/hypr/scripts/waybar-wscount.sh",
-    "return-type": "json",
-    "format": "{}",
-    "restart-interval": 3,
-    "tooltip": true,
-  },
-
-  "network": {
-    "tooltip": true,
-    "format-wifi": "{icon}",
-    "tooltip-format-wifi": "{essid}\nSignal: {signalStrength}% ({signaldBm} dBm) @ {frequency} GHz\nIP: {ipaddr}/{cidr}  GW: {gwaddr}\n↓ {bandwidthDownBytes}/s   ↑ {bandwidthUpBytes}/s",
-    "tooltip-format-ethernet": "{ifname}\nIP: {ipaddr}/{cidr}  GW: {gwaddr}\n↓ {bandwidthDownBytes}/s   ↑ {bandwidthUpBytes}/s",
-    "tooltip-format-disconnected": "Disconnected",
-    "format-ethernet": "",
-    "format-icons": { "wifi": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"] },
-    "interval": 2,
-    "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
-    "on-click-right": "nm-connection-editor",
-    "on-click-middle": "nmcli radio wifi off || nmcli radio wifi on",
-  },
-
   "temperature": {
     // Anclado al CPU AMD (k10temp) vía PCI BDF estable, no thermal_zone0
     // (que puede reasignarse entre reboots).
@@ -121,9 +100,9 @@
     "critical-threshold": 90,
     "interval": 2,
     "tooltip": false,
-    "format-critical": "{temperatureC}°C {icon}",
-    "format": "{temperatureC}°C {icon}",
-    "format-icons": ["", "", ""],
+    "format-critical": "{icon} {temperatureC}°C",
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": ["󰔏"],
     "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
   },
 
@@ -148,11 +127,26 @@
   },
 
   "clock": {
-    "tooltip": false,
+    "tooltip": true,
+    "tooltip-format": "{:%A %d de %B de %Y}",
+    "locale": "es_AR.UTF-8",
     "interval": 60,
     "timezone": "America/Argentina/Buenos_Aires",
     "format": "󰥔 {:%H:%M}",
     "on-click": "~/.config/hypr/scripts/hub-toggle.sh",
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8,
+  },
+
+  // Mantener pantalla despierta (inhibe hypridle mientras está activado).
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": { "activated": "", "deactivated": "" },
+    "tooltip-format-activated": "Idle inhibido — la pantalla no se bloquea",
+    "tooltip-format-deactivated": "Idle normal",
   },
 
   "custom/layout": {

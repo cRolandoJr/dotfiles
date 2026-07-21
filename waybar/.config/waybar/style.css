@@ -22,6 +22,8 @@
 @define-color cyan-dim    rgba(0, 180, 216, 0.18);
 @define-color blue-soft   #3b82f6;
 
+@define-color lang-es     rgba(94, 234, 212, 0.75);  /* teal layout ES (mismo acento sin-purple que starship) */
+
 @define-color crit        rgba(248, 113, 113, 0.90);
 @define-color warn        rgba(251, 146, 60, 0.90);
 @define-color ok          rgba(52, 211, 153, 0.90);
@@ -110,17 +112,6 @@ window#waybar {
   box-shadow: 0 0 10px rgba(248, 113, 113, 0.50);
 }
 
-/* Contador de ventanas del workspace activo (tape en scrolling) */
-#custom-wscount {
-  background: @island-bg;
-  color: @cyan;
-  margin: 2px 0 2px 6px;
-  padding: 0 11px;                /* vertical 0 → min-height centra el texto (igual que #mpris) */
-  min-height: 20px;
-  border-radius: 14px;
-  border: 1px solid @border;
-}
-
 /* ========= CENTER: window title island ========= */
 #window {
   background: @island-bg;
@@ -177,17 +168,15 @@ window#waybar {
 #clock {
   color: @cyan;
   font-weight: 800;
-  padding: 0 12px 0 8px;
 }
 
 /* Módulos estándar */
-#temperature, #network, #pulseaudio, #battery {
+#temperature, #pulseaudio, #battery {
   color: @fg;
 }
 
 /* Estados */
 #pulseaudio.muted { color: @fg-dim; }
-#network.disconnected { color: @warn; }
 
 /* MPRIS: island propio al lado de workspaces (canción actual) */
 #mpris {
@@ -211,11 +200,33 @@ window#waybar {
   to { color: rgba(248, 113, 113, 0.40); }
 }
 
-/* Layout de teclado */
+/* Layout de teclado — color por clase que emite waybar-layout.sh */
 #custom-layout {
   color: @fg;
   padding: 0 6px;
   min-width: 22px;
+}
+#custom-layout.us      { color: @blue-soft; }
+#custom-layout.es      { color: @lang-es; }
+#custom-layout.unknown { color: @fg-dim; }
+
+/* Systray (blueman, telegram, kdeconnect…) */
+#tray {
+  padding: 0 8px;
+}
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}
+
+/* Idle inhibitor: apagado = discreto, activado = cyan (pantalla despierta) */
+#idle_inhibitor {
+  color: @fg-dim;
+}
+#idle_inhibitor.activated {
+  color: @cyan;
 }
 
 /* Tooltip coherente */
