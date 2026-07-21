@@ -3,7 +3,7 @@
 # Fetch Open-Meteo (gratis, sin API key); ubicación detectada por IP (cacheada).
 # Salida: JSON con {temp, code, desc, icon, city}
 #
-# Llamado desde eww.yuck con defpoll cada 30m.
+# Llamado desde eww.yuck con defpoll cada 5m.
 
 set -euo pipefail
 
