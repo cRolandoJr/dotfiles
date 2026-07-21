@@ -14,13 +14,13 @@ El repositorio del sistema NixOS (flake, módulos, paquetes) vive por separado e
 | `hypr` | [Hyprland](https://hyprland.org/) 0.55+ | Compositor Wayland — ventanas, animaciones, atajos, rules |
 | `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Barra con chip NixOS (gen + dirty-status), workspaces, reloj, red, batería |
 | `eww` | [eww](https://elkowar.github.io/eww/) | Hub dashboard (clima, calendario, red, BT) · popup con `SUPER+grave` |
-| `kitty` | [Kitty](https://sw.kovidgoyal.net/kitty/) | Terminal acelerada por GPU |
+| `foot` | [foot](https://codeberg.org/dnkl/foot) | Terminal Wayland-nativa (migrada desde kitty 2026-07-20) |
 | `rofi` | [Rofi](https://github.com/davatorium/rofi) | Launcher + menús de WiFi, wallpapers, clipboard, keybinds |
 | `mako` | [Mako](https://github.com/emersion/mako) | Daemon de notificaciones Wayland (DND vía `SUPER+N`) |
 | `starship` | [Starship](https://starship.rs/) | Prompt multiplataforma |
 | `fastfetch` | [Fastfetch](https://github.com/fastfetch-cli/fastfetch) | Info del sistema al abrir terminal |
 | `nvim` | [Neovim](https://neovim.io/) | Editor (lazy.nvim, LSP, treesitter) |
-| `yazi` | [Yazi](https://yazi-rs.github.io/) | File manager en terminal (dentro de kitty flotante) |
+| `yazi` | [Yazi](https://yazi-rs.github.io/) | File manager en terminal (dentro de foot flotante) |
 | `khal` | [khal](https://lostpackets.de/khal/) | Calendario CLI integrado al hub eww |
 | `qt6ct` | [qt6ct](https://github.com/trialuser02/qt6ct) | Tema Qt6 con paleta Deep Ocean |
 
@@ -42,7 +42,7 @@ Paleta unificada en todos los componentes:
 
 ## ✨ Features destacadas
 
-- **Hub eww** (`SUPER+grave`): popup central con clima (Open-Meteo), próximos eventos de khal, estado de red/BT y controles rápidos.
+- **Hub eww** (`SUPER+grave`): popup central con clima (Open-Meteo), calendario, estado de red/BT y controles rápidos.
 - **Chip NixOS en waybar**: muestra generación actual + símbolo NixOS coloreado (azul = flake limpio, rojo = dirty con cambios sin commitear).
 - **Keybinds viewer** (`SUPER+K`): cheatsheet fuzzy de todos los binds extraído en vivo de `binds.conf`, agrupado por sección.
 - **Wallhaven fetch** (`SUPER+SHIFT+W`): browser de wallpapers con preview grid (thumbnails cacheados), búsqueda por término y descarga directa.
@@ -58,10 +58,10 @@ Paleta unificada en todos los componentes:
 
 | Atajo | Acción |
 |---|---|
-| `SUPER + Return` / `+ SHIFT` | Terminal Kitty · flotante |
+| `SUPER + Return` / `+ SHIFT` | Terminal foot · flotante |
 | `SUPER + Space` | Launcher (Rofi) |
 | `SUPER + B / M / T` | Firefox · Spotify (special ws) · Telegram |
-| `SUPER + E` / `+ SHIFT` | Yazi (kitty flotante) · Thunar |
+| `SUPER + E` / `+ SHIFT` | Yazi (foot flotante) · Thunar |
 | `SUPER + W` / `+ SHIFT` | Wallselect local · Wallhaven fetch |
 | `SUPER + C` | Clipboard history (cliphist + rofi) |
 | `SUPER + L` | Bloquear pantalla (hyprlock + viñeta) |
@@ -99,18 +99,19 @@ Paleta unificada en todos los componentes:
 dotfiles/
 ├── hypr/             # hyprland.conf + configs/{autostart,binds,environments,monitors,rules,settings}.conf
 │                     # scripts/ (lock, spotify-toggle, wallhaven-fetch, keybinds-viewer, …)
-│                     # shaders/ (lock-vignette.glsl, reading_mode.glsl)
+│                     # shaders/ (lock-vignette.glsl)
 ├── waybar/           # config.jsonc + style.css (Deep Ocean)
 ├── eww/              # eww.yuck + eww.scss + scripts/ (weather, net-status, …)
-├── kitty/            # kitty.conf + current-theme.conf
+├── foot/             # foot.ini (tema Deep Ocean)
+├── kitty/            # histórico (sin symlink desde 2026-07-20; borrar si foot convence)
 ├── rofi/             # config.rasi + temas por menú (wallselect, wifi, cliphist, keybinds)
 ├── mako/             # config
 ├── starship/         # starship.toml
 ├── fastfetch/        # config.jsonc + logos/
 ├── nvim/             # init.lua + lua/{config,plugins}/
-├── yazi/             # (gestionado desde nix-config si aplica)
+├── yazi/             # yazi.toml (opener PDF → firefox)
 ├── khal/             # config (calendarios: personal + pedco)
-└── qt6ct/            # qt6ct.conf + colors/neon-islands.conf
+└── qt6ct/            # qt6ct.conf + colors/deep-ocean.conf
 ```
 
 Cada directorio refleja la estructura de `~/.config/`: `hypr/` contiene `.config/hypr/`, etc.
