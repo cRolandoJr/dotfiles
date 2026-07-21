@@ -1,11 +1,11 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
 
-  // ── Logo: imagen NixOS via kitty graphics protocol ─────────────────────────
-  // type "kitty-direct" usa el protocolo nativo de kitty (TERM=xterm-kitty).
-  // Si algún día corres fastfetch fuera de kitty, cambiar a "auto" o "chafa".
+  // ── Logo: imagen NixOS via sixel (foot) ────────────────────────────────────
+  // Migración kitty→foot 2026-07-20: "kitty" → "sixel" (foot no habla el
+  // protocolo de kitty). Fuera de foot, fallback: "auto" o "chafa".
   "logo": {
-    "type": "kitty",
+    "type": "sixel",
     "source": "~/.config/fastfetch/logos/nixos_logo_1.png",
     "width": 38,
     "height": 19,
