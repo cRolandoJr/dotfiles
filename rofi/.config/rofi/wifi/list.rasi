@@ -17,12 +17,13 @@ configuration {
 /*****----- Main Window -----*****/
 window {
     transparency:                "real";
-    location:                    southeast;
-    anchor:                      center;
+    /* Panel de utilidad bajo el system-area de waybar (bar 28+2 + gap). */
+    location:                    northeast;
+    anchor:                      northeast;
     fullscreen:                  false;
     width:                       400px;
     x-offset:                    -10px;
-    y-offset:                    -650px;
+    y-offset:                    40px;
 
     /* properties for all widgets */
     enabled:                     true;
@@ -80,7 +81,7 @@ textbox-prompt-colon {
 listview {
     enabled:                     true;
     columns:                     1;
-    lines:                       7;
+    lines:                       8;
     cycle:                       false;
     dynamic:                     true;
     scrollbar:                   false;

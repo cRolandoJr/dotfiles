@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PS4='+ ${LINENO}: '
-LOG=/tmp/wifi-run.log
-CHOICE_LOG=/tmp/rofi-wifi-choice
-: >"$LOG"
-: >"$CHOICE_LOG"
-
-log() { printf '%s %s\n' "$(date '+%H:%M:%S')" "$*" | tee -a "$LOG"; }
-
-# Themes (ajusta si hace falta)
+# Themes
 LIST_THEME="$HOME/.config/rofi/wifi/list.rasi"
 ENABLE_THEME="$HOME/.config/rofi/wifi/enable.rasi"
 SSID_THEME="$HOME/.config/rofi/wifi/ssid.rasi"
@@ -23,16 +15,6 @@ need sort
 need sed
 
 notify() { notify-send -t 3000 -i network-wireless "$@"; }
-
-log "Starting wifi script"
-log "ENV: XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-<unset>}"
-log "ENV: WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-<unset>}"
-log "ENV: DBUS_SESSION_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS:-<unset>}"
-
-log "Notify test (non-fatal)"
-if ! timeout 2 notify-send "Wi‑Fi script starting" >/dev/null 2>&1; then
-  log "notify-send failed or timed out (ignored)"
-fi
 
 theme_arg() {
   local f="$1"
@@ -54,12 +36,14 @@ list_wifi_menu() {
   {
     printf "%s\n" "   Disable Wi‑Fi"
     printf "%s\n" "   Manual Setup"
+    printf "%s\n" "󰚃   Forget network"
     [[ -n "${connection_status:-}" ]] && printf "%s\n" "$connection_status"
     printf "%s\n" "────────── Redes ──────────"
     printf "%s\n" "${wifi_list}"
   } | (
+    # -display-columns 1: la col 2 (SSID crudo tras tab) viaja oculta para el parseo.
     # shellcheck disable=SC2086
-    rofi -markup-rows -dmenu $ta
+    rofi -markup-rows -dmenu -display-columns 1 -display-column-separator "$(printf '\t')" $ta
   )
 }
 
@@ -75,34 +59,31 @@ prompt_password() {
   rofi -dmenu -password -p "Password" $ta
 }
 
-# --- Saved connections helpers ---
-# Devuelve el nombre del perfil wifi guardado cuyo SSID == $1 (si existe)
-saved_connection_name_for_ssid() {
-  local ssid="$1"
-  # Nota: `connection show` lista perfiles; consultamos cada perfil wifi y leemos 802-11-wireless.ssid
-  nmcli -t -f NAME,TYPE connection show \
-    | awk -F: '$2=="802-11-wireless"{print $1}' \
-    | while IFS= read -r name; do
-        [[ -z "$name" ]] && continue
-        prof_ssid="$(nmcli -g 802-11-wireless.ssid connection show "$name" 2>/dev/null || true)"
-        if [[ "$prof_ssid" == "$ssid" ]]; then
-          printf '%s\n' "$name"
-          exit 0
-        fi
-      done
+forget_menu() {
+  local ta; ta=$(theme_arg "$LIST_THEME")
+  # shellcheck disable=SC2086
+  printf '%s\n' "$@" | rofi -dmenu -p "Forget" $ta
 }
 
-has_saved_connection_for_ssid() {
-  local ssid="$1"
-  [[ -n "$(saved_connection_name_for_ssid "$ssid")" ]]
-}
+# --- Saved connections ---
+# SAVED[ssid]=perfil, cargado UNA sola vez y en paralelo (-P8): la consulta
+# secuencial por perfil costaba ~25ms × perfil. Separador tab (SSIDs con ':').
+declare -A SAVED=()
+# shellcheck disable=SC2016  # $1 debe expandir dentro del sh -c, no acá
+while IFS=$'\t' read -r prof_ssid name; do
+  [[ -n "$prof_ssid" && -n "$name" ]] && SAVED["$prof_ssid"]="$name"
+done < <(
+  nmcli -t -f NAME,TYPE connection show \
+  | awk -F: '$2=="802-11-wireless"{print $1}' \
+  | xargs -r -P8 -I{} sh -c 'printf "%s\t%s\n" "$(nmcli -g 802-11-wireless.ssid connection show "$1" 2>/dev/null)" "$1"' _ {}
+)
 
 connect_without_prompt() {
   local ssid="$1"
 
   # 1) Preferir levantar el perfil guardado (si existe)
-  if conn="$(saved_connection_name_for_ssid "$ssid")" && [[ -n "${conn:-}" ]]; then
-    nmcli -w 12 connection up "$conn" && return 0
+  if [[ -n "${SAVED[$ssid]:-}" ]]; then
+    nmcli -w 12 connection up "${SAVED[$ssid]}" && return 0
     # si falla, seguimos a intentar directo por SSID
   fi
 
@@ -111,44 +92,37 @@ connect_without_prompt() {
 
   # 3) Detectar caso "necesita clave"
   if grep -qiE "secrets were required|need.*secrets|password.*required|No secrets|not provided" <<<"$out"; then
-    echo "$out" >>"$LOG"
     return 10
   fi
 
-  echo "$out" >>"$LOG"
   return 1
 }
 
 # MAIN
 wifi_status="$(nmcli -t -f WIFI general | tail -n1 | tr -d '\r\n' || true)"
-log "wifi_status='$wifi_status'"
 
 if [[ "$wifi_status" == "disabled" ]]; then
-  log "Wi‑Fi disabled, asking to enable..."
-  choice=$(enable_wifi_menu) || choice=""
-  log "enable menu returned rc=$? choice='$choice'"
-  if [[ -n "$choice" ]]; then
-    nmcli radio wifi on
-    sleep 1
-  else
-    log "User cancelled enable menu, exiting"
-    exit 0
-  fi
+  choice=$(enable_wifi_menu) || exit 0
+  [[ -z "$choice" ]] && exit 0
+  nmcli radio wifi on
+  sleep 1
 fi
 
-nmcli device wifi rescan >/dev/null 2>&1 || log "nmcli rescan failed"
-sleep 0.6
+# Rescan async: refresca la caché de NM para la PRÓXIMA apertura. Los listados
+# van con --rescan no: el default "auto" bloquea 2-5s esperando el scan cuando
+# NM considera vieja la caché (la lentitud intermitente del menú venía de ahí).
+nmcli device wifi rescan >/dev/null 2>&1 || true
 
-connected_ssid="$(nmcli -t -f active,ssid dev wifi | awk -F: '$1=="yes"{print $2; exit}' || true)"
+connected_ssid="$(nmcli -t -f active,ssid dev wifi list --rescan no | awk -F: '$1=="yes"{print $2; exit}' || true)"
 if [[ -n "$connected_ssid" ]]; then
   connection_status="   Connected to ${connected_ssid}"
 else
   connection_status=""
 fi
 
-# Build wifi list
+# Build wifi list (marca 󰌾 los SSID con perfil guardado, vía SAVED)
 wifi_list=$(
-  nmcli -t -f SIGNAL,BARS,SSID,SECURITY dev wifi list 2>/dev/null \
+  nmcli -t -f SIGNAL,BARS,SSID,SECURITY dev wifi list --rescan no 2>/dev/null \
   | sort -rn \
   | awk -F: '
   {
@@ -157,40 +131,24 @@ wifi_list=$(
     if (ssid == "" || seen[ssid]++) next;
 
     lock = (sec ~ /WPA|WEP|802\.1X/) ? "" : "";
-    printf "%s  %s  %s :::%s\n", bars, lock, ssid, ssid
+    printf "%s  %s  %s\t%s\n", bars, lock, ssid, ssid
   }' \
   | while IFS= read -r line; do
-      ssid="${line##*:::}"
-      if nmcli -t -f NAME,TYPE connection show | awk -F: '$2=="802-11-wireless"{print $1}' \
-        | while IFS= read -r name; do
-            prof_ssid="$(nmcli -g 802-11-wireless.ssid connection show "$name" 2>/dev/null || true)"
-            [[ "$prof_ssid" == "$ssid" ]] && exit 0
-          done
-      then
-        printf "󰌾  %s\n" "$line"   # saved
+      ssid="${line##*$'\t'}"
+      if [[ -n "${SAVED[$ssid]:-}" ]]; then
+        printf "󰌾  %s\n" "$line"
       else
         printf "   %s\n" "$line"
       fi
     done
 )
 
-log "Prepared wifi_list (first 20 lines):"
-printf '%s\n' "$wifi_list" | sed -n '1,20p' | tee -a "$LOG"
-
-choice="$(list_wifi_menu)"
-rofi_rc=$?
-printf '%s\n' "choice='$choice'" > "$CHOICE_LOG"
-printf '%s\n' "rofi_rc=$rofi_rc" >> "$CHOICE_LOG"
-log "Rofi rc=$rofi_rc choice='${choice}' (also saved to $CHOICE_LOG)"
-
-if [[ $rofi_rc -ne 0 ]]; then
-  log "Rofi cancelled or failed (rc=$rofi_rc); exiting"
-  exit 0
-fi
+choice="$(list_wifi_menu)" || exit 0
 
 # Trim
 choice="${choice#"${choice%%[![:space:]]*}"}"
 choice="${choice%"${choice##*[![:space:]]}"}"
+[[ -z "$choice" ]] && exit 0
 
 case "$choice" in
   *"Disable Wi‑Fi"*|"*Disable Wi-Fi"*)
@@ -207,11 +165,18 @@ case "$choice" in
       nmcli dev wifi connect "$ssid" hidden yes
     fi
     ;;
+  *"Forget network"*)
+    [[ ${#SAVED[@]} -eq 0 ]] && { notify "Wi‑Fi" "No saved networks"; exit 0; }
+    sel="$(forget_menu "${!SAVED[@]}")" || exit 0
+    [[ -z "$sel" || -z "${SAVED[$sel]:-}" ]] && exit 0
+    nmcli connection delete "${SAVED[$sel]}"
+    notify "Forgotten" "$sel"
+    ;;
   *"Connected to "* )
     conn_name="$(nmcli -t -f NAME,TYPE connection show --active | awk -F: '$2=="802-11-wireless"{print $1; exit}' || true)"
     if [[ -n "$conn_name" ]]; then
-      if command -v kitty >/dev/null 2>&1; then
-        kitty -e sh -c "nmcli connection show \"$conn_name\"; echo; read -p 'Press Return to close...'"
+      if command -v foot >/dev/null 2>&1; then
+        foot sh -c "nmcli connection show \"$conn_name\"; echo; read -p 'Press Return to close...'"
       else
         nmcli connection show "$conn_name" | less
       fi
@@ -220,24 +185,24 @@ case "$choice" in
     fi
     ;;
   *)
-    if [[ "$choice" == *":::"* ]]; then
-      ssid="${choice##*:::}"
+    if [[ "$choice" == *$'\t'* ]]; then
+      ssid="${choice##*$'\t'}"
     else
       ssid="$(echo "$choice" | sed -E 's/^[^[:alnum:]]+//')"
     fi
     [[ -z "$ssid" ]] && exit 0
 
-    # Try connect without password prompt
-    if connect_without_prompt "$ssid"; then
+    # OJO: no usar `if fn; then…fi` + `rc=$?` — un if fallido sin else deja $?=0
+    # y el return 10 ("necesita clave") se perdía: red nueva protegida nunca
+    # llegaba al prompt de password.
+    rc=0
+    connect_without_prompt "$ssid" || rc=$?
+    if [[ $rc -eq 0 ]]; then
       notify "Connected" "$ssid"
-      log "Connected to '$ssid' without prompting for password."
       exit 0
     fi
-
-    rc=$?
     if [[ $rc -ne 10 ]]; then
       notify "Wi‑Fi error" "Failed to connect to $ssid"
-      log "Failed to connect to '$ssid' (rc=$rc)."
       exit 1
     fi
 
@@ -248,5 +213,3 @@ case "$choice" in
     notify "Connected" "$ssid"
     ;;
 esac
-
-log "Done."
