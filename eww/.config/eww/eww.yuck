@@ -51,8 +51,8 @@
 
 (defpoll mpris_meta
   :interval "2s"
-  :initial '{"title":"Nada sonando","artist":"","status":"stopped","player":""}'
-  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"{\\\"title\\\":\\\"Nada sonando\\\",\\\"artist\\\":\\\"\\\",\\\"status\\\":\\\"stopped\\\",\\\"player\\\":\\\"\\\"}\" && exit 0; T=$(playerctl --player=\"$P\" metadata --format \"{{title}}\" 2>/dev/null); A=$(playerctl --player=\"$P\" metadata --format \"{{artist}}\" 2>/dev/null); S=$(playerctl --player=\"$P\" status 2>/dev/null | tr A-Z a-z); jq -n --arg t \"$T\" --arg a \"$A\" --arg s \"$S\" --arg p \"$P\" \"{title:\\$t,artist:\\$a,status:\\$s,player:\\$p}\"'")
+  :initial '{"title":"Nada sonando","artist":"","album":"","player":"","shuffle":"Off","loop":"None"}'
+  "$HOME/.config/eww/scripts/media-meta.sh")
 
 (defpoll mpris_art
   :interval "3s"
@@ -179,16 +179,27 @@
                :show-truncated true
                :halign "start"
                :visible {media_tick.lyric != ""})
-        ;; tiempos: se ocultan si no hay duración (streams de radio)
-        (label :class "media-time"
-               :text "${media_tick.elapsed} / ${media_tick.total}"
-               :halign "start"
-               :visible {media_tick.total != ""})))
+        ;; tiempos + de qué player sale el audio (el poll cae al primero
+        ;; disponible si no hay Spotify, así que no siempre es obvio)
+        (box :orientation "h" :space-evenly false :spacing 10
+          (label :class "media-time"
+                 :text "${media_tick.elapsed} / ${media_tick.total}"
+                 :halign "start"
+                 :visible {media_tick.total != ""})
+          (label :class "media-player"
+                 :text "▸ ${mpris_meta.player}"
+                 :halign "start"
+                 :visible {mpris_meta.player != ""}))))
     (box :class "media-controls"
          :orientation "h"
          :space-evenly false
          :halign "center"
-         :spacing 22
+         :spacing 18
+      ;; shuffle: On | Off
+      (button :class {mpris_meta.shuffle == "On" ? "media-btn media-btn-on" : "media-btn"}
+              :onclick "playerctl --player='${mpris_meta.player}' shuffle toggle"
+              :tooltip {mpris_meta.shuffle == "On" ? "Aleatorio activado" : "Aleatorio desactivado"}
+        (label :text "󰒟"))
       (button :class "media-btn"
               :onclick "playerctl --player='${mpris_meta.player}' previous"
         (label :text "󰒮"))
@@ -197,7 +208,15 @@
         (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
       (button :class "media-btn"
               :onclick "playerctl --player='${mpris_meta.player}' next"
-        (label :text "󰒭")))))
+        (label :text "󰒭"))
+      ;; loop: None → Track → Playlist → None. El ícono distingue repetir-una de
+      ;; repetir-todo, información que se perdería con un solo glifo.
+      (button :class {mpris_meta.loop != "None" ? "media-btn media-btn-on" : "media-btn"}
+              :onclick "playerctl --player='${mpris_meta.player}' loop ${mpris_meta.loop == 'None' ? 'Track' : mpris_meta.loop == 'Track' ? 'Playlist' : 'None'}"
+              :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
+                         : mpris_meta.loop == "Playlist" ? "Repetir la lista"
+                         : "Sin repetición"}
+        (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"})))))
 
 
 ;; ── Stats con circular progress ───────────────────────────────────────────────

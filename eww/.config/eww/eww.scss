@@ -263,6 +263,20 @@ window {
 .media-btn:hover label {
   color: $cyan;
 }
+
+// shuffle/repeat activos. Va DESPUÉS de `.media-btn label` a propósito: las dos
+// reglas tienen la misma especificidad (clase + elemento), así que gana la última
+// del archivo. Puesta antes, el gris de .media-btn label la pisaba.
+.media-btn-on label {
+  color: $cyan;
+}
+
+// De qué player sale el audio
+.media-player {
+  color: $fg-dim;
+  font-size: 11px;
+}
+
 // play/pause: ícono destacado en cyan, un poco más grande
 .media-btn-play label {
   color: $cyan;
