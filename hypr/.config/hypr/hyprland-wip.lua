@@ -14,3 +14,4 @@
 require("configs.environments")
 require("configs.monitors")
 require("configs.settings")
+require("configs.autostart")
