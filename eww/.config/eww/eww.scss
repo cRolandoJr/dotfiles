@@ -184,8 +184,8 @@ window {
   border-radius: 6px;
 }
 
-// ── Media card ────────────────────────────────────────────────────────────────
-.media-card {
+// ── Media band (al pie, cruzando las dos columnas) ────────────────────────────
+.media-band {
   min-height: 150px;
 }
 
@@ -281,6 +281,12 @@ window {
 }
 .circ-label {
   color: $fg-dim;
+  font-size: 10px;
+}
+
+// El dato que el porcentaje no responde: temperatura, GiB libres, watts.
+.circ-extra {
+  color: $cyan;
   font-size: 10px;
 }
 

@@ -40,8 +40,9 @@
 
 (defpoll battery
   :interval "30s"
-  :initial '{"capacity":"0","status":"unknown"}'
-  "jq -n --arg c \"$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo 0)\" --arg s \"$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo unknown)\" '{capacity: $c, status: $s}'")
+  :initial '{"capacity":"0","status":"unknown","power_uw":"0"}'
+  ;; power_now viene en µW; se convierte a W en el widget. Es 0 cuando está a la red.
+  "jq -n --arg c \"$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo 0)\" --arg s \"$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo unknown)\" --arg w \"$(cat /sys/class/power_supply/BAT0/power_now 2>/dev/null || echo 0)\" '{capacity: $c, status: $s, power_uw: $w}'")
 
 (defpoll dnd_active
   :interval "5s"
@@ -112,10 +113,9 @@
 
 ;; ── Media (MPRIS / Spotify) ───────────────────────────────────────────────────
 
-(defwidget media-card []
-  (box :class "card media-card"
+(defwidget media-band []
+  (box :class "card media-band"
        :orientation "v"
-       :vexpand true          ;; absorbe el sobrante: iguala la altura de las 2 columnas
        :space-evenly false
        :spacing 8
        :hexpand true
@@ -169,47 +169,50 @@
 
 ;; ── Stats con circular progress ───────────────────────────────────────────────
 
-(defwidget circ-stat [value label icon cls]
+(defwidget circ-stat [value label icon cls extra]
   (box :class "circ-stat-wrap"
-       :orientation "v"
+       :orientation "h"
        :space-evenly false
-       :spacing 4
+       :spacing 10
        :hexpand true
-       :halign "center"
     (circular-progress
       :value value
       :class "circ ${cls}"
       :thickness 6
-      :width 60
-      :height 60
+      :width 54
+      :height 54
+      :valign "center"
       (label :class "circ-icon" :text icon))
-    (box :orientation "v" :space-evenly false :spacing 2
-      (label :class "circ-value" :text "${value}%" :halign "center")
-      (label :class "circ-label" :text label :halign "center"))))
+    (box :orientation "v" :space-evenly false :spacing 1 :valign "center"
+      (label :class "circ-value" :text "${value}%" :halign "start")
+      (label :class "circ-label" :text label :halign "start")
+      (label :class "circ-extra" :text extra :halign "start"))))
 
 (defwidget circ-stat-ram []
   (eventbox :cursor "pointer"
-            :onclick "eww update ram_mode=${ram_mode == 'pct' ? 'gib' : 'pct'}"
+            :onclick "eww update ram_mode=${ram_mode == 'gib' ? 'swap' : 'gib'}"
     (box :class "circ-stat-wrap"
-         :orientation "v"
+         :orientation "h"
          :space-evenly false
-         :spacing 4
+         :spacing 10
          :hexpand true
-         :halign "center"
       (circular-progress
         :value {EWW_RAM.used_mem_perc}
         :class "circ circ-ram"
         :thickness 6
-        :width 60
-        :height 60
+        :width 54
+        :height 54
+        :valign "center"
         (label :class "circ-icon" :text "󰘚"))
-      (box :orientation "v" :space-evenly false :spacing 2
-        (label :class "circ-value"
-               :text {ram_mode == "pct"
-                       ? "${round(EWW_RAM.used_mem_perc, 0)}%"
-                       : "${round(EWW_RAM.used_mem / 1073741824, 1)}G"}
-               :halign "center")
-        (label :class "circ-label" :text "RAM" :halign "center")))))
+      (box :orientation "v" :space-evenly false :spacing 1 :valign "center"
+        (label :class "circ-value" :text "${round(EWW_RAM.used_mem_perc, 0)}%" :halign "start")
+        (label :class "circ-label" :text "RAM" :halign "start")
+        ;; click alterna GiB usado/total ↔ swap: el % no dice cuánto queda
+        (label :class "circ-extra"
+               :text {ram_mode == "swap"
+                       ? "swap ${round((EWW_RAM.total_swap - EWW_RAM.free_swap) / 1073741824, 1)} / ${round(EWW_RAM.total_swap / 1073741824, 0)} GiB"
+                       : "${round(EWW_RAM.used_mem / 1073741824, 1)} / ${round(EWW_RAM.total_mem / 1073741824, 1)} GiB"}
+               :halign "start")))))
 
 (defwidget stats-card []
   (box :class "card stats-card"
@@ -217,14 +220,16 @@
        :space-evenly false
        :spacing 8
        :hexpand true
-    (box :orientation "h"
-         :space-evenly true
-         :spacing 8
+    ;; 2x2 en vez de 4 en fila: cada celda gana ancho para un dato que el
+    ;; porcentaje no responde, y la card gana el alto que balancea la columna.
+    (box :orientation "h" :space-evenly true :spacing 8
       (circ-stat :value {round(EWW_CPU.avg, 0)}
                  :label "CPU"
                  :icon "󰻠"
-                 :cls "circ-cpu")
-      (circ-stat-ram)
+                 :cls "circ-cpu"
+                 :extra "${round(EWW_TEMPS.K10TEMP_TCTL, 1)}°C")
+      (circ-stat-ram))
+    (box :orientation "h" :space-evenly true :spacing 8
       (circ-stat :value {battery.capacity}
                  :label {battery.status == "Charging" ? "Cargando"
                           : battery.status == "Full" ? "Llena"
@@ -234,11 +239,16 @@
                          : "󰁹"}
                  :cls {battery.capacity < "20" ? "circ-bat-crit"
                         : battery.status == "Charging" ? "circ-bat-ok"
-                        : "circ-bat"})
+                        : "circ-bat"}
+                 ;; los watts solo informan cuando descarga; a la red son 0 fijo
+                 :extra {battery.status == "Discharging"
+                          ? "${round(battery.power_uw / 1000000, 1)} W"
+                          : "enchufado"})
       (circ-stat :value {round(EWW_DISK["/"].used_perc, 0)}
                  :label "Disco"
                  :icon "󰋊"
-                 :cls "circ-disk"))))
+                 :cls "circ-disk"
+                 :extra "${round(EWW_DISK["/"].free / 1073741824, 0)} GiB libres"))))
 
 
 ;; ── Network ───────────────────────────────────────────────────────────────────
@@ -406,26 +416,31 @@
 
 (defwidget hub-content []
   (box :class "hub-root"
-       :orientation "h"
+       :orientation "v"
        :space-evenly false
        :spacing 10
-    ;; ── Col izquierda: info ──────────────────────────────────────────────
-    (box :class "hub-col-left"
-         :orientation "v"
+    ;; ── Arriba: las dos columnas ─────────────────────────────────────────
+    (box :orientation "h"
          :space-evenly false
-         :spacing 8
-      (calendar-card)
-      (media-card)
-      (stats-card))
-    ;; ── Col derecha: controles ───────────────────────────────────────────
-    (box :class "hub-col-right"
-         :orientation "v"
-         :space-evenly false
-         :spacing 8
-      (header-card)
-      (network-card)
-      (power-card)
-      (sliders-card))))
+         :spacing 10
+      ;; Col izquierda: info
+      (box :class "hub-col-left"
+           :orientation "v"
+           :space-evenly false
+           :spacing 8
+        (calendar-card)
+        (stats-card))
+      ;; Col derecha: controles
+      (box :class "hub-col-right"
+           :orientation "v"
+           :space-evenly false
+           :spacing 8
+        (header-card)
+        (network-card)
+        (power-card)
+        (sliders-card)))
+    ;; ── Al pie: el reproductor, cruzando todo el ancho ───────────────────
+    (media-band)))
 
 
 (defwindow hub
@@ -433,7 +448,7 @@
   :geometry (geometry :x "5px"
                       :y "20px"
                       :width "820px"
-                      :height "620px"
+                      :height "800px"
                       :anchor "bottom right")
   :stacking "fg"
   :focusable true
