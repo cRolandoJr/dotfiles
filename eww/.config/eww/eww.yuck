@@ -145,7 +145,7 @@
       (eventbox :class "media-art-click"
                 :cursor "pointer"
                 :valign "center"
-                :onclick "hyprctl dispatch focuswindow class:^([Ss]potify)$ >/dev/null 2>&1 || true"
+                :onclick "hyprctl dispatch 'hl.dsp.focus({ window = \"class:spotify\" })' >/dev/null 2>&1 || true"
         (circular-progress :class "media-ring"
                            :value {media_tick.pct}
                            :thickness 4
@@ -408,7 +408,7 @@
          :spacing 8
       (power-btn :icon "󰌾" :label "Lock"     :cls ""            :cmd "loginctl lock-session")
       (power-btn :icon "󰒲" :label "Suspend"  :cls ""            :cmd "systemctl suspend")
-      (power-btn :icon "󰈲" :label "Logout"   :cls ""            :cmd "hyprctl dispatch exit"))
+      (power-btn :icon "󰈲" :label "Logout"   :cls ""            :cmd "hyprctl dispatch 'hl.dsp.exit()'"))
     (box :orientation "h"
          :space-evenly true
          :spacing 8

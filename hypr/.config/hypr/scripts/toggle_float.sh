@@ -4,9 +4,9 @@
 is_floating=$(hyprctl activewindow -j | jq '.floating')
 
 if [ "$is_floating" == "false" ]; then
-    hyprctl dispatch togglefloating
-    hyprctl dispatch resizeactive exact 1450 800
-    hyprctl dispatch centerwindow
+    hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })'
+    hyprctl dispatch 'hl.dsp.window.resize({ x = 1450, y = 800 })'
+    hyprctl dispatch 'hl.dsp.window.center()'
 else
-    hyprctl dispatch togglefloating
+    hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })'
 fi
