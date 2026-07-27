@@ -285,7 +285,7 @@
        :hexpand true
     ;; 2x2 en vez de 4 en fila: cada celda gana ancho para un dato que el
     ;; porcentaje no responde, y la card gana el alto que balancea la columna.
-    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
+    (box :orientation "h" :space-evenly true :spacing 8
       (circ-stat :value {round(EWW_CPU.avg, 0)}
                  :label "CPU"
                  :icon "󰻠"
@@ -294,7 +294,7 @@
       (circ-stat-ram))
     ;; GPU dedicada (RX 6500M) y red. Con GPU híbrida muxless saber CUÁL de las
     ;; dos trabaja no estaba en ningún lado del sistema.
-    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
+    (box :orientation "h" :space-evenly true :spacing 8
       (circ-stat :value {gpu.busy}
                  :label "GPU"
                  :icon "󰢮"
@@ -309,7 +309,7 @@
                  :extra {EWW_NET.wlo1.NET_DOWN > 1048576
                           ? "${round(EWW_NET.wlo1.NET_DOWN / 1048576, 1)} MiB/s ↓"
                           : "${round(EWW_NET.wlo1.NET_DOWN / 1024, 0)} KiB/s ↓"}))
-    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
+    (box :orientation "h" :space-evenly true :spacing 8
       (circ-stat :value {battery.capacity}
                  :label {battery.status == "Charging" ? "Cargando"
                           : battery.status == "Full" ? "Llena"
