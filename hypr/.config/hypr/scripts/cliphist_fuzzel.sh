@@ -62,8 +62,11 @@ build_menu() {
     ((count++)) || true
     ((count > MAX_ITEMS)) && break
 
-    id="${line%% *}"
-    rest="${line#"$id"}"; rest="${rest# }"
+    # cliphist list separa id y contenido con TAB (no espacio). Cortar en espacio rompía el id
+    # cuando el contenido no tenía espacio temprano (y el tr -cd 0-9 de abajo pegaba los dígitos
+    # del contenido al id → decode "not found" → no copiaba). Cortamos por TAB.
+    id="${line%%$'\t'*}"
+    rest="${line#*$'\t'}"
 
     if is_image_line "$line"; then
       thumb="${CACHE_DIR}/${id}.png"
@@ -110,7 +113,11 @@ have rofi     || die "Missing dependency: rofi"
 
 sel="$(
   build_menu | rofi -dmenu -i -show-icons -p "$ROFI_PROMPT" -theme "$ROFI_THEME"
-)" || exit 0
+)" || true
+# Ojo: build_menu corta en MAX_ITEMS con un break → cliphist list recibe SIGPIPE y, con
+# 'set -o pipefail', la pipeline da != 0. Un '|| exit 0' salía ANTES del wl-copy (recall roto
+# con >250 entradas). '|| true' absorbe ese SIGPIPE; salimos solo si NO hubo selección real.
+[[ -n "$sel" ]] || exit 0
 
 # Extraer id:
 # - Imágenes: "  :::123" => 123
