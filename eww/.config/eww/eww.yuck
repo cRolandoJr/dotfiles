@@ -51,7 +51,7 @@
 
 (defpoll mpris_meta
   :interval "2s"
-  :initial '{"title":"Nada sonando","artist":"","album":"","player":"","shuffle":"Off","loop":"None"}'
+  :initial '{"title":"Nada sonando","artist":"","album":"","player":"","shuffle":"Off","loop":"None","volume":0}'
   "$HOME/.config/eww/scripts/media-meta.sh")
 
 (defpoll mpris_art
@@ -67,7 +67,7 @@
 
 (defpoll media_tick
   :interval "500ms"
-  :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","lyric":""}'
+  :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","lyric":"","lyric_prev":"","lyric_next":""}'
   "$HOME/.config/eww/scripts/media-tick.sh")
 
 (defvar ram_mode "pct")
@@ -129,108 +129,152 @@
   ;; flotando sobre el escritorio.
   (box :class "card media-band"
     (overlay
+      ;; primer hijo del overlay = el fondo (el ecualizador)
       (eq-row)
       (box :orientation "v"
            :space-evenly false
-           :spacing 8
+           :spacing 4
            :hexpand true
+
+        ;; ── Fila 1: portada | info | controles ────────────────────────────
         (box :orientation "h"
-         :space-evenly false
-         :spacing 10
-      ;; La portada va DENTRO del anillo de progreso: reemplaza la barra recta y
-      ;; libera la línea de abajo para las lyrics (Fase 5). GTK recorta la imagen
-      ;; en círculo, así que no hay esquinas cuadradas chocando con el trazo.
-      ;; Sin :start-at — probados 0, 25, 50 y 75 y el arco arranca en el mismo
-      ;; punto en los cuatro, así que el parámetro no controla lo que promete acá.
-      (eventbox :class "media-art-click"
-                :cursor "pointer"
-                :valign "center"
-                :onclick "hyprctl dispatch 'hl.dsp.focus({ window = \"class:spotify\" })' >/dev/null 2>&1 || true"
-        (circular-progress :class "media-ring"
-                           :value {media_tick.pct}
-                           :thickness 4
-                           :width 128
-                           :height 128
-          (box :class "media-art-box"
-               :halign "center"
+             :space-evenly false
+             :spacing 12
+
+          ;; La portada va DENTRO del anillo de progreso: reemplaza la barra
+          ;; recta y libera la franja de abajo para la letra. GTK recorta la
+          ;; imagen en círculo, así que no hay esquinas contra el trazo.
+          ;; Sin :start-at — probados 0, 25, 50 y 75 y el arco arranca igual.
+          (eventbox :class "media-art-click"
+                    :cursor "pointer"
+                    :valign "center"
+                    :onclick "hyprctl dispatch 'hl.dsp.focus({ window = \"class:spotify\" })' >/dev/null 2>&1 || true"
+            (circular-progress :class "media-ring"
+                               :value {media_tick.pct}
+                               :thickness 4
+                               :width 128
+                               :height 128
+              (box :class "media-art-box" :halign "center" :valign "center"
+                (image :class "media-art"
+                       :path mpris_art
+                       :image-width 104
+                       :image-height 104
+                       :visible {mpris_art != ""})
+                (label :class "media-art-empty"
+                       :text "󰎈"
+                       :visible {mpris_art == ""}))))
+
+          (box :orientation "v"
+               :space-evenly false
+               :spacing 5
+               :hexpand true
                :valign "center"
-            (image :class "media-art"
-                   :path mpris_art
-                   :image-width 104
-                   :image-height 104
-                   :visible {mpris_art != ""})
-            (label :class "media-art-empty"
-                   :text "󰎈"
-                   :visible {mpris_art == ""}))))
-      (box :orientation "v"
-           :space-evenly false
-           :spacing 6
-           :hexpand true
-           :valign "center"
-        (label :class "media-title"
-               :text {mpris_meta.title}
-               :wrap true
-               :limit-width 42
-               :lines 2
-               :halign "start")
-        (label :class "media-artist"
-               :text {mpris_meta.artist}
-               :limit-width 48
-               :show-truncated true
-               :halign "start")
-        (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
-               :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"}
-               :halign "start")
-        ;; lyric sincronizada: se oculta sola si la canción no tiene letra con
-        ;; timestamps, es instrumental o no está en lrclib
-        (label :class "media-lyric"
-               :text {media_tick.lyric}
-               :limit-width 54
-               :show-truncated true
-               :halign "start"
-               :visible {media_tick.lyric != ""})
-        ;; tiempos + de qué player sale el audio (el poll cae al primero
-        ;; disponible si no hay Spotify, así que no siempre es obvio)
-        (box :orientation "h" :space-evenly false :spacing 10
-          (label :class "media-time"
-                 :text "${media_tick.elapsed} / ${media_tick.total}"
-                 :halign "start"
-                 :visible {media_tick.total != ""})
-          (label :class "media-player"
-                 :text "▸ ${mpris_meta.player}"
-                 :halign "start"
-                 :visible {mpris_meta.player != ""})))
-      (box :class "media-controls"
-           :orientation "h"
-           :space-evenly false
-           :valign "center"
-           :spacing 14
-        ;; shuffle: On | Off
-        (button :class {mpris_meta.shuffle == "On" ? "media-btn media-btn-on" : "media-btn"}
-                :onclick "playerctl --player='${mpris_meta.player}' shuffle toggle"
-                :tooltip {mpris_meta.shuffle == "On" ? "Aleatorio activado" : "Aleatorio desactivado"}
-          (label :text "󰒟"))
-        (button :class "media-btn"
-                :onclick "playerctl --player='${mpris_meta.player}' previous"
-          (label :text "󰒮"))
-        (button :class "media-btn media-btn-play"
-                :onclick "playerctl --player='${mpris_meta.player}' play-pause"
-          (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
-        (button :class "media-btn"
-                :onclick "playerctl --player='${mpris_meta.player}' next"
-          (label :text "󰒭"))
-        ;; loop: None → Track → Playlist → None. El ícono distingue repetir-una de
-        ;; repetir-todo, información que se perdería con un solo glifo.
-        (button :class {mpris_meta.loop != "None" ? "media-btn media-btn-on" : "media-btn"}
-                :onclick "playerctl --player='${mpris_meta.player}' loop ${mpris_meta.loop == 'None' ? 'Track' : mpris_meta.loop == 'Track' ? 'Playlist' : 'None'}"
-                :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
-                           : mpris_meta.loop == "Playlist" ? "Repetir la lista"
-                           : "Sin repetición"}
-          (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"}))))
-      ))))
+            (label :class "media-title"
+                   :text {mpris_meta.title}
+                   :wrap true
+                   :limit-width 38
+                   :lines 2
+                   :halign "start")
+            ;; artista · álbum. El álbum se oculta en singles, donde repetiría
+            ;; el título.
+            (box :orientation "h" :space-evenly false :spacing 6
+              (label :class "media-artist"
+                     :text {mpris_meta.artist}
+                     :limit-width 26
+                     :show-truncated true
+                     :halign "start")
+              (label :class "media-album"
+                     :text "· ${mpris_meta.album}"
+                     :limit-width 24
+                     :show-truncated true
+                     :halign "start"
+                     :visible {mpris_meta.album != "" && mpris_meta.album != mpris_meta.title}))
+            (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
+                   :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"}
+                   :halign "start")
+            ;; tiempos, lo que falta, y de qué player sale el audio (el poll cae
+            ;; al primero disponible si no hay Spotify, así que no es obvio)
+            (box :orientation "h" :space-evenly false :spacing 8
+              (label :class "media-time"
+                     :text "${media_tick.elapsed} / ${media_tick.total}"
+                     :visible {media_tick.total != ""})
+              (label :class "media-remaining"
+                     :text {media_tick.remaining}
+                     :visible {media_tick.remaining != ""})
+              (label :class "media-player"
+                     :text "· ${mpris_meta.player}"
+                     :visible {mpris_meta.player != ""})))
 
+          ;; controles + volumen del player, a la derecha
+          (box :orientation "v"
+               :space-evenly false
+               :spacing 8
+               :valign "center"
+            (box :class "media-controls"
+                 :orientation "h"
+                 :space-evenly false
+                 :halign "end"
+                 :spacing 14
+              (button :class {mpris_meta.shuffle == "On" ? "media-btn media-btn-on" : "media-btn"}
+                      :onclick "playerctl --player='${mpris_meta.player}' shuffle toggle"
+                      :tooltip {mpris_meta.shuffle == "On" ? "Aleatorio activado" : "Aleatorio desactivado"}
+                (label :text "󰒟"))
+              (button :class "media-btn"
+                      :onclick "playerctl --player='${mpris_meta.player}' previous"
+                (label :text "󰒮"))
+              (button :class "media-btn media-btn-play"
+                      :onclick "playerctl --player='${mpris_meta.player}' play-pause"
+                (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
+              (button :class "media-btn"
+                      :onclick "playerctl --player='${mpris_meta.player}' next"
+                (label :text "󰒭"))
+              ;; loop: None → Track → Playlist → None. El ícono distingue
+              ;; repetir-una de repetir-todo, que un glifo único perdería.
+              (button :class {mpris_meta.loop != "None" ? "media-btn media-btn-on" : "media-btn"}
+                      :onclick "playerctl --player='${mpris_meta.player}' loop ${mpris_meta.loop == 'None' ? 'Track' : mpris_meta.loop == 'Track' ? 'Playlist' : 'None'}"
+                      :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
+                                 : mpris_meta.loop == "Playlist" ? "Repetir la lista"
+                                 : "Sin repetición"}
+                (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"})))
+            ;; volumen DEL PLAYER, distinto del volumen del sistema de arriba.
+            ;; playerctl toma 0.0-1.0 y el slider da 0-100, de ahí el awk.
+            (box :class "media-vol-box"
+                 :orientation "h"
+                 :space-evenly false
+                 :spacing 6
+                 :halign "end"
+              (label :class "media-vol-icon" :text {mpris_meta.volume < 5 ? "󰸈" : "󰕾"})
+              (scale :class "media-vol"
+                     :min 0 :max 100
+                     :value {mpris_meta.volume}
+                     :onchange "playerctl --player='${mpris_meta.player}' volume $(awk \"BEGIN{print {}/100}\")"))))
 
-;; ── Stats con circular progress ───────────────────────────────────────────────
+        ;; ── Fila 2: la letra, a lo ancho ──────────────────────────────────
+        ;; Tres líneas: de dónde viene, la que suena, y la que sigue. Llena la
+        ;; franja que la info sola dejaba vacía. Se oculta completa si la
+        ;; canción no tiene letra sincronizada.
+        (box :class "media-lyrics"
+             :orientation "v"
+             :space-evenly false
+             :spacing 1
+             :halign "center"
+             :visible {media_tick.lyric != "" || media_tick.lyric_next != ""}
+          (label :class "media-lyric-side"
+                 :text {media_tick.lyric_prev}
+                 :limit-width 74
+                 :show-truncated true
+                 :visible {media_tick.lyric_prev != ""})
+          (label :class "media-lyric-now"
+                 :text {media_tick.lyric}
+                 :limit-width 74
+                 :show-truncated true
+                 :visible {media_tick.lyric != ""})
+          (label :class "media-lyric-side"
+                 :text {media_tick.lyric_next}
+                 :limit-width 74
+                 :show-truncated true
+                 :visible {media_tick.lyric_next != ""}))))))
+
 
 (defwidget circ-stat [value label icon cls extra]
   (box :class "circ-stat-wrap"

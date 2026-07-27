@@ -13,7 +13,7 @@
 
 set -uo pipefail
 
-VACIO='{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","lyric":""}'
+VACIO='{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","lyric":"","lyric_prev":"","lyric_next":""}'
 
 P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1)
 [ -z "$P" ] && P=$(playerctl --list-all 2>/dev/null | head -1)
@@ -46,18 +46,23 @@ if [ "$len" -gt 0 ]; then
   pct=$((pos * 100 / len))
   elapsed=$(printf '%d:%02d' $((pos / 60)) $((pos % 60)))
   total=$(printf '%d:%02d' $((len / 60)) $((len % 60)))
+  rem=$((len - pos))
+  remaining=$(printf -- '-%d:%02d' $((rem / 60)) $((rem % 60)))
 else
   # streams de radio: sin duración. Anillo quieto y tiempos ocultos en vez de
   # saltar a valores raros.
   pct=0
   elapsed=""
   total=""
+  remaining=""
 fi
 
 # ── Lyrics sincronizadas ──────────────────────────────────────────────────────
 # La línea se DERIVA de la posición, por eso vive en este tick y no en un poll
 # aparte: pedirlas por separado significaría consultar dos veces lo mismo.
 lyric=""
+lyric_prev=""
+lyric_next=""
 IFS='|' read -r ART TIT < <(
   playerctl --player="$P" metadata --format '{{artist}}|{{title}}' 2>/dev/null
 )
@@ -75,17 +80,25 @@ if [ -n "${ART:-}" ] && [ -n "${TIT:-}" ]; then
     INSTRUMENTAL) lyric="♪ instrumental" ;;
     PLAIN | NONE) lyric="" ;;
     *)
-      # última línea cuyo timestamp sea <= pos. Sin grep/awk por línea: el
-      # while corre en el mismo bash, así que son 0 subprocesos.
+      # Tres líneas de contexto: la anterior, la que suena y la que viene.
+      # Las líneas sin texto (solo timestamp, los silencios del .lrc) se saltan,
+      # si no el contexto quedaría con huecos vacíos.
+      # Todo en el mismo bash: 0 subprocesos por línea.
       while IFS= read -r l; do
         case "$l" in
         \[[0-9]*)
           mm=${l:1:2}
           ss=${l:4:2}
           t=$((10#$mm * 60 + 10#$ss))
-          [ "$t" -le "$pos" ] || break
           txt=${l#*] }
-          [ -n "$txt" ] && [ "$txt" != "$l" ] && lyric="$txt"
+          [ -z "$txt" ] || [ "$txt" = "$l" ] && continue
+          if [ "$t" -le "$pos" ]; then
+            lyric_prev="$lyric"
+            lyric="$txt"
+          else
+            lyric_next="$txt"
+            break
+          fi
           ;;
         esac
       done <"$LRC"
@@ -94,6 +107,8 @@ if [ -n "${ART:-}" ] && [ -n "${TIT:-}" ]; then
   fi
 fi
 
-jq -n --arg s "$ST" --argjson p "$pos" --argjson pc "$pct" \
-  --arg e "$elapsed" --arg t "$total" --arg l "$lyric" \
-  '{status:$s,position:$p,pct:$pc,elapsed:$e,total:$t,lyric:$l}'
+jq -c -n --arg s "$ST" --argjson p "$pos" --argjson pc "$pct" \
+  --arg e "$elapsed" --arg t "$total" --arg r "${remaining:-}" \
+  --arg l "$lyric" --arg lp "$lyric_prev" --arg ln "$lyric_next" \
+  '{status:$s,position:$p,pct:$pc,elapsed:$e,total:$t,remaining:$r,
+    lyric:$l,lyric_prev:$lp,lyric_next:$ln}'

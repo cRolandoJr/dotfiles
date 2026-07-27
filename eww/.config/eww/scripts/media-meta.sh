@@ -10,7 +10,7 @@
 
 set -uo pipefail
 
-VACIO='{"title":"Nada sonando","artist":"","album":"","player":"","shuffle":"Off","loop":"None"}'
+VACIO='{"title":"Nada sonando","artist":"","album":"","player":"","shuffle":"Off","loop":"None","volume":0}'
 
 P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1)
 [ -z "$P" ] && P=$(playerctl --list-all 2>/dev/null | head -1)
@@ -31,7 +31,11 @@ IFS='|' read -r T A AL < <(
 SH=$(playerctl --player="$P" shuffle 2>/dev/null)
 # None | Track | Playlist — son TRES estados, no dos
 LP=$(playerctl --player="$P" loop 2>/dev/null)
+# volumen DEL PLAYER (0.0-1.0), independiente del volumen del sistema que ya
+# tiene el hub. Se expone como 0-100 para el slider.
+VOL=$(playerctl --player="$P" volume 2>/dev/null)
 
-jq -n --arg t "$T" --arg a "$A" --arg al "${AL:-}" --arg p "$P" \
-  --arg sh "${SH:-Off}" --arg lp "${LP:-None}" \
-  '{title:$t,artist:$a,album:$al,player:$p,shuffle:$sh,loop:$lp}'
+jq -c -n --arg t "$T" --arg a "$A" --arg al "${AL:-}" --arg p "$P" \
+  --arg sh "${SH:-Off}" --arg lp "${LP:-None}" --arg v "${VOL:-0}" \
+  '{title:$t,artist:$a,album:$al,player:$p,shuffle:$sh,loop:$lp,
+    volume:(($v|tonumber)*100|floor)}'

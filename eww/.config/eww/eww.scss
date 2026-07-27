@@ -213,11 +213,19 @@ window {
   min-height: 104px;
 }
 
-// La línea de la letra que está sonando. Cursiva para que se lea como cita y
-// no se confunda con el artista.
-.media-lyric {
+// Las tres líneas de letra. La actual en cyan y un punto más grande; la anterior
+// y la siguiente atenuadas, para que el ojo caiga en la que suena.
+.media-lyrics {
+  margin-top: 2px;
+}
+.media-lyric-now {
   color: $cyan;
-  font-size: 12px;
+  font-size: 13px;
+  font-style: italic;
+}
+.media-lyric-side {
+  color: rgba($fg, 0.30);
+  font-size: 11px;
   font-style: italic;
 }
 
@@ -225,6 +233,18 @@ window {
 .media-time {
   color: $fg-dim;
   font-size: 11px;
+}
+
+// Lo que falta para que termine — más atenuado que el transcurrido
+.media-remaining {
+  color: rgba($fg, 0.28);
+  font-size: 11px;
+}
+
+// Álbum, al lado del artista. Oculto en singles (repetiría el título).
+.media-album {
+  color: rgba($fg, 0.35);
+  font-size: 12px;
 }
 
 .media-title {
@@ -269,6 +289,42 @@ window {
 // del archivo. Puesta antes, el gris de .media-btn label la pisaba.
 .media-btn-on label {
   color: $cyan;
+}
+
+// Volumen DEL PLAYER, más chico que los sliders del hub para que se lea como
+// control secundario y no compita con el volumen del sistema.
+.media-vol-box {
+  margin-left: 12px;
+}
+.media-vol-icon {
+  color: $fg-dim;
+  font-size: 13px;
+}
+.media-vol {
+  min-width: 78px;
+
+  trough {
+    background-color: rgba($navy, 0.55);
+    background-image: none;
+    border: none;
+    border-radius: 100px;
+    min-height: 4px;
+  }
+  highlight {
+    background-color: $cyan;
+    background-image: none;
+    border-radius: 100px;
+    min-height: 4px;
+  }
+  slider {
+    background-color: $fg-dim;
+    background-image: none;
+    border: none;
+    border-radius: 100px;
+    min-width: 10px;
+    min-height: 10px;
+    margin: -4px;
+  }
 }
 
 // De qué player sale el audio
@@ -552,7 +608,12 @@ tooltip decoration {
 
 .eq-bar {
   min-width: 8px;
-  min-height: 120px;   // el eq es el FONDO de la banda: define su alto
+  // El overlay toma el tamaño de su PRIMER hijo, y ese es el eq-row. O sea que
+  // este min-height define el alto de toda la banda: si es menor que lo que
+  // necesita el contenido, las líneas de letra se recortan sin aviso.
+  // 196 = portada 128 + las 3 líneas de letra + spacings. Con 178 la tercera
+  // línea quedaba cortada por el borde inferior.
+  min-height: 196px;
 
   background-color: transparent;
   background-image: none;
