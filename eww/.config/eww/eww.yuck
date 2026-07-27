@@ -453,20 +453,20 @@
 ;; en cada emisión, o sea 14 widgets GTK destruidos y creados 30 veces por segundo.
 (defwidget eq-row []
   (box :class "eq-row" :orientation "h" :space-evenly true :spacing 3
-    (progress :orientation "v" :value {cava_bars[0]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[1]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[2]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[3]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[4]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[5]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[6]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[7]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[8]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[9]}  :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[10]} :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[11]} :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[12]} :class "eq-bar")
-    (progress :orientation "v" :value {cava_bars[13]} :class "eq-bar")))
+    (progress :orientation "v" :flipped true :value {cava_bars[0]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[1]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[2]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[3]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[4]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[5]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[6]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[7]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[8]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[9]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[10]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[11]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[12]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[13]} :class "eq-bar")))
 
 (defwindow eqtest
   :monitor 0

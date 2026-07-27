@@ -41,9 +41,15 @@ mono_option = average
 noise_reduction = 20
 EOF
 
+# cava se identifica por su config temporal, que es única por invocación. Matarlo
+# por PID no sirve: vive dentro de un `{ cava | while } &`, así que $! es el PID del
+# subshell y cava es un NIETO — al morir el subshell se reparenta a systemd y sigue
+# comiendo CPU. Cazado en vivo el 27-jul-2026 con el player en pausa.
+kill_cava() { pkill -f "cava -p $CFG" 2>/dev/null; }
+
 cleanup() {
+  kill_cava
   [ -n "$CAVA_PID" ] && kill "$CAVA_PID" 2>/dev/null
-  # cava corre dentro de un pipe: matar el grupo para no dejarlo huérfano
   pkill -P $$ 2>/dev/null
   rm -f "$CFG"
 }
@@ -61,11 +67,12 @@ start_cava() {
 }
 
 stop_cava() {
-  [ -z "$CAVA_PID" ] && return
-  kill "$CAVA_PID" 2>/dev/null
-  pkill -P "$CAVA_PID" 2>/dev/null
-  wait "$CAVA_PID" 2>/dev/null
-  CAVA_PID=""
+  kill_cava
+  if [ -n "$CAVA_PID" ]; then
+    kill "$CAVA_PID" 2>/dev/null
+    wait "$CAVA_PID" 2>/dev/null
+    CAVA_PID=""
+  fi
   echo "$ZEROS"
 }
 
