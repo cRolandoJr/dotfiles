@@ -171,6 +171,14 @@
         (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
                :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"}
                :halign "start")
+        ;; lyric sincronizada: se oculta sola si la canción no tiene letra con
+        ;; timestamps, es instrumental o no está en lrclib
+        (label :class "media-lyric"
+               :text {media_tick.lyric}
+               :limit-width 54
+               :show-truncated true
+               :halign "start"
+               :visible {media_tick.lyric != ""})
         ;; tiempos: se ocultan si no hay duración (streams de radio)
         (label :class "media-time"
                :text "${media_tick.elapsed} / ${media_tick.total}"

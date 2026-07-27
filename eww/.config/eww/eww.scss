@@ -213,6 +213,14 @@ window {
   min-height: 104px;
 }
 
+// La línea de la letra que está sonando. Cursiva para que se lea como cita y
+// no se confunda con el artista.
+.media-lyric {
+  color: $cyan;
+  font-size: 12px;
+  font-style: italic;
+}
+
 // Tiempos transcurrido/total, debajo del estado
 .media-time {
   color: $fg-dim;

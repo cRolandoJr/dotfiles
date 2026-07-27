@@ -54,6 +54,46 @@ else
   total=""
 fi
 
+# ── Lyrics sincronizadas ──────────────────────────────────────────────────────
+# La línea se DERIVA de la posición, por eso vive en este tick y no en un poll
+# aparte: pedirlas por separado significaría consultar dos veces lo mismo.
+lyric=""
+IFS='|' read -r ART TIT < <(
+  playerctl --player="$P" metadata --format '{{artist}}|{{title}}' 2>/dev/null
+)
+
+if [ -n "${ART:-}" ] && [ -n "${TIT:-}" ]; then
+  KEY=$(printf '%s|%s' "$ART" "$TIT" | sha1sum | cut -d' ' -f1)
+  LRC="/tmp/eww-lyrics/$KEY.lrc"
+
+  if [ ! -f "$LRC" ]; then
+    # primera vez que vemos esta canción: a bajarla, sin bloquear el tick
+    "$HOME/.config/eww/scripts/lyrics-fetch.sh" "$ART" "$TIT" "$LRC" >/dev/null 2>&1 &
+  else
+    read -r MARK <"$LRC"
+    case "$MARK" in
+    INSTRUMENTAL) lyric="♪ instrumental" ;;
+    PLAIN | NONE) lyric="" ;;
+    *)
+      # última línea cuyo timestamp sea <= pos. Sin grep/awk por línea: el
+      # while corre en el mismo bash, así que son 0 subprocesos.
+      while IFS= read -r l; do
+        case "$l" in
+        \[[0-9]*)
+          mm=${l:1:2}
+          ss=${l:4:2}
+          t=$((10#$mm * 60 + 10#$ss))
+          [ "$t" -le "$pos" ] || break
+          txt=${l#*] }
+          [ -n "$txt" ] && [ "$txt" != "$l" ] && lyric="$txt"
+          ;;
+        esac
+      done <"$LRC"
+      ;;
+    esac
+  fi
+fi
+
 jq -n --arg s "$ST" --argjson p "$pos" --argjson pc "$pct" \
-  --arg e "$elapsed" --arg t "$total" --arg l "" \
+  --arg e "$elapsed" --arg t "$total" --arg l "$lyric" \
   '{status:$s,position:$p,pct:$pc,elapsed:$e,total:$t,lyric:$l}'
