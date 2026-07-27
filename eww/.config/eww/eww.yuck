@@ -216,7 +216,10 @@
               :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
                          : mpris_meta.loop == "Playlist" ? "Repetir la lista"
                          : "Sin repetición"}
-        (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"})))))
+        (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"})))
+    ;; zócalo: el ecualizador. Se oculta solo si no hay nada sonando, y cava
+    ;; ni existe en ese caso (ver scripts/cava-mpris.sh).
+    (eq-row)))
 
 
 ;; ── Stats con circular progress ───────────────────────────────────────────────
@@ -520,7 +523,13 @@
 ;; 14 progress explícitos y NO el `for` de eww: el `for` reconstruye su contenedor
 ;; en cada emisión, o sea 14 widgets GTK destruidos y creados 30 veces por segundo.
 (defwidget eq-row []
-  (box :class "eq-row" :orientation "h" :space-evenly true :spacing 3
+  ;; space-evenly false + halign center: repartidas en los 820px del hub las
+  ;; barras quedaban finas y separadas (GTK no estira el progressbar, mantiene su
+  ;; ancho natural), y se leía como gráfico de barras. Agrupadas al centro sí se
+  ;; lee como ecualizador.
+  (box :class "eq-row" :orientation "h" :space-evenly false :spacing 4
+       :halign "center"
+       :visible {media_tick.status == "playing"}
     (progress :orientation "v" :flipped true :value {cava_bars[0]}  :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[1]}  :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[2]}  :class "eq-bar")
@@ -535,10 +544,3 @@
     (progress :orientation "v" :flipped true :value {cava_bars[11]} :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[12]} :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[13]} :class "eq-bar")))
-
-(defwindow eqtest
-  :monitor 0
-  :geometry (geometry :x "20px" :y "20px" :width "300px" :height "80px" :anchor "top left")
-  :stacking "fg"
-  :namespace "hub"
-  (eq-row))
