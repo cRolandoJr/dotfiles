@@ -10,7 +10,7 @@
 
 set -uo pipefail
 
-BARS=14
+BARS=24
 ZEROS="[$(printf '0,%.0s' $(seq 1 $((BARS - 1))))0]"
 CAVA_PID=""
 

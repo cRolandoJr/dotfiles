@@ -304,7 +304,7 @@ window {
 .circ-disk  { color: $warn; background-color: $warn-dim; }
 
 .circ-icon {
-  font-size: 18px;
+  font-size: 22px;
   color: $fg-dim;
 }
 .circ-value {
@@ -426,11 +426,11 @@ window {
 // ── Sliders modernos ─────────────────────────────────────────────────────────
 // Inspirado en athena-eww: trough grueso, gradient fill, thumb pill
 .sliders-card {
-  padding: 9px 16px;
+  padding: 8px 16px;
 }
 
 .slider-block {
-  padding: 4px 2px;
+  padding: 1px 2px;
 }
 
 .slider-icon-modern {
@@ -541,11 +541,12 @@ tooltip decoration {
 // gradiente de su tema encima de cualquier background-color propio.
 .eq-row {
   padding: 0;
+  margin: 0;
 }
 
 .eq-bar {
-  min-width: 10px;
-  min-height: 22px;
+  min-width: 8px;
+  min-height: 120px;   // el eq es el FONDO de la banda: define su alto
 
   background-color: transparent;
   background-image: none;
@@ -564,10 +565,16 @@ tooltip decoration {
   min-width: 10px;
 }
 
+// Gradiente que se DESVANECE hacia arriba: la barra es sólida abajo y
+// transparente donde empieza el texto, así el ecualizador no compite con el
+// título ni con la portada.
 .eq-bar trough progress {
-  background-color: $cyan;
-  background-image: linear-gradient(to top, $cyan, $blue);
+  background-color: transparent;
+  background-image: linear-gradient(to top,
+                      rgba($cyan, 0.55) 0%,
+                      rgba($blue, 0.28) 45%,
+                      rgba($blue, 0.00) 100%);
   border: none;
-  border-radius: 3px;
-  min-width: 13px;
+  border-radius: 2px;
+  min-width: 8px;
 }

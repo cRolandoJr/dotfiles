@@ -119,12 +119,17 @@
 ;; ── Media (MPRIS / Spotify) ───────────────────────────────────────────────────
 
 (defwidget media-band []
+  ;; El box exterior pinta el fondo de la card: GtkOverlay NO dibuja background
+  ;; propio en GTK3, así que ponerle la clase `card` al overlay dejaba el texto
+  ;; flotando sobre el escritorio.
   (box :class "card media-band"
-       :orientation "v"
-       :space-evenly false
-       :spacing 8
-       :hexpand true
-    (box :orientation "h"
+    (overlay
+      (eq-row)
+      (box :orientation "v"
+           :space-evenly false
+           :spacing 8
+           :hexpand true
+        (box :orientation "h"
          :space-evenly false
          :spacing 10
       ;; La portada va DENTRO del anillo de progreso: reemplaza la barra recta y
@@ -217,9 +222,7 @@
                            : mpris_meta.loop == "Playlist" ? "Repetir la lista"
                            : "Sin repetición"}
           (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"}))))
-    ;; zócalo: el ecualizador. Se oculta solo si no hay nada sonando, y cava
-    ;; ni existe en ese caso (ver scripts/cava-mpris.sh).
-    (eq-row)))
+      ))))
 
 
 ;; ── Stats con circular progress ───────────────────────────────────────────────
@@ -233,9 +236,9 @@
     (circular-progress
       :value value
       :class "circ ${cls}"
-      :thickness 6
-      :width 54
-      :height 54
+      :thickness 7
+      :width 70
+      :height 70
       :valign "center"
       (label :class "circ-icon" :text icon))
     (box :orientation "v" :space-evenly false :spacing 1 :valign "center"
@@ -254,9 +257,9 @@
       (circular-progress
         :value {EWW_RAM.used_mem_perc}
         :class "circ circ-ram"
-        :thickness 6
-        :width 54
-        :height 54
+        :thickness 7
+        :width 70
+        :height 70
         :valign "center"
         (label :class "circ-icon" :text "󰘚"))
       (box :orientation "v" :space-evenly false :spacing 1 :valign "center"
@@ -277,14 +280,14 @@
        :hexpand true
     ;; 2x2 en vez de 4 en fila: cada celda gana ancho para un dato que el
     ;; porcentaje no responde, y la card gana el alto que balancea la columna.
-    (box :orientation "h" :space-evenly true :spacing 8
+    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
       (circ-stat :value {round(EWW_CPU.avg, 0)}
                  :label "CPU"
                  :icon "󰻠"
                  :cls "circ-cpu"
                  :extra "${round(EWW_TEMPS.K10TEMP_TCTL, 1)}°C")
       (circ-stat-ram))
-    (box :orientation "h" :space-evenly true :spacing 8
+    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
       (circ-stat :value {battery.capacity}
                  :label {battery.status == "Charging" ? "Cargando"
                           : battery.status == "Full" ? "Llena"
@@ -398,15 +401,14 @@
 (defwidget sliders-card []
   (box :class "card sliders-card"
        :orientation "v"
-       :vexpand true          ;; absorbe el sobrante: iguala la altura de las 2 columnas
        :space-evenly false
-       :spacing 14
+       :spacing 8
        :hexpand true
     ;; — Brillo —
     (box :class "slider-block"
          :orientation "v"
          :space-evenly false
-         :spacing 4
+         :spacing 2
       (box :orientation "h"
            :space-evenly false
            :spacing 8
@@ -424,7 +426,7 @@
     (box :class "slider-block"
          :orientation "v"
          :space-evenly false
-         :spacing 4
+         :spacing 2
       (box :orientation "h"
            :space-evenly false
            :spacing 8
@@ -482,6 +484,7 @@
       (box :class "hub-col-left"
            :orientation "v"
            :space-evenly false
+           :hexpand true        ;; sin esto las columnas quedan en su ancho natural
            :spacing 8
         (calendar-card)
         (stats-card))
@@ -489,6 +492,7 @@
       (box :class "hub-col-right"
            :orientation "v"
            :space-evenly false
+           :hexpand true        ;; y la banda se veía ~49px más ancha que ellas
            :spacing 8
         (header-card)
         (network-card)
@@ -517,30 +521,37 @@
 ;; ═════════════════════════════════════════════════════════════════════════════
 
 (deflisten cava_bars
-  :initial "[0,0,0,0,0,0,0,0,0,0,0,0,0,0]"
+  :initial "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]"
   "$HOME/.config/eww/scripts/cava-mpris.sh")
 
 ;; 14 progress explícitos y NO el `for` de eww: el `for` reconstruye su contenedor
 ;; en cada emisión, o sea 14 widgets GTK destruidos y creados 30 veces por segundo.
 (defwidget eq-row []
-  ;; space-evenly false + halign center: repartidas en los 820px del hub las
-  ;; barras quedaban finas y separadas (GTK no estira el progressbar, mantiene su
-  ;; ancho natural), y se leía como gráfico de barras. Agrupadas al centro sí se
-  ;; lee como ecualizador.
-  (box :class "eq-row" :orientation "h" :space-evenly false :spacing 4
-       :halign "center"
+  ;; Fondo de la banda: 24 barras a todo el ancho que se desvanecen hacia
+  ;; arriba (ver .eq-bar en el scss). space-evenly reparte el ancho entre las 24.
+  (box :class "eq-row" :orientation "h" :space-evenly true :spacing 2
        :visible {media_tick.status == "playing"}
-    (progress :orientation "v" :flipped true :value {cava_bars[0]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[1]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[2]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[3]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[4]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[5]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[6]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[7]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[8]}  :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[9]}  :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[0]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[1]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[2]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[3]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[4]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[5]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[6]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[7]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[8]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[9]} :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[10]} :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[11]} :class "eq-bar")
     (progress :orientation "v" :flipped true :value {cava_bars[12]} :class "eq-bar")
-    (progress :orientation "v" :flipped true :value {cava_bars[13]} :class "eq-bar")))
+    (progress :orientation "v" :flipped true :value {cava_bars[13]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[14]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[15]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[16]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[17]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[18]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[19]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[20]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[21]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[22]} :class "eq-bar")
+    (progress :orientation "v" :flipped true :value {cava_bars[23]} :class "eq-bar")))
