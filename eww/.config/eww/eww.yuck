@@ -281,7 +281,7 @@
   (box :class "card stats-card"
        :orientation "v"
        :space-evenly false
-       :spacing 8
+       :spacing 4          ;; 2 gaps × 4px: los 8px exactos que sobraban en esta columna
        :hexpand true
     ;; 2x2 en vez de 4 en fila: cada celda gana ancho para un dato que el
     ;; porcentaje no responde, y la card gana el alto que balancea la columna.
