@@ -56,7 +56,8 @@
 (defpoll mpris_art
   :interval "3s"
   :initial ""
-  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); [ -z \"$P\" ] && echo \"\" && exit 0; $HOME/.config/eww/scripts/mpris-art.sh \"$P\" && [ -f /tmp/eww-spotify-art.png ] && echo /tmp/eww-spotify-art.png || echo \"\"'")
+  ;; el script ya emite la ruta (o vacío), así que acá solo hay que elegir el player
+  "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); $HOME/.config/eww/scripts/mpris-art.sh \"$P\"'")
 
 (defvar ram_mode "pct")
 
