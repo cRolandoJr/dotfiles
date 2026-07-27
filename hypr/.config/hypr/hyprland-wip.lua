@@ -11,4 +11,6 @@
 -- Al terminar la migración: renombrar a hyprland.lua y volver a entrar a la sesión.
 -- Rollback: renombrar de vuelta a hyprland-wip.lua y relogin.
 
+require("configs.environments")
+require("configs.monitors")
 require("configs.settings")
