@@ -245,7 +245,7 @@ window {
 }
 
 .media-controls {
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 .media-btn {
@@ -540,12 +540,12 @@ tooltip decoration {
 // la barra crece desde abajo. background-image: none es obligatorio: GTK pinta el
 // gradiente de su tema encima de cualquier background-color propio.
 .eq-row {
-  padding: 2px 2px 0 2px;
+  padding: 0;
 }
 
 .eq-bar {
   min-width: 10px;
-  min-height: 28px;
+  min-height: 22px;
 
   background-color: transparent;
   background-image: none;
@@ -553,12 +553,15 @@ tooltip decoration {
 
 // En GTK3 un progressbar es `progressbar > trough > progress`. Sin apuntar al
 // trough explícitamente queda el gris del tema y las barras se ven como cajas.
+// Trough transparente: con fondo visible los 14 rectángulos vacíos pesaban
+// más que las barras activas y el ecualizador parecía roto cuando cava sacaba
+// valores solo en las frecuencias bajas.
 .eq-bar trough {
-  background-color: rgba($navy, 0.30);
+  background-color: transparent;
   background-image: none;
   border: none;
-  border-radius: 3px;
-  min-width: 13px;
+  border-radius: 2px;
+  min-width: 10px;
 }
 
 .eq-bar trough progress {

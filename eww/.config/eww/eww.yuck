@@ -189,34 +189,34 @@
           (label :class "media-player"
                  :text "▸ ${mpris_meta.player}"
                  :halign "start"
-                 :visible {mpris_meta.player != ""}))))
-    (box :class "media-controls"
-         :orientation "h"
-         :space-evenly false
-         :halign "center"
-         :spacing 18
-      ;; shuffle: On | Off
-      (button :class {mpris_meta.shuffle == "On" ? "media-btn media-btn-on" : "media-btn"}
-              :onclick "playerctl --player='${mpris_meta.player}' shuffle toggle"
-              :tooltip {mpris_meta.shuffle == "On" ? "Aleatorio activado" : "Aleatorio desactivado"}
-        (label :text "󰒟"))
-      (button :class "media-btn"
-              :onclick "playerctl --player='${mpris_meta.player}' previous"
-        (label :text "󰒮"))
-      (button :class "media-btn media-btn-play"
-              :onclick "playerctl --player='${mpris_meta.player}' play-pause"
-        (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
-      (button :class "media-btn"
-              :onclick "playerctl --player='${mpris_meta.player}' next"
-        (label :text "󰒭"))
-      ;; loop: None → Track → Playlist → None. El ícono distingue repetir-una de
-      ;; repetir-todo, información que se perdería con un solo glifo.
-      (button :class {mpris_meta.loop != "None" ? "media-btn media-btn-on" : "media-btn"}
-              :onclick "playerctl --player='${mpris_meta.player}' loop ${mpris_meta.loop == 'None' ? 'Track' : mpris_meta.loop == 'Track' ? 'Playlist' : 'None'}"
-              :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
-                         : mpris_meta.loop == "Playlist" ? "Repetir la lista"
-                         : "Sin repetición"}
-        (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"})))
+                 :visible {mpris_meta.player != ""})))
+      (box :class "media-controls"
+           :orientation "h"
+           :space-evenly false
+           :valign "center"
+           :spacing 14
+        ;; shuffle: On | Off
+        (button :class {mpris_meta.shuffle == "On" ? "media-btn media-btn-on" : "media-btn"}
+                :onclick "playerctl --player='${mpris_meta.player}' shuffle toggle"
+                :tooltip {mpris_meta.shuffle == "On" ? "Aleatorio activado" : "Aleatorio desactivado"}
+          (label :text "󰒟"))
+        (button :class "media-btn"
+                :onclick "playerctl --player='${mpris_meta.player}' previous"
+          (label :text "󰒮"))
+        (button :class "media-btn media-btn-play"
+                :onclick "playerctl --player='${mpris_meta.player}' play-pause"
+          (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
+        (button :class "media-btn"
+                :onclick "playerctl --player='${mpris_meta.player}' next"
+          (label :text "󰒭"))
+        ;; loop: None → Track → Playlist → None. El ícono distingue repetir-una de
+        ;; repetir-todo, información que se perdería con un solo glifo.
+        (button :class {mpris_meta.loop != "None" ? "media-btn media-btn-on" : "media-btn"}
+                :onclick "playerctl --player='${mpris_meta.player}' loop ${mpris_meta.loop == 'None' ? 'Track' : mpris_meta.loop == 'Track' ? 'Playlist' : 'None'}"
+                :tooltip {mpris_meta.loop == "Track" ? "Repetir esta canción"
+                           : mpris_meta.loop == "Playlist" ? "Repetir la lista"
+                           : "Sin repetición"}
+          (label :text {mpris_meta.loop == "Track" ? "󰑘" : "󰑖"}))))
     ;; zócalo: el ecualizador. Se oculta solo si no hay nada sonando, y cava
     ;; ni existe en ese caso (ver scripts/cava-mpris.sh).
     (eq-row)))
