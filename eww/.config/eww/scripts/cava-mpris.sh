@@ -21,6 +21,19 @@ if ! command -v cava >/dev/null 2>&1; then
   exec sleep infinity
 fi
 
+# Una sola instancia: cada `eww reload` arranca un deflisten nuevo pero NO mata
+# el viejo, así que se acumulaban (medido: de 2 a 5 tras un solo reload). El que
+# arranca se encarga de bajar al anterior.
+PIDFILE=/tmp/eww-cava-mpris.pid
+if [ -f "$PIDFILE" ]; then
+  OLD=$(cat "$PIDFILE" 2>/dev/null)
+  if [ -n "$OLD" ] && [ "$OLD" != "$$" ] && kill -0 "$OLD" 2>/dev/null; then
+    pkill -P "$OLD" 2>/dev/null
+    kill "$OLD" 2>/dev/null
+  fi
+fi
+echo $$ >"$PIDFILE"
+
 CFG=$(mktemp /tmp/eww-cava.XXXXXX.conf)
 cat >"$CFG" <<EOF
 [general]
@@ -48,6 +61,8 @@ EOF
 kill_cava() { pkill -f "cava -p $CFG" 2>/dev/null; }
 
 cleanup() {
+  # solo borrar el pidfile si sigue siendo nuestro
+  [ "$(cat "$PIDFILE" 2>/dev/null)" = "$$" ] && rm -f "$PIDFILE"
   kill_cava
   [ -n "$CAVA_PID" ] && kill "$CAVA_PID" 2>/dev/null
   pkill -P $$ 2>/dev/null

@@ -216,7 +216,7 @@ window {
 // Las tres líneas de letra. La actual en cyan y un punto más grande; la anterior
 // y la siguiente atenuadas, para que el ojo caiga en la que suena.
 .media-lyrics {
-  margin-top: 2px;
+  margin-top: -2px;   // sube a ocupar el espacio que dejó la línea de tiempos
 }
 .media-lyric-now {
   color: $cyan;
@@ -611,9 +611,9 @@ tooltip decoration {
   // El overlay toma el tamaño de su PRIMER hijo, y ese es el eq-row. O sea que
   // este min-height define el alto de toda la banda: si es menor que lo que
   // necesita el contenido, las líneas de letra se recortan sin aviso.
-  // 196 = portada 128 + las 3 líneas de letra + spacings. Con 178 la tercera
-  // línea quedaba cortada por el borde inferior.
-  min-height: 196px;
+  // 178 = portada 116 + las 3 líneas de letra + spacings. Al sacar la línea de
+  // tiempos la letra sube y necesita menos alto total.
+  min-height: 178px;
 
   background-color: transparent;
   background-image: none;

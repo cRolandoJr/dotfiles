@@ -149,8 +149,12 @@
                     :cursor "pointer"
                     :valign "center"
                     :onclick "hyprctl dispatch 'hl.dsp.focus({ window = \"class:spotify\" })' >/dev/null 2>&1 || true"
+            ;; Anillo DECORATIVO: value fijo en 100 para que no se redibuje con el
+            ;; progreso. Se queda porque es el que recorta la portada en círculo
+            ;; (GTK aplica el clip del circular-progress a su hijo); sin él la
+            ;; portada vuelve a ser cuadrada.
             (circular-progress :class "media-ring"
-                               :value {media_tick.pct}
+                               :value 100
                                :thickness 4
                                :width 128
                                :height 128
@@ -189,18 +193,12 @@
                      :show-truncated true
                      :halign "start"
                      :visible {mpris_meta.album != "" && mpris_meta.album != mpris_meta.title}))
-            (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
-                   :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"}
-                   :halign "start")
-            ;; tiempos, lo que falta, y de qué player sale el audio (el poll cae
-            ;; al primero disponible si no hay Spotify, así que no es obvio)
+            ;; Estado y de qué player sale el audio (el poll cae al primero
+            ;; disponible si no hay Spotify, así que no siempre es obvio).
+            ;; Sin línea de tiempos: ese espacio se lo queda la letra.
             (box :orientation "h" :space-evenly false :spacing 8
-              (label :class "media-time"
-                     :text "${media_tick.elapsed} / ${media_tick.total}"
-                     :visible {media_tick.total != ""})
-              (label :class "media-remaining"
-                     :text {media_tick.remaining}
-                     :visible {media_tick.remaining != ""})
+              (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
+                     :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"})
               (label :class "media-player"
                      :text "· ${mpris_meta.player}"
                      :visible {mpris_meta.player != ""})))
