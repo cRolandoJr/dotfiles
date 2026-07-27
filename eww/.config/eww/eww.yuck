@@ -60,6 +60,11 @@
   ;; el script ya emite la ruta (o vacío), así que acá solo hay que elegir el player
   "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); $HOME/.config/eww/scripts/mpris-art.sh \"$P\"'")
 
+(defpoll media_tick
+  :interval "500ms"
+  :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","lyric":""}'
+  "$HOME/.config/eww/scripts/media-tick.sh")
+
 (defvar ram_mode "pct")
 
 
@@ -122,16 +127,31 @@
     (box :orientation "h"
          :space-evenly false
          :spacing 10
-      (box :class "media-art-box"
-           :valign "start"
-        (image :class "media-art"
-               :path mpris_art
-               :image-width 116
-               :image-height 116
-               :visible {mpris_art != ""})
-        (label :class "media-art-empty"
-               :text "󰎈"
-               :visible {mpris_art == ""}))
+      ;; La portada va DENTRO del anillo de progreso: reemplaza la barra recta y
+      ;; libera la línea de abajo para las lyrics (Fase 5). GTK recorta la imagen
+      ;; en círculo, así que no hay esquinas cuadradas chocando con el trazo.
+      ;; Sin :start-at — probados 0, 25, 50 y 75 y el arco arranca en el mismo
+      ;; punto en los cuatro, así que el parámetro no controla lo que promete acá.
+      (eventbox :class "media-art-click"
+                :cursor "pointer"
+                :valign "center"
+                :onclick "hyprctl dispatch focuswindow class:^([Ss]potify)$ >/dev/null 2>&1 || true"
+        (circular-progress :class "media-ring"
+                           :value {media_tick.pct}
+                           :thickness 4
+                           :width 128
+                           :height 128
+          (box :class "media-art-box"
+               :halign "center"
+               :valign "center"
+            (image :class "media-art"
+                   :path mpris_art
+                   :image-width 104
+                   :image-height 104
+                   :visible {mpris_art != ""})
+            (label :class "media-art-empty"
+                   :text "󰎈"
+                   :visible {mpris_art == ""}))))
       (box :orientation "v"
            :space-evenly false
            :spacing 6
@@ -140,17 +160,22 @@
         (label :class "media-title"
                :text {mpris_meta.title}
                :wrap true
-               :limit-width 18
+               :limit-width 42
                :lines 2
                :halign "start")
         (label :class "media-artist"
                :text {mpris_meta.artist}
-               :limit-width 22
+               :limit-width 48
                :show-truncated true
                :halign "start")
-        (label :class {mpris_meta.status == "playing" ? "media-status playing" : "media-status"}
-               :text {mpris_meta.status == "playing" ? "● reproduciendo" : "● pausado"}
-               :halign "start")))
+        (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
+               :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"}
+               :halign "start")
+        ;; tiempos: se ocultan si no hay duración (streams de radio)
+        (label :class "media-time"
+               :text "${media_tick.elapsed} / ${media_tick.total}"
+               :halign "start"
+               :visible {media_tick.total != ""})))
     (box :class "media-controls"
          :orientation "h"
          :space-evenly false
@@ -161,7 +186,7 @@
         (label :text "󰒮"))
       (button :class "media-btn media-btn-play"
               :onclick "playerctl --player='${mpris_meta.player}' play-pause"
-        (label :text {mpris_meta.status == "playing" ? "󰏤" : "󰐊"}))
+        (label :text {media_tick.status == "playing" ? "󰏤" : "󰐊"}))
       (button :class "media-btn"
               :onclick "playerctl --player='${mpris_meta.player}' next"
         (label :text "󰒭")))))

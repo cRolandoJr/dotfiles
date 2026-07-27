@@ -189,12 +189,17 @@ window {
   min-height: 150px;
 }
 
+// El anillo de progreso que rodea la portada. Reemplaza a la barra recta.
+.media-ring {
+  color: $cyan;                          // el trazo cumplido
+  background-color: rgba($cyan, 0.18);   // el pendiente: navy al 55% no se veía
+}
+
 .media-art-box {
   background-color: $cyan-soft;
   border-radius: $rad-sm;
-  border: 1px solid $border;
-  min-width: 116px;
-  min-height: 116px;
+  min-width: 104px;
+  min-height: 104px;
 }
 
 .media-art {
@@ -204,8 +209,14 @@ window {
 .media-art-empty {
   color: $fg-dim;
   font-size: 40px;
-  min-width: 116px;
-  min-height: 116px;
+  min-width: 104px;
+  min-height: 104px;
+}
+
+// Tiempos transcurrido/total, debajo del estado
+.media-time {
+  color: $fg-dim;
+  font-size: 11px;
 }
 
 .media-title {
