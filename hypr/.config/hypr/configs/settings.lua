@@ -72,7 +72,7 @@ hl.config({
     misc = {
         force_default_wallpaper = -1,
         disable_hyprland_logo   = false,
-        session_lock_xray       = 1,
+        session_lock_xray       = true,  -- en el .conf era 1; el efectivo ya era bool true
 
         -- Swallow: cuando lanzás `mpv foto.jpg` desde foot, foot desaparece
         -- mientras mpv corre y reaparece al cerrarlo. Layout limpio.

@@ -9,6 +9,12 @@
 --   Hyprland --config ~/.config/hypr/hyprland.lua --verify-config
 --
 -- Provider en uso:  hyprctl systeminfo | grep configProvider
+--
+-- Chequeo estático con el language server (tipos, nombres de campo, globals).
+-- El --configpath es OBLIGATORIO: `--check` NO autodetecta el .luarc.json de al
+-- lado, y sin él tira ~200 falsos "Undefined global hl".
+--   cd ~/.config/hypr && lua-language-server --check "$PWD/configs" \
+--       --configpath="$PWD/.luarc.json" --checklevel=Warning
 
 require("configs.environments")
 require("configs.monitors")
