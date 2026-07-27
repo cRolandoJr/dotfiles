@@ -2,7 +2,7 @@
 # Daemon: escucha el socket de eventos de Hyprland y notifica al cambiar layout.
 # Funciona independientemente de cómo se haya disparado el cambio (xkb grp:alt_shift_toggle,
 # hyprctl switchxkblayout, click en widget de waybar, etc).
-# Se lanza desde configs/autostart.conf con exec-once.
+# Se lanza desde configs/autostart.lua con hl.on("hyprland.start").
 
 set -euo pipefail
 

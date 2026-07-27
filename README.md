@@ -44,7 +44,7 @@ Paleta unificada en todos los componentes:
 
 - **Hub eww** (`SUPER+grave`): popup central con clima (Open-Meteo), calendario, estado de red/BT y controles rápidos.
 - **Chip NixOS en waybar**: muestra generación actual + símbolo NixOS coloreado (azul = flake limpio, rojo = dirty con cambios sin commitear).
-- **Keybinds viewer** (`SUPER+K`): cheatsheet fuzzy de todos los binds extraído en vivo de `binds.conf`, agrupado por sección.
+- **Keybinds viewer** (`SUPER+K`): cheatsheet fuzzy de todos los binds, leídos en vivo de `hyprctl binds` (los que Hyprland tiene cargados de verdad), agrupado por submap.
 - **Wallhaven fetch** (`SUPER+SHIFT+W`): browser de wallpapers con preview grid (thumbnails cacheados), búsqueda por término y descarga directa.
 - **Wallselect local** (`SUPER+W`): selector de wallpapers en `~/Wallpapers/` con thumbnails, borrado con `Alt+D`.
 - **Hyprlock con viñeta** (`SUPER+L`): lockscreen con shader GLSL de viñeta Deep Ocean activado en el compositor (Hyprland `decoration:screen_shader`) antes de lanzar hyprlock.
