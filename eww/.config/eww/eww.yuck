@@ -60,6 +60,11 @@
   ;; el script ya emite la ruta (o vacío), así que acá solo hay que elegir el player
   "bash -c 'P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1); [ -z \"$P\" ] && P=$(playerctl --list-all 2>/dev/null | head -1); $HOME/.config/eww/scripts/mpris-art.sh \"$P\"'")
 
+(defpoll gpu
+  :interval "3s"
+  :initial '{"busy":0,"vram_used":0,"vram_total":0,"temp":0}'
+  "$HOME/.config/eww/scripts/gpu-stat.sh")
+
 (defpoll media_tick
   :interval "500ms"
   :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","lyric":""}'
@@ -287,6 +292,23 @@
                  :cls "circ-cpu"
                  :extra "${round(EWW_TEMPS.K10TEMP_TCTL, 1)}°C")
       (circ-stat-ram))
+    ;; GPU dedicada (RX 6500M) y red. Con GPU híbrida muxless saber CUÁL de las
+    ;; dos trabaja no estaba en ningún lado del sistema.
+    (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
+      (circ-stat :value {gpu.busy}
+                 :label "GPU"
+                 :icon "󰢮"
+                 :cls "circ-gpu"
+                 :extra "${gpu.temp}°C · ${gpu.vram_used} MiB")
+      ;; el anillo se llena contra un techo de 100 Mbps (12.5 MB/s), que es lo
+      ;; que da esta WiFi; sin techo una velocidad no tiene porcentaje
+      (circ-stat :value {round(EWW_NET.wlo1.NET_DOWN / 131072, 0)}
+                 :label "Red"
+                 :icon "󰀂"
+                 :cls "circ-net"
+                 :extra {EWW_NET.wlo1.NET_DOWN > 1048576
+                          ? "${round(EWW_NET.wlo1.NET_DOWN / 1048576, 1)} MiB/s ↓"
+                          : "${round(EWW_NET.wlo1.NET_DOWN / 1024, 0)} KiB/s ↓"}))
     (box :orientation "h" :space-evenly true :spacing 8 :vexpand true
       (circ-stat :value {battery.capacity}
                  :label {battery.status == "Charging" ? "Cargando"
