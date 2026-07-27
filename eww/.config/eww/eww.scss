@@ -1,32 +1,50 @@
 // eww hub — Deep Ocean palette
 // GTK CSS: no flex-grow, no overflow, no max-width, gaps = spacing en yuck
 
-// ── Paleta ────────────────────────────────────────────────────────────────────
-$bg:        #0a0e17;
-$glass:     rgba(12, 18, 30, 0.94);
-$surface:   #0f1623;
-$surface2:  #151e2d;
-$border:    rgba(26, 39, 68, 0.85);
-$border-hi: rgba(0, 180, 216, 0.35);
-
-$cyan:      #00b4d8;
-$cyan-glow: rgba(0, 180, 216, 0.30);
-$cyan-dim:  rgba(0, 180, 216, 0.15);
-$cyan-soft: rgba(0, 180, 216, 0.14);
-
-$blue:      #3b82f6;
-$blue-dim:  rgba(59, 130, 246, 0.20);
-
+// ═══ 1. PRIMITIVOS ═══════════════════════════════════════════════════════════
+// Los ÚNICOS hex del archivo. Cambiar la paleta = cambiar solo esto.
+// El orden importa: SCSS exige declarar antes de usar, y todo lo de abajo
+// deriva de acá.
+$cyan:      #00b4d8;   // acento principal
+$blue:      #3b82f6;   // acento secundario (azul NixOS)
+$navy:      #1a2744;   // azul profundo de los bordes
+$ink:       #0a0e17;   // el fondo más oscuro
 $fg:        #cdd6f4;
 $fg-dim:    #7a8ba8;
-
 $ok:        #34d399;
-$ok-dim:    rgba(52, 211, 153, 0.20);
 $warn:      #fb923c;
-$warn-dim:  rgba(251, 146, 60, 0.20);
 $crit:      #f87171;
-$crit-dim:  rgba(248, 113, 113, 0.18);
-$crit-glow: rgba(248, 113, 113, 0.30);
+$white:     #ffffff;   // hover de máximo contraste
+
+// ═══ 2. SUPERFICIES ══════════════════════════════════════════════════════════
+// Escala de elevación: cada nivel es un paso más claro que el anterior.
+// `mix($cyan, $ink, N%)` tiñe el negro con una pizca de cyan, así que la
+// superficie sube de nivel SIN depender de transparencia — que es lo que hacía
+// que los botones se vieran grises.
+$bg:        $ink;
+$glass:     rgba(12, 18, 30, 0.94);   // el vidrio de las cards (sobre wallpaper)
+$glass-hi:  rgba(14, 22, 38, 0.96);   // vidrio del header, un pelo más opaco
+$surface:   #0f1623;                  // color propio, no derivado: se deja tal cual
+$surface-1: mix($cyan, $ink, 10%);    // controles en reposo  ← botones y filas
+$surface-2: mix($cyan, $ink, 16%);    // controles en hover
+
+// ═══ 3. DERIVADOS ════════════════════════════════════════════════════════════
+// Todo con rgba($token, N): un solo lugar define el color, la opacidad se
+// ajusta acá sin volver a escribir el hex en decimal.
+$border:    rgba($navy, 0.85);
+$border-hi: rgba($cyan, 0.35);
+
+$cyan-soft: rgba($cyan, 0.14);
+$cyan-dim:  rgba($cyan, 0.15);
+$cyan-glow: rgba($cyan, 0.30);
+
+$blue-dim:  rgba($blue, 0.20);
+$ok-dim:    rgba($ok,   0.20);
+$warn-dim:  rgba($warn, 0.20);
+$crit-dim:  rgba($crit, 0.18);
+$crit-glow: rgba($crit, 0.30);
+
+$shadow:    rgba(0, 0, 0, 0.50);
 
 $rad:       18px;
 $rad-sm:    12px;
@@ -63,7 +81,7 @@ window {
 
 // ── Header ───────────────────────────────────────────────────────────────────
 .header-card {
-  background-color: rgba(14, 22, 38, 0.96);
+  background-color: $glass-hi;
   border-radius: $rad;
   border: 1px solid $border;
   padding: 12px 14px;
@@ -96,6 +114,7 @@ window {
     min-height: 18px;
   }
   .header-close {
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
     background-color: $cyan-dim;
     border: 1px solid $border-hi;
     border-radius: 100px;
@@ -106,8 +125,9 @@ window {
     min-height: 28px;
   }
   .header-close:hover {
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
     background-color: $cyan-glow;
-    color: #ffffff;
+    color: $white;
   }
 }
 
@@ -146,7 +166,7 @@ window {
   font-weight: bold;
 }
 .hub-calendar.other-month {
-  color: rgba(205, 214, 244, 0.18);
+  color: rgba($fg, 0.18);
 }
 .hub-calendar.day-name {
   color: $cyan;
@@ -210,6 +230,7 @@ window {
 }
 
 .media-btn {
+  background-image: none;   // idem: el gradiente del tema GTK tapaba el transparent
   background-color: transparent;
   border: none;
   padding: 0 4px;
@@ -229,7 +250,7 @@ window {
   font-size: 20px;
 }
 .media-btn-play:hover label {
-  color: #ffffff;
+  color: $white;
 }
 
 // ── Stats card ───────────────────────────────────────────────────────────────
@@ -238,7 +259,7 @@ window {
 }
 
 .circ {
-  background-color: rgba(26, 39, 68, 0.60);
+  background-color: rgba($navy, 0.60);
   color: $cyan;
   border-radius: 100px;
 }
@@ -269,18 +290,19 @@ window {
 }
 
 .net-row {
-  background-color: rgba(0, 180, 216, 0.14);
+  background-color: $surface-1;
   border-radius: $rad-sm;
   padding: 10px 12px;
 }
 .net-row.net-active {
-  background-color: rgba(0, 180, 216, 0.10);
+  background-color: $surface-2;
+  border: 1px solid $border-hi;
 }
 .net-row:hover {
-  background-color: rgba(0, 180, 216, 0.12);
+  background-color: $surface-2;
 }
 .net-chip {
-  background-color: rgba(0, 180, 216, 0.22);
+  background-color: rgba($cyan, 0.22);
   border-radius: 100px;
   min-width: 32px;
   min-height: 32px;
@@ -290,7 +312,7 @@ window {
   background-color: $cyan-glow;
 }
 .net-icon {
-  color: rgba(0, 180, 216, 0.85);
+  color: rgba($cyan, 0.85);
   font-size: 14px;
 }
 .net-row.net-active .net-icon {
@@ -309,7 +331,7 @@ window {
   color: $fg;
 }
 .net-chevron {
-  color: rgba(205, 214, 244, 0.30);
+  color: rgba($fg, 0.30);
   font-size: 18px;
 }
 .net-row:hover .net-chevron {
@@ -322,14 +344,16 @@ window {
 }
 
 .power-btn {
-  background-color: rgba(0, 180, 216, 0.14);
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
+  background-color: $surface-1;
   border: 1px solid $border;
   border-radius: $rad-sm;
   padding: 10px 6px;
   min-width: 54px;
 }
 .power-btn:hover {
-  background-color: $cyan-dim;
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
+  background-color: $surface-2;
   border-color: $border-hi;
 }
 .power-icon {
@@ -342,20 +366,22 @@ window {
   font-weight: bold;
 }
 .power-btn.destructive {
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
   background-color: $crit-dim;
-  border-color: rgba(248, 113, 113, 0.30);
+  border-color: $crit-glow;
 }
 .power-btn.destructive .power-icon,
 .power-btn.destructive .power-label {
   color: $crit;
 }
 .power-btn.destructive:hover {
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
   background-color: $crit-glow;
   border-color: $crit;
 }
 .power-btn.destructive:hover .power-icon,
 .power-btn.destructive:hover .power-label {
-  color: #ffffff;
+  color: $white;
 }
 
 // ── Sliders modernos ─────────────────────────────────────────────────────────
@@ -389,7 +415,7 @@ window {
 
 // Trough grueso con gradient — el truco de athena
 .hub-slider trough {
-  background-color: rgba(26, 39, 68, 0.80);
+  background-color: rgba($navy, 0.80);
   border-radius: 10px;
   min-height: 10px;
 }
@@ -411,7 +437,7 @@ window {
   min-width: 20px;
   min-height: 15px;
   margin: -4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.50);
+  box-shadow: 0 1px 4px $shadow;
 }
 .hub-slider:hover trough slider {
   background-color: $cyan;
@@ -422,25 +448,28 @@ window {
 
 // ── Toggles integrados en sliders-card ───────────────────────────────────────
 .qtoggle {
-  background-color: rgba(0, 180, 216, 0.14);
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
+  background-color: $surface-1;
   border: 1px solid $border;
   border-radius: $rad-sm;
   padding: 10px 12px;
 }
 .qtoggle:hover {
-  background-color: $cyan-dim;
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
+  background-color: $surface-2;
   border-color: $border-hi;
 }
 .qtoggle.qtoggle-on {
+  background-image: none;   // GTK pinta el gradiente del tema encima del background-color
   background-color: $cyan-dim;
   border-color: $border-hi;
 }
 .qtoggle-icon {
-  color: $fg-dim;
+  color: $fg-dim;       // el ícono apagado indica el estado
   font-size: 18px;
 }
 .qtoggle-label {
-  color: $fg-dim;
+  color: $fg;           // el texto siempre legible (antes iba en $fg-dim y el botón se leía muerto)
   font-size: 11px;
   font-weight: bold;
 }
@@ -451,7 +480,7 @@ window {
 
 // ── Tooltip ───────────────────────────────────────────────────────────────────
 tooltip {
-  background-color: rgba(12, 18, 30, 0.98);
+  background-color: rgba($ink, 0.98);
   color: $fg;
   border: 1px solid $border;
   border-radius: 8px;
@@ -465,4 +494,37 @@ tooltip label {
 }
 tooltip decoration {
   background-color: transparent;
+}
+
+// ── Ecualizador (cava) ────────────────────────────────────────────────────────
+// El trough del progress se hace invisible y el relleno lleva el degradado, así
+// la barra crece desde abajo. background-image: none es obligatorio: GTK pinta el
+// gradiente de su tema encima de cualquier background-color propio.
+.eq-row {
+  padding: 4px 2px;
+}
+
+.eq-bar {
+  min-width: 6px;
+  min-height: 34px;
+  background-color: transparent;
+  background-image: none;
+}
+
+// En GTK3 un progressbar es `progressbar > trough > progress`. Sin apuntar al
+// trough explícitamente queda el gris del tema y las barras se ven como cajas.
+.eq-bar trough {
+  background-color: rgba($navy, 0.35);
+  background-image: none;
+  border: none;
+  border-radius: 3px;
+  min-width: 6px;
+}
+
+.eq-bar trough progress {
+  background-color: $cyan;
+  background-image: linear-gradient(to top, $cyan, $blue);
+  border: none;
+  border-radius: 3px;
+  min-width: 6px;
 }
