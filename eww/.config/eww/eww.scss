@@ -216,7 +216,8 @@ window {
 // Las tres líneas de letra. La actual en cyan y un punto más grande; la anterior
 // y la siguiente atenuadas, para que el ojo caiga en la que suena.
 .media-lyrics {
-  margin-top: -10px;  // sube a ocupar el espacio que dejó la línea de tiempos
+  margin-top: -27px;  // sube a ocupar el espacio que dejó la línea de tiempos
+                      // (-10 era una línea de texto más abajo)
 }
 .media-lyric-now {
   color: $cyan;
