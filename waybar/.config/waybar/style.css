@@ -220,6 +220,18 @@ window#waybar {
   color: @cyan;
 }
 
+/* Modo juego: misma semántica que idle_inhibitor — cyan = activo (k3s parado) */
+#custom-gamemode {
+  color: @fg-dim;
+  padding: 0 6px;
+}
+#custom-gamemode.on {
+  color: @cyan;
+}
+#custom-gamemode.busy {
+  color: @warn;
+}
+
 /* Tooltip coherente */
 tooltip {
   background: @island-bg;

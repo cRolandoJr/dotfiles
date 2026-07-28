@@ -25,6 +25,7 @@
     "pulseaudio",
     "idle_inhibitor",
     "custom/power-profile",
+    "custom/gamemode",
     "temperature",
     "battery",
     "clock",
@@ -170,5 +171,18 @@
     "tooltip": true,
     "tooltip-format": "Power profile",
     "on-click": "$HOME/.config/hypr/scripts/toggle-power-profile.sh",
+  },
+
+  // ─── Modo juego — libera k3s (6.7% CPU y 539 MiB en idle) ────────────────
+  //   El estado lo deriva de systemctl, no de un flag, así que no se
+  //   desincroniza si k3s arranca o se para por otra vía.
+  "custom/gamemode": {
+    "exec": "$HOME/.config/hypr/scripts/waybar-gamemode.sh",
+    "return-type": "json",
+    "interval": 10,
+    "signal": 11,
+    "format": "{}",
+    "tooltip": true,
+    "on-click": "$HOME/.config/hypr/scripts/waybar-gamemode.sh toggle",
   },
 }
