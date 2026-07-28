@@ -1,8 +1,6 @@
 -- ╔════════════════════════════════════════════════╗
 -- ║           WINDOW & LAYER RULES (rules.lua)      ║
 -- ╚════════════════════════════════════════════════╝
--- Traducción literal de rules.conf.
---
 -- Los regex van con corchetes largos [[...]] cuando contienen backslashes:
 -- en un string "..." de Lua, \d y \. serían escapes y la regla dejaría de
 -- matchear SIN dar error. Con [[ ]] el contenido es literal.

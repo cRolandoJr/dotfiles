@@ -3,8 +3,7 @@
 #
 # Lee los binds de `hyprctl binds`, o sea los que Hyprland tiene REALMENTE
 # cargados, no lo que dice el archivo de config. Eso resuelve solo el loop de
-# workspaces y los submaps, y sobrevive cambios de formato de la config
-# (antes parseaba binds.conf con awk y se rompía al migrar a Lua).
+# workspaces y los submaps, y sobrevive cambios de formato de la config.
 #
 # Agrupa por submap; los binds globales van bajo [GLOBAL]. Si el bind tiene
 # description (los `bindd` de antes), se muestra esa en vez del dispatcher.

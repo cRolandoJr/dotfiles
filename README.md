@@ -97,13 +97,13 @@ Paleta unificada en todos los componentes:
 
 ```
 dotfiles/
-├── hypr/             # hyprland.conf + configs/{autostart,binds,environments,monitors,rules,settings}.conf
+├── hypr/             # hyprland.lua + configs/{autostart,binds,environments,monitors,rules,settings,workspaces}.lua
+│                     # hypridle/hyprlock/hyprsunset.conf
 │                     # scripts/ (lock, spotify-toggle, wallhaven-fetch, keybinds-viewer, …)
 │                     # shaders/ (lock-vignette.glsl)
 ├── waybar/           # config.jsonc + style.css (Deep Ocean)
 ├── eww/              # eww.yuck + eww.scss + scripts/ (weather, net-status, …)
 ├── foot/             # foot.ini (tema Deep Ocean)
-├── kitty/            # histórico (sin symlink desde 2026-07-20; borrar si foot convence)
 ├── rofi/             # config.rasi + temas por menú (wallselect, wifi, cliphist, keybinds)
 ├── mako/             # config
 ├── starship/         # starship.toml

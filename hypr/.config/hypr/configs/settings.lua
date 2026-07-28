@@ -1,7 +1,6 @@
 -- ╔════════════════════════════════════════════════╗
 -- ║       SETTINGS, LOOK & FEEL (settings.lua)     ║
 -- ╚════════════════════════════════════════════════╝
--- Traducción literal de settings.conf. Mismos valores, cero rediseño.
 
 hl.config({
     -- INPUT (Teclado y Ratón)

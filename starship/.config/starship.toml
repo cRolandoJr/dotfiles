@@ -17,7 +17,7 @@ $time\
 right_format = ""
 
 [palettes.hyprnix]
-# Paleta Deep Ocean — coherente con waybar/eww/mako/kitty/rofi/hyprland borders.
+# Paleta Deep Ocean — coherente con waybar/eww/mako/rofi/hyprland borders.
 base = "#cdd6f4"     # fg principal
 base_fg = "#0a0e17"  # bg-bar para texto sobre la "base"
 

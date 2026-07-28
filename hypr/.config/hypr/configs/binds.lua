@@ -1,7 +1,7 @@
 -- ╔════════════════════════════════════════════════╗
 -- ║              KEYBINDINGS (binds.lua)            ║
 -- ╚════════════════════════════════════════════════╝
--- Traducción de binds.conf. Dos cambios de forma respecto a hyprlang:
+-- Dos cambios de forma respecto a hyprlang (los ejemplos de la doc no aplican):
 --   * las teclas van en UN string con " + ": "SUPER + SHIFT + Return"
 --   * los dispatchers son funciones tipadas de hl.dsp.*, y se pasan LLAMADAS
 -- Los comandos con comillas dobles van en [[ ]] para no escaparlas.

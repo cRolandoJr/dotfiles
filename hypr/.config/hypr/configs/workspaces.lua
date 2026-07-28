@@ -5,8 +5,7 @@
 -- que se invoca (impredecible). Estas reglas le dan casa fija a cada uno.
 -- default = true: el workspace que el monitor muestra al conectarse / al iniciar.
 --
--- Se dejan explícitas en vez de un loop: son data, no lógica, y así el diff
--- contra workspaces.conf se lee línea por línea.
+-- Se dejan explícitas en vez de un loop: son data, no lógica.
 
 -- Laptop (eDP-1, pantalla principal, a la izquierda) = primarios 1-5
 hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true })
