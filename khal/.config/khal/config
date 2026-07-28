@@ -1,4 +1,9 @@
-# khal — config local-only (sin vdirsyncer / sin sync remoto).
+# ╔════════════════════════════════════════════════════════════════╗
+# ║   K  H  A  L  ·  local-only                                    ║
+# ║   cRolandoJr · github.com/cRolandoJr                           ║
+# ╚════════════════════════════════════════════════════════════════╝
+#
+# Sin vdirsyncer, sin sync remoto.
 #
 # Storage: cada subdir bajo ~/.local/share/calendars/ es UN calendar.
 # Estructura:

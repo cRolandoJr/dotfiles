@@ -1,10 +1,7 @@
-# mako — daemon de notificaciones
-# Paleta: Deep Ocean
-#   bg-bar      #0a0e17   bg-surface  #0f1623
-#   border      #1a2744   divider     #1e3050
-#   fg          #cdd6f4   fg-dim      #7a8ba8
-#   cyan        #00b4d8   cyan-glow   rgba(0,180,216,0.35)
-#   crit        #f87171   warn        #fb923c
+# ╔════════════════════════════════════════════════════════════════╗
+# ║   M  A  K  O  ·  Deep Ocean                                    ║
+# ║   cRolandoJr · github.com/cRolandoJr                           ║
+# ╚════════════════════════════════════════════════════════════════╝
 #
 # Posición: top-right, debajo del waybar (height=28 + margin-top=4 ≈ 32).
 # Layer top (no overlay) para respetar exclusive zone.

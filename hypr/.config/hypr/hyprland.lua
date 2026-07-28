@@ -1,3 +1,8 @@
+-- ╔════════════════════════════════════════════════════════════════╗
+-- ║   H  Y  P  R  L  A  N  D  ·  Deep Ocean                        ║
+-- ║   cRolandoJr · github.com/cRolandoJr                           ║
+-- ╚════════════════════════════════════════════════════════════════╝
+--
 -- Validar cambios SIN tocar la sesión activa (no corre nada, y detecta errores de
 -- sintaxis, nombres de opción inexistentes y dispatchers que no existen):
 --   Hyprland --config ~/.config/hypr/hyprland.lua --verify-config

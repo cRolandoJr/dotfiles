@@ -1,9 +1,13 @@
-/* Global Rofi theme (Rofi 2.0.0)
- * - Azul Nix, limpio, moderno
- * - Corrige selector: element-icon (no "element icon")
- * - Alpha al final: #RRGGBBAA (según tu rofi 2.0.0)
- * - Mantiene launcher normal (con texto). Tu wallpaper picker debe usar su propio -theme.
- */
+/* ╔════════════════════════════════════════════════════════════════╗
+   ║   R  O  F  I  ·  Deep Ocean                                    ║
+   ║   cRolandoJr · github.com/cRolandoJr                           ║
+   ╚════════════════════════════════════════════════════════════════╝ */
+
+/* Sintaxis de Rofi 2.0.0: el selector es element-icon (no "element icon"), y el
+   alpha va al final del hex: #RRGGBBAA.
+
+   Este archivo es el tema del launcher. Los menús con layout propio
+   (wallselect, wifi, cliphist, keybinds) pasan su -theme aparte. */
 
 configuration {
     display-drun: "Applications:";

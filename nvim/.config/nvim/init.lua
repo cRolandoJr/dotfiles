@@ -1,5 +1,6 @@
 -- ╔════════════════════════════════════════════════════════════════╗
--- ║              Neovim config (lazy.nvim + modular)               ║
+-- ║   N  E  O  V  I  M  ·  lazy.nvim · modular                     ║
+-- ║   cRolandoJr · github.com/cRolandoJr                           ║
 -- ╚════════════════════════════════════════════════════════════════╝
 
 vim.g.mapleader = " "
