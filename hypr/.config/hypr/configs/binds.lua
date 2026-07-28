@@ -68,9 +68,6 @@ hl.bind("SUPER + O", hl.dsp.layout("movetoroot"),  { description = "Promover ven
 hl.bind("SUPER + N",         hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle-dnd.sh"), { description = "No molestar: alternar (mako)" })
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd("makoctl dismiss --all"),                 { description = "Descartar todas las notificaciones" })
 
--- --- POWER PROFILE ---
-hl.bind("SUPER + CTRL + P", hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle-power-profile.sh"), { description = "Perfil de energía: ciclar balanced/performance" })
-
 -- --- EL SCRATCHPAD (Terminal Oculta) ---
 hl.bind("SUPER + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }), { description = "Mandar ventana al scratchpad" })
 hl.bind("SUPER + S",         hl.dsp.workspace.toggle_special("magic"),            { description = "Scratchpad: mostrar u ocultar" })

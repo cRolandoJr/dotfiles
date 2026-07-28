@@ -18,13 +18,12 @@
 
   "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
   "modules-center": ["hyprland/window"],
-  // Orden: controles interactivos (layout/volumen/idle/perfil) → estado
+  // Orden: controles interactivos (layout/volumen/idle/modo juego) → estado
   // pasivo (temp/batería) → reloj como ancla → tray al borde.
   "modules-right": [
     "custom/layout",
     "pulseaudio",
     "idle_inhibitor",
-    "custom/power-profile",
     "custom/gamemode",
     "temperature",
     "battery",
@@ -160,17 +159,6 @@
     "format": "{}",
     "restart-interval": 3,
     "on-click": "hyprctl switchxkblayout current next",
-  },
-
-  // power-profile custom: ícono refleja el modo activo; click cicla los 3 perfiles.
-  // Refresh inmediato vía signal SIGRTMIN+10 (script emite pkill al final).
-  "custom/power-profile": {
-    "exec": "case $(powerprofilesctl get) in performance) echo '<span color=\"#f87171\">󱓞</span>';; power-saver) echo '<span color=\"#34d399\">󰁾</span>';; *) echo '<span color=\"#00b4d8\">󰌪</span>';; esac",
-    "interval": 5,
-    "signal": 10,
-    "tooltip": true,
-    "tooltip-format": "Power profile",
-    "on-click": "$HOME/.config/hypr/scripts/toggle-power-profile.sh",
   },
 
   // ─── Modo juego — libera k3s (6.7% CPU y 539 MiB en idle) ────────────────
