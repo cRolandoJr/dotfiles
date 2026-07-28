@@ -71,7 +71,14 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 start_cava() {
-  [ -n "$CAVA_PID" ] && return
+  # Verificar que el proceso siga VIVO, no solo que la variable tenga valor: si
+  # cava muere solo (crash, o el sink se va), CAVA_PID queda seteado y sin este
+  # chequeo el script no lo revive nunca — quedaría en ceros hasta el próximo
+  # cambio de estado del player.
+  if [ -n "$CAVA_PID" ] && kill -0 "$CAVA_PID" 2>/dev/null; then
+    return
+  fi
+  CAVA_PID=""
   # cava saca "12;40;8;...;" → lo convertimos a [12,40,8,...]
   {
     cava -p "$CFG" 2>/dev/null | while IFS= read -r line; do
