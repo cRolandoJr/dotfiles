@@ -8,8 +8,9 @@
 -- El `~` se expande (verificado en 0.56), así que las rutas van literales.
 
 hl.on("hyprland.start", function()
-    -- UI
-    hl.exec_cmd("uwsm app -- env TZ=America/Argentina/Buenos_Aires waybar")
+    -- waybar: NO se lanza aquí. Va como servicio de usuario
+    -- (programs.waybar.systemd.enable) porque 0.15.0 crashea al perder el audio
+    -- y con exec_cmd nadie lo relevanta. El TZ del reloj va en el unit.
 
     -- Widgets custom (calendar popup; ver ~/.config/eww/eww.yuck)
     -- Se invoca desde waybar con `eww open --toggle calendar` (on-click del clock).
