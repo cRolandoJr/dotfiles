@@ -1,4 +1,3 @@
-// eww hub — Deep Ocean palette
 // GTK CSS: no flex-grow, no overflow, no max-width, gaps = spacing en yuck
 
 // ═══ 1. PRIMITIVOS ═══════════════════════════════════════════════════════════
@@ -217,7 +216,6 @@ window {
 // y la siguiente atenuadas, para que el ojo caiga en la que suena.
 .media-lyrics {
   margin-top: -27px;  // sube a ocupar el espacio que dejó la línea de tiempos
-                      // (-10 era una línea de texto más abajo)
 }
 .media-lyric-now {
   color: $cyan;
@@ -230,13 +228,11 @@ window {
   font-style: italic;
 }
 
-// Tiempos transcurrido/total, debajo del estado
 .media-time {
   color: $fg-dim;
   font-size: 11px;
 }
 
-// Lo que falta para que termine — más atenuado que el transcurrido
 .media-remaining {
   color: rgba($fg, 0.28);
   font-size: 11px;
@@ -334,13 +330,11 @@ window {
   }
 }
 
-// De qué player sale el audio
 .media-player {
   color: $fg-dim;
   font-size: 11px;
 }
 
-// play/pause: ícono destacado en cyan, un poco más grande
 .media-btn-play label {
   color: $cyan;
   font-size: 20px;
@@ -350,10 +344,6 @@ window {
 }
 
 // ── Stats card ───────────────────────────────────────────────────────────────
-.stats-card {
-  // hexpand true en yuck
-}
-
 .circ {
   background-color: rgba($navy, 0.60);
   color: $cyan;
@@ -389,10 +379,6 @@ window {
 }
 
 // ── Network card ─────────────────────────────────────────────────────────────
-.network-card {
-  // hexpand true en yuck; sin min-width fijo
-}
-
 .net-row {
   background-color: $surface-1;
   border-radius: $rad-sm;

@@ -1,15 +1,6 @@
 /* Waybar - Deep Ocean
  * Reload: pkill -SIGUSR2 waybar
- *
- * Paleta:
- *   bg-bar      #0a0e17   transparent bar
- *   bg-surface  #0f1623   island bg
- *   border      #1a2744
- *   fg          #cdd6f4   fg-dim #7a8ba8
- *   cyan        #00b4d8   cyan-glow rgba(0,180,216,0.35)
- *   blue-soft   #3b82f6   navy #1e3a5f
- *   crit        #f87171   warn #fb923c   ok #34d399
- */
+ * Los colores son los @define-color de abajo. */
 
 @define-color fg          #cdd6f4;
 @define-color fg-dim      rgba(122, 139, 168, 0.85);
