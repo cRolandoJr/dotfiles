@@ -13,7 +13,7 @@
 
 set -uo pipefail
 
-VACIO='{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","lyric":"","lyric_prev":"","lyric_next":""}'
+VACIO='{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","stalled":false,"lyric":"","lyric_prev":"","lyric_next":""}'
 
 P=$(playerctl --list-all 2>/dev/null | grep -i spotify | head -1)
 [ -z "$P" ] && P=$(playerctl --list-all 2>/dev/null | head -1)
@@ -41,6 +41,35 @@ LEN=${LEN:-0}
 
 pos=$((POS / 1000000))
 len=$((LEN / 1000000))
+
+# ── ¿Spotify dice que reproduce pero no avanza? ────────────────────────────────
+# Pasa con canciones no disponibles: status=Playing, posición congelada y ningún
+# stream de audio en PipeWire. El hub mostraba "reproduciendo" fielmente y el
+# único indicio era el ecualizador plano.
+#
+# Se comparan los MICROsegundos, no `pos`: con el tick a 500ms dos lecturas caen
+# en el mismo segundo entero muy seguido, y comparar `pos` daría falsos positivos
+# todo el tiempo. Y se exigen 4 ticks (2s) seguidos sin avance para no marcar un
+# hipo puntual.
+STATE=/tmp/eww-media-pos
+stalled=false
+if [ -r "$STATE" ]; then
+  read -r LASTPOS STALLCNT <"$STATE" 2>/dev/null || { LASTPOS=0; STALLCNT=0; }
+else
+  LASTPOS=0
+  STALLCNT=0
+fi
+DELTA=$((POS - ${LASTPOS:-0}))
+if [ "$ST" = "playing" ] && [ "$DELTA" -lt 100000 ] && [ "$DELTA" -gt -100000 ]; then
+  STALLCNT=$((${STALLCNT:-0} + 1))
+else
+  STALLCNT=0
+fi
+[ "$STALLCNT" -ge 4 ] && stalled=true
+# El \n es obligatorio: `read` devuelve error si no encuentra newline, y el
+# `|| reset` de arriba se disparaba en cada tick dejando el contador clavado en 1
+# — o sea que stalled NUNCA llegaba a activarse. Cazado con un test de la lógica.
+printf '%s %s\n' "$POS" "$STALLCNT" >"$STATE"
 
 if [ "$len" -gt 0 ]; then
   pct=$((pos * 100 / len))
@@ -110,5 +139,6 @@ fi
 jq -c -n --arg s "$ST" --argjson p "$pos" --argjson pc "$pct" \
   --arg e "$elapsed" --arg t "$total" --arg r "${remaining:-}" \
   --arg l "$lyric" --arg lp "$lyric_prev" --arg ln "$lyric_next" \
-  '{status:$s,position:$p,pct:$pc,elapsed:$e,total:$t,remaining:$r,
+  --argjson st "$stalled" \
+  '{status:$s,position:$p,pct:$pc,elapsed:$e,total:$t,remaining:$r,stalled:$st,
     lyric:$l,lyric_prev:$lp,lyric_next:$ln}'

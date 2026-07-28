@@ -67,7 +67,7 @@
 
 (defpoll media_tick
   :interval "500ms"
-  :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","lyric":"","lyric_prev":"","lyric_next":""}'
+  :initial '{"status":"stopped","position":0,"pct":0,"elapsed":"","total":"","remaining":"","stalled":false,"lyric":"","lyric_prev":"","lyric_next":""}'
   "$HOME/.config/eww/scripts/media-tick.sh")
 
 (defvar ram_mode "pct")
@@ -197,8 +197,15 @@
             ;; disponible si no hay Spotify, así que no siempre es obvio).
             ;; Sin línea de tiempos: ese espacio se lo queda la letra.
             (box :orientation "h" :space-evenly false :spacing 8
-              (label :class {media_tick.status == "playing" ? "media-status playing" : "media-status"}
-                     :text {media_tick.status == "playing" ? "● reproduciendo" : "● pausado"})
+              ;; `stalled` = Spotify dice Playing pero la posición no avanza. Pasa
+              ;; con canciones no disponibles; antes el único indicio era el
+              ;; ecualizador plano.
+              (label :class {media_tick.stalled ? "media-status stalled"
+                              : media_tick.status == "playing" ? "media-status playing"
+                              : "media-status"}
+                     :text {media_tick.stalled ? "⚠ sin audio"
+                             : media_tick.status == "playing" ? "● reproduciendo"
+                             : "● pausado"})
               (label :class "media-player"
                      :text "· ${mpris_meta.player}"
                      :visible {mpris_meta.player != ""})))

@@ -264,6 +264,12 @@ window {
   color: $ok;
 }
 
+// Spotify dice que reproduce pero no sale audio: naranja de advertencia, no rojo
+// (no está roto, la canción no está disponible).
+.media-status.stalled {
+  color: $warn;
+}
+
 .media-controls {
   margin-top: 2px;
 }
@@ -637,10 +643,12 @@ tooltip decoration {
 // título ni con la portada.
 .eq-bar trough progress {
   background-color: transparent;
+  // Desvanecido hacia arriba. Para volver al anterior (más tenue arriba):
+  //   rgba($cyan, 0.55) 0%, rgba($blue, 0.28) 45%, rgba($blue, 0.00) 100%
   background-image: linear-gradient(to top,
                       rgba($cyan, 0.55) 0%,
-                      rgba($blue, 0.28) 45%,
-                      rgba($blue, 0.00) 100%);
+                      rgba($blue, 0.40) 45%,
+                      rgba($blue, 0.12) 100%);
   border: none;
   border-radius: 2px;
   min-width: 8px;
