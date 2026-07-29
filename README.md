@@ -128,10 +128,17 @@ Este repo **no usa GNU Stow** ni se instala con un script. Los symlinks los gest
 2. Clonar el flake NixOS en `~/projects/nix-config/`.
 3. En `nix-config`, el módulo home-manager usa `mkOutOfStoreSymlink` apuntando a las rutas de este repo:
    ```nix
-   home.file.".config/hypr".source =
+   xdg.configFile."hypr".source =
      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/projects/dotfiles/hypr/.config/hypr";
    ```
-4. Aplicar con `sudo nixos-rebuild switch --flake ~/projects/nix-config#<host>`.
+4. Copiar `~/.ssh/id_ed25519` desde el backup — de esa clave se deriva la identidad
+   age que descifra los secretos de `nix-config`.
+5. Aplicar con `sudo nixos-rebuild switch --flake ~/projects/nix-config#<host>`.
+
+> **El orden de los pasos 1 y 2 no es opcional.** `mkOutOfStoreSymlink` apunta a
+> `~/projects/dotfiles/…`: si ese path no existe cuando se activa home-manager, la
+> activación falla. Instalación completa desde cero (incluido el particionado con disko):
+> ver la sección *Instalación en una máquina nueva* del README de `nix-config`.
 
 Después de eso, editar directamente en `~/projects/dotfiles/` aplica en vivo. No se necesita rebuild para cambios de config; sí se necesita para agregar/quitar symlinks.
 
