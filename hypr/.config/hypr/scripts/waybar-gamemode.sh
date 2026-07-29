@@ -1,22 +1,7 @@
 #!/usr/bin/env bash
-# Modo juego: para los dos daemons always-on que gastan sin que los uses.
-#
-#   k3s  — 6.7% de CPU y 539 MiB en idle (medido 29-jul-2026)
-#   scx  — scx_lavd gasta CPU a propósito para bajar latencia; sin cargador es
-#          justo lo contrario de lo que querés
-#
-# Reemplaza a la specialisation `battery`, que hacía exactamente esto con dos
-# `mkForce false` pero costaba build en cada rebuild y una entrada de boot por
-# generación (45 acumuladas) — y bootear ahí por accidente dejaba el botón sin
-# unit que togglear.
-#
-# NO toca el perfil de energía: gamemode ya pone el governor en performance por
-# juego, y `powerprofilesctl set` necesita un agente polkit que un click no tiene.
-#
-# El estado se DERIVA de systemctl, no de un archivo de flag: así el botón no
-# puede quedar desincronizado si algo arranca o se para por otra vía.
-#
-# El sudo es NOPASSWD acotado a los comandos exactos (ver base.nix).
+# Modo juego: para k3s (6.7% CPU, 539 MiB en idle) y scx (gasta CPU para bajar
+# latencia). NO toca el perfil de energía: gamemode ya pone el governor en
+# performance por juego, y powerprofilesctl necesita un polkit que un click no tiene.
 
 UNITS=(k3s.service scx.service)
 SYSTEMCTL=/run/current-system/sw/bin/systemctl
