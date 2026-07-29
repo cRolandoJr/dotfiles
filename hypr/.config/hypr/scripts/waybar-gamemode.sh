@@ -15,7 +15,16 @@ UNIT=k3s.service
 SYSTEMCTL=/run/current-system/sw/bin/systemctl
 ICON='󰊴'
 
-state() { systemctl is-active "$UNIT" 2>/dev/null; }
+# `is-active` devuelve "inactive" tanto si el unit está parado como si NO EXISTE,
+# así que no alcanza para decidir. En la specialisation battery k3s se saca con
+# mkForce false y el unit desaparece: ahí el botón no tiene nada que togglear.
+state() {
+  if [ "$(systemctl is-enabled "$UNIT" 2>/dev/null)" = "not-found" ]; then
+    echo absent
+  else
+    systemctl is-active "$UNIT" 2>/dev/null
+  fi
+}
 
 emit() {
   case "$(state)" in
@@ -25,6 +34,9 @@ emit() {
     inactive | failed)
       printf '{"text":"%s","class":"on","tooltip":"Modo juego ON\\nk3s parado\\nClick para volver a arrancarlo"}\n' "$ICON"
       ;;
+    absent)
+      printf '{"text":"%s","class":"absent","tooltip":"Perfil battery activo\\nk3s no existe en esta specialisation — ya no consume\\nVolvé con battery-off"}\n' "$ICON"
+      ;;
     *)
       printf '{"text":"%s","class":"busy","tooltip":"k3s en transición…"}\n' "$ICON"
       ;;
@@ -33,6 +45,11 @@ emit() {
 
 case "${1:-status}" in
   toggle)
+    if [ "$(state)" = absent ]; then
+      notify-send -u low -a "Modo juego" "Perfil battery activo" \
+        "k3s no existe en esta specialisation. Volvé con battery-off."
+      exit 0
+    fi
     if [ "$(state)" = active ]; then
       sudo "$SYSTEMCTL" stop "$UNIT" && notify-send -a "Modo juego" -i input-gaming \
         "Modo juego ON" "k3s parado — CPU y RAM liberadas"

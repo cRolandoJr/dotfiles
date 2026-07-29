@@ -231,6 +231,10 @@ window#waybar {
 #custom-gamemode.busy {
   color: @warn;
 }
+/* Perfil battery: k3s no existe, no hay nada que togglear */
+#custom-gamemode.absent {
+  color: @blue-soft;
+}
 
 /* Tooltip coherente */
 tooltip {
