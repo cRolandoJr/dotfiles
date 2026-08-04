@@ -221,6 +221,20 @@ window#waybar {
 }
 
 /* Modo juego: misma semántica que idle_inhibitor — cyan = activo (k3s parado) */
+#custom-agenda {
+  color: @fg-dim;
+  padding: 0 6px;
+}
+#custom-agenda.soon {
+  color: @cyan;
+}
+#custom-agenda.now {
+  color: @crit;
+}
+#custom-agenda.error {
+  color: @warn;
+}
+
 #custom-gamemode {
   color: @fg-dim;
   padding: 0 6px;

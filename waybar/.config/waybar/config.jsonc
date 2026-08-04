@@ -21,6 +21,7 @@
   // Orden: controles interactivos (layout/volumen/idle/modo juego) → estado
   // pasivo (temp/batería) → reloj como ancla → tray al borde.
   "modules-right": [
+    "custom/agenda",
     "custom/layout",
     "pulseaudio",
     "idle_inhibitor",
@@ -30,6 +31,19 @@
     "clock",
     "tray",
   ],
+
+  // ─── Agenda — próxima clase o lectura (khal) ─────────────────────────────
+  //   Va PRIMERO en modules-right: el texto es de largo variable y así crece
+  //   hacia la izquierda sin mover el reloj, que es el ancla.
+  "custom/agenda": {
+    "exec": "$HOME/.config/hypr/scripts/waybar-agenda.sh",
+    "return-type": "json",
+    "interval": 60,
+    "format": "{}",
+    "max-length": 48,
+    "tooltip": true,
+    "on-click": "foot --app-id=foot_float ikhal",
+  },
 
   // ─── NixOS chip — gen + flake status ─────────────────────────────────────
   //   Click izq → hub | Click der → foot en el flake dir (para resolver dirty)
