@@ -15,6 +15,7 @@
 local terminal       = "foot"
 local float_terminal = "foot --app-id=foot_float"
 local FM2            = "foot --app-id=foot_float yazi"
+local calendar       = "foot --app-id=foot_float ikhal"
 local fileManager    = "thunar"
 local browser        = "firefox"
 local menu           = "rofi -show drun -theme ~/.config/rofi/config.rasi"
@@ -30,6 +31,7 @@ hl.bind("SUPER + E",              hl.dsp.exec_cmd(FM2),            { description
 hl.bind("SUPER + SHIFT + E",      hl.dsp.exec_cmd(fileManager),    { description = "Archivos GUI (thunar)" })
 hl.bind("SUPER + M",              hl.dsp.exec_cmd("~/.config/hypr/scripts/spotify-toggle.sh"),     { description = "Spotify: mostrar u ocultar" })
 hl.bind("SUPER + T",              hl.dsp.exec_cmd("Telegram"),     { description = "Telegram" })
+hl.bind("SUPER + I",              hl.dsp.exec_cmd(calendar),       { description = "Calendario (ikhal)" })
 hl.bind("SUPER + Space",          hl.dsp.exec_cmd(menu),           { description = "Lanzador de aplicaciones (rofi)" })
 hl.bind("SUPER + W",              hl.dsp.exec_cmd(wallselect),     { description = "Elegir wallpaper" })
 hl.bind("SUPER + SHIFT + W",      hl.dsp.exec_cmd("~/.config/hypr/scripts/wallhaven-fetch.sh"),    { description = "Descargar wallpapers de wallhaven" })

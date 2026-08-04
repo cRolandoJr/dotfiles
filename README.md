@@ -21,7 +21,7 @@ El repositorio del sistema NixOS (flake, módulos, paquetes) vive por separado e
 | `fastfetch` | [Fastfetch](https://github.com/fastfetch-cli/fastfetch) | Info del sistema al abrir terminal |
 | `nvim` | [Neovim](https://neovim.io/) | Editor (lazy.nvim, LSP, treesitter) |
 | `yazi` | [Yazi](https://yazi-rs.github.io/) | File manager en terminal (dentro de foot flotante) |
-| `khal` | [khal](https://lostpackets.de/khal/) | Calendario CLI integrado al hub eww |
+| `khal` | [khal](https://lostpackets.de/khal/) | Calendario local (`.ics` planos). TUI `ikhal` en `SUPER + I`; el hub eww NO lo lee |
 | `qt6ct` | [qt6ct](https://github.com/trialuser02/qt6ct) | Tema Qt6 con paleta Deep Ocean |
 
 ---
