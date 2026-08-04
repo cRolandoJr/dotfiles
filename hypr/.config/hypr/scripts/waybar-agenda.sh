@@ -55,7 +55,7 @@ ahora=$(date +%s)
 hoy=$(date +%Y-%m-%d)
 
 texto=''; clase=''; tooltip=''
-while IFS=$'\t' read -r s e allday cal title; do
+while IFS=$'\t' read -r s e allday _cal title; do
   ini=$(date -d "$s" +%s)
   fin=$(date -d "$e" +%s)
 
@@ -69,11 +69,9 @@ while IFS=$'\t' read -r s e allday cal title; do
     fi
   fi
 
-  # A la barra va lo académico (pedco = clases, estudio = lecturas). El bloque de
-  # trabajo ocupa 8h de lunes a viernes: en la barra sería ruido, en el tooltip es contexto.
+  # El primero que no terminó es el que va en la barra.
   [ -n "$texto" ] && continue
   [ "$fin" -lt "$ahora" ] && continue
-  [ "$cal" = personal ] && continue
 
   if [ "$ini" -le "$ahora" ]; then
     texto="$ICON ahora · $title"
