@@ -35,14 +35,18 @@
   // ─── Agenda — próxima clase o lectura (khal) ─────────────────────────────
   //   Va PRIMERO en modules-right: el texto es de largo variable y así crece
   //   hacia la izquierda sin mover el reloj, que es el ancla.
+  //   Click izq → contrae/expande | Click der → ikhal (también SUPER+I)
+  //   La señal es para que el toggle se vea al instante y no al próximo interval.
   "custom/agenda": {
     "exec": "$HOME/.config/hypr/scripts/waybar-agenda.sh",
     "return-type": "json",
     "interval": 60,
+    "signal": 12,
     "format": "{}",
     "max-length": 48,
     "tooltip": true,
-    "on-click": "foot --app-id=foot_float ikhal",
+    "on-click": "$HOME/.config/hypr/scripts/waybar-agenda.sh toggle",
+    "on-click-right": "foot --app-id=foot_float ikhal",
   },
 
   // ─── NixOS chip — gen + flake status ─────────────────────────────────────

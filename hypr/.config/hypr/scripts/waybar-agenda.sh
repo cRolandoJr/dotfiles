@@ -10,10 +10,22 @@
 set -euo pipefail
 
 ICON='󰃭'
+# Estado del plegado. Va en XDG_RUNTIME_DIR a propósito: se borra al reiniciar,
+# así el default vuelve a ser contraído sin tener que limpiarlo a mano.
+ESTADO="${XDG_RUNTIME_DIR:-/tmp}/waybar-agenda.expandido"
+SENAL=12   # la 11 la usa custom/gamemode
 DIAS=(dom lun mar mié jue vie sáb)
 
 emit() { jq -nc --arg text "$1" --arg tooltip "$2" --arg class "$3" \
   '{text:$text,tooltip:$tooltip,class:$class}'; }
+
+# Un click alterna contraído/expandido y le avisa a waybar por señal, igual que
+# waybar-gamemode.sh. Sin la señal habría que esperar el interval de 60s.
+if [ "${1:-}" = toggle ]; then
+  if [ -e "$ESTADO" ]; then rm -f "$ESTADO"; else : > "$ESTADO"; fi
+  pkill -RTMIN+$SENAL waybar 2>/dev/null || true
+  exit 0
+fi
 
 if ! command -v khal >/dev/null 2>&1; then
   emit "$ICON ?" "khal no está en el PATH" error
@@ -54,7 +66,7 @@ fi
 ahora=$(date +%s)
 hoy=$(date +%Y-%m-%d)
 
-texto=''; clase=''; tooltip=''
+texto=''; corto=''; clase=''; tooltip=''
 while IFS=$'\t' read -r s e allday _cal title; do
   ini=$(date -d "$s" +%s)
   fin=$(date -d "$e" +%s)
@@ -75,11 +87,14 @@ while IFS=$'\t' read -r s e allday _cal title; do
 
   if [ "$ini" -le "$ahora" ]; then
     texto="$ICON ahora · $title"
+    corto="$ICON ahora"
     clase=now
   elif [ "$allday" = true ]; then
     texto="$ICON $title"
+    corto="$ICON hoy"
   elif [ "${s%% *}" = "$hoy" ]; then
     falta=$(( (ini - ahora) / 60 ))
+    corto="$ICON ${s##* }"
     if [ "$falta" -lt 60 ]; then
       texto="$ICON ${s##* } $title · en ${falta}m"
       clase=soon
@@ -89,6 +104,7 @@ while IFS=$'\t' read -r s e allday _cal title; do
   else
     dia=${DIAS[$(date -d "${s%% *}" +%w)]}
     texto="$ICON $dia ${s##* } $title"
+    corto="$ICON $dia ${s##* }"
   fi
 done <<< "$eventos"
 
@@ -97,4 +113,9 @@ if [ -z "$texto" ]; then
   exit 0
 fi
 
-emit "$texto" "${tooltip%$'\n'}" "$clase"
+# Contraído deja solo el icono y la hora; el título largo es lo que copaba la
+# barra. El tooltip trae todo en los dos modos.
+visible=$corto
+[ -e "$ESTADO" ] && visible=$texto
+
+emit "$visible" "${tooltip%$'\n'}" "$clase"
