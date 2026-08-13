@@ -12,13 +12,22 @@
 -- donde el keybinds-viewer (SUPER+K) saca el texto que muestra.
 
 -- --- VARIABLES PRINCIPALES --- (eran $vars de hyprlang)
-local terminal       = "foot"
-local float_terminal = "foot --app-id=foot_float"
-local FM2            = "foot --app-id=foot_float yazi"
-local calendar       = "foot --app-id=foot_float ikhal"
-local fileManager    = "thunar"
-local browser        = "firefox"
-local menu           = "rofi -show drun -theme ~/.config/rofi/config.rasi"
+-- `uwsm app --` le da a cada app su propio scope bajo user-1000.slice, igual que
+-- en autostart.lua. Sin eso hereda el cgroup del compositor, que queda FUERA de la
+-- sesión de logind: polkit no puede resolver la sesión y toda autenticación gráfica
+-- falla en silencio (Etcher, powerprofilesctl). rofi lo necesita especialmente,
+-- porque lo que lanza desde ahí hereda su cgroup.
+local function app(cmd)
+    return "uwsm app -- " .. cmd
+end
+
+local terminal       = app("foot")
+local float_terminal = app("foot --app-id=foot_float")
+local FM2            = app("foot --app-id=foot_float yazi")
+local calendar       = app("foot --app-id=foot_float ikhal")
+local fileManager    = app("thunar")
+local browser        = app("firefox")
+local menu           = app("rofi -show drun -theme ~/.config/rofi/config.rasi")
 local wallselect     = "~/.config/rofi/wallselect/script.sh"
 local clipboard      = "~/.config/hypr/scripts/cliphist_fuzzel.sh"
 local wifi           = "~/.config/rofi/wifi/wifi_manager.sh"
@@ -30,7 +39,7 @@ hl.bind("SUPER + B",              hl.dsp.exec_cmd(browser),        { description
 hl.bind("SUPER + E",              hl.dsp.exec_cmd(FM2),            { description = "Archivos en terminal (yazi)" })
 hl.bind("SUPER + SHIFT + E",      hl.dsp.exec_cmd(fileManager),    { description = "Archivos GUI (thunar)" })
 hl.bind("SUPER + M",              hl.dsp.exec_cmd("~/.config/hypr/scripts/spotify-toggle.sh"),     { description = "Spotify: mostrar u ocultar" })
-hl.bind("SUPER + T",              hl.dsp.exec_cmd("Telegram"),     { description = "Telegram" })
+hl.bind("SUPER + T",              hl.dsp.exec_cmd(app("Telegram")), { description = "Telegram" })
 hl.bind("SUPER + I",              hl.dsp.exec_cmd(calendar),       { description = "Calendario (ikhal)" })
 hl.bind("SUPER + Space",          hl.dsp.exec_cmd(menu),           { description = "Lanzador de aplicaciones (rofi)" })
 hl.bind("SUPER + W",              hl.dsp.exec_cmd(wallselect),     { description = "Elegir wallpaper" })
