@@ -34,6 +34,12 @@ return {
                 bash            = { "shfmt" },
                 dart            = { "dart_format" },
             },
+            -- Con --stdin-filepath (como lo invoca conform) stylua NO mira
+            -- .styluaignore salvo que se le pase --respect-ignores.
+            formatters = {
+                stylua = { prepend_args = { "--respect-ignores" } },
+            },
+
             format_on_save = function(bufnr)
                 if vim.b[bufnr].disable_autoformat or vim.g.disable_autoformat then
                     return
