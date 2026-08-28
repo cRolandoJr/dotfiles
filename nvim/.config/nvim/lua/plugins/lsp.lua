@@ -1,5 +1,6 @@
 -- LSP sin Mason: los binarios vienen del sistema (nix / pacman).
--- Si un binario no está en PATH, ese server simplemente no se activa.
+-- Si falta en PATH algún binario que el server requiere (el suyo o una dep de su
+-- config), ese server simplemente no se activa.
 -- Usa la API nativa de nvim 0.11+: vim.lsp.config + vim.lsp.enable.
 return {
     {
@@ -7,10 +8,13 @@ return {
         event = { "BufReadPre", "BufNewFile" },
         dependencies = { "saghen/blink.cmp" },
         config = function()
-            -- name → { bin = "<exe-en-PATH>", settings = ... }
+            -- name → { bin = "<exe-en-PATH>", needs = { <exes extra> }, settings = ... }
             local servers = {
                 gopls = {
                     bin = "gopls",
+                    -- root_dir de lspconfig spawnea "go": sin toolchain el ENOENT no está
+                    -- pcalleado y rompe el autocmd de FileType en cada buffer Go.
+                    needs = { "go" },
                     settings = {
                         gopls = {
                             usePlaceholders = true,
@@ -88,18 +92,30 @@ return {
                 end,
             })
 
-            -- Configurar y habilitar sólo los servers cuyo binario está en PATH.
+            -- Configurar y habilitar sólo los servers con todos sus binarios en PATH.
             -- nvim-lspconfig sigue siendo útil: provee defaults (cmd, root, filetypes)
             -- en lsp/<name>.lua del runtimepath, que vim.lsp.enable() consume.
+            local function first_missing(spec)
+                if vim.fn.executable(spec.bin) ~= 1 then
+                    return spec.bin
+                end
+                for _, dep in ipairs(spec.needs or {}) do
+                    if vim.fn.executable(dep) ~= 1 then
+                        return dep
+                    end
+                end
+            end
+
             local missing = {}
             for name, spec in pairs(servers) do
-                if vim.fn.executable(spec.bin) == 1 then
+                local absent = first_missing(spec)
+                if absent then
+                    table.insert(missing, name .. " (" .. absent .. ")")
+                else
                     if spec.settings then
                         vim.lsp.config(name, { settings = spec.settings })
                     end
                     vim.lsp.enable(name)
-                else
-                    table.insert(missing, name .. " (" .. spec.bin .. ")")
                 end
             end
 
