@@ -18,7 +18,7 @@ WALLPAPER_DIR="$HOME/Wallpapers"
 GRID_THEME="$HOME/.config/rofi/wallselect/style.rasi"
 APIKEY_FILE="$HOME/.config/wallhaven/apikey"
 THUMB_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/wallhaven-thumbs"
-COUNT=48 # cuántos resultados mostrar (2 páginas exactas de 24)
+COUNT=72 # cuántos resultados mostrar (3 páginas exactas de 24)
 MIN_RES="1920x1080"
 
 # theme-str: hace visible un inputbar en el grid (el theme wallselect lo oculta).
@@ -54,7 +54,7 @@ fetch() {
     # La API devuelve 24 por página → paginamos hasta juntar COUNT (50 ≈ 3 págs).
     ROWS=()
     page=1
-    while ((${#ROWS[@]} < COUNT && page <= 4)); do
+    while ((${#ROWS[@]} < COUNT && page <= 6)); do
         resp="$(curl -fsSL --get "https://wallhaven.cc/api/v1/search" \
             ${query:+--data-urlencode "q=$query"} \
             --data-urlencode "categories=111" \
