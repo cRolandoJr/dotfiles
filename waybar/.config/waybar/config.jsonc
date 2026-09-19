@@ -18,34 +18,53 @@
 
   "modules-left": ["custom/nixos", "hyprland/workspaces", "mpris"],
   "modules-center": ["hyprland/window"],
-  // Orden: controles interactivos (layout/volumen/idle/modo juego) → estado
-  // pasivo (temp/batería) → reloj como ancla → tray al borde.
-  "modules-right": [
-    "custom/agenda",
-    "custom/layout",
-    "pulseaudio",
-    "idle_inhibitor",
-    "custom/gamemode",
-    "temperature",
-    "battery",
-    "clock",
-    "tray",
-  ],
+  // Todo lo que no se mira de continuo vive plegado en group/estado (se abre
+  // al pasar el mouse). Afuera quedan las tres anclas que no se mueven nunca.
+  "modules-right": ["group/estado", "battery", "clock", "tray"],
+
+  // Grupo plegable. El primer módulo es el "leader" y es el único que no se
+  // oculta; waybar lo empaqueta a la IZQUIERDA y los hijos aparecen entre él y
+  // la batería (medido, no supuesto). Por eso el leader es un chevron sin dato:
+  // el que se desplaza al abrir es un ícono, no un número que el ojo persigue.
+  // Orden interno: interactivos → estado pasivo, igual que antes.
+  "group/estado": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 300,
+      // false = entran de derecha a izquierda, que es hacia donde crece el
+      // bloque (modules-right está anclado al borde derecho del bar).
+      "transition-left-to-right": false,
+    },
+    "modules": [
+      "custom/expand",
+      "custom/agenda",
+      "custom/layout",
+      "pulseaudio",
+      "idle_inhibitor",
+      "custom/gamemode",
+      "temperature",
+    ],
+  },
+
+  // Leader del grupo: sin dato propio. Es la superficie de hover y el aviso de
+  // que hay algo plegado. Apunta a la izquierda porque es hacia donde abre.
+  "custom/expand": {
+    "format": "󰅁",
+    "tooltip": false,
+  },
 
   // ─── Agenda — próxima clase o lectura (khal) ─────────────────────────────
-  //   Va PRIMERO en modules-right: el texto es de largo variable y así crece
-  //   hacia la izquierda sin mover el reloj, que es el ancla.
-  //   Click izq → contrae/expande | Click der → ikhal (también SUPER+I)
-  //   La señal es para que el toggle se vea al instante y no al próximo interval.
+  //   Primera dentro del grupo: es la de largo más variable, así que al
+  //   expandirse crece hacia la izquierda sin mover nada de lo que quedó afuera.
+  //   Click der → ikhal (también SUPER+I). El plegado lo hace el drawer del
+  //   grupo, no el módulo: el texto largo ya no llega a la barra.
   "custom/agenda": {
     "exec": "$HOME/.config/hypr/scripts/waybar-agenda.sh",
     "return-type": "json",
     "interval": 60,
-    "signal": 12,
     "format": "{}",
     "max-length": 48,
     "tooltip": true,
-    "on-click": "$HOME/.config/hypr/scripts/waybar-agenda.sh toggle",
     "on-click-right": "foot --app-id=foot_float ikhal",
   },
 

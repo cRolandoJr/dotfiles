@@ -142,7 +142,7 @@ window#waybar {
      1px  1px 0 0 rgba(37, 99, 235, 0.40);
 }
 
-/* Módulos internos: transparentes, sin margin, separadores sutiles */
+/* Módulos internos: transparentes, sin margin, separadores sutiles. */
 .modules-right > widget > * {
   background: transparent;
   margin: 0;
@@ -155,15 +155,29 @@ window#waybar {
   border-right: 1px solid rgba(205, 214, 244, 0.08);
 }
 
+/* Los hijos de group/estado están un nivel más adentro. Esta regla NO fija
+ * padding a propósito: al llevar un #id le ganaría en especificidad a los
+ * módulos que declaran el suyo, así que ahí cada uno pone su ancho. */
+#estado { padding: 0; }
+#estado > widget > * {
+  background: transparent;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border-right: 1px solid rgba(205, 214, 244, 0.08);
+}
+
 /* Reloj — resaltado con cyan */
 #clock {
   color: @cyan;
   font-weight: 800;
 }
 
-/* Módulos estándar */
+/* Módulos estándar. El padding va explícito porque dentro del grupo no hay
+ * regla genérica que lo ponga (ver el bloque de #estado). */
 #temperature, #pulseaudio, #battery {
   color: @fg;
+  padding: 0 8px;
 }
 
 /* Estados */
@@ -200,6 +214,17 @@ window#waybar {
 #custom-layout.us      { color: @blue-soft; }
 #custom-layout.es      { color: @lang-es; }
 #custom-layout.unknown { color: @fg-dim; }
+
+/* Leader del grupo plegable: sin dato, solo superficie de hover. Se enciende
+ * al apuntarlo para que se lea como control y no como adorno. */
+#custom-expand {
+  color: @fg-dim;
+  padding: 0 7px;
+  transition: color 140ms ease;
+}
+#custom-expand:hover {
+  color: @cyan;
+}
 
 /* Systray (blueman, telegram, kdeconnect…) */
 #tray {
