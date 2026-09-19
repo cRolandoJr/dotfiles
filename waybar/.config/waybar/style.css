@@ -237,9 +237,12 @@ window#waybar {
   -gtk-icon-effect: highlight;
 }
 
-/* Idle inhibitor: apagado = discreto, activado = cyan (pantalla despierta) */
+/* Idle inhibitor: apagado = discreto, activado = cyan (pantalla despierta).
+ * El ojo se dibuja más ancho que el avance que declara la Nerd Font, así que
+ * con el padding común invade al vecino: lleva el suyo, como #custom-layout. */
 #idle_inhibitor {
   color: @fg-dim;
+  padding: 0 12px;
 }
 #idle_inhibitor.activated {
   color: @cyan;
