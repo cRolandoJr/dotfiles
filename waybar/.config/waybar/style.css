@@ -248,6 +248,19 @@ window#waybar {
   color: @cyan;
 }
 
+/* Num lock: solo se ve encendido. El ancho y el separador los pone el label
+ * .locked y no el módulo, porque apagado el label no lleva esa clase; así no
+ * queda ni aire ni raya (medido contra no tener el módulo: 0 px). */
+#keyboard-state {
+  padding: 0;
+  border-right: none;
+}
+#keyboard-state label.locked {
+  color: @warn;
+  padding: 0 8px;
+  border-right: 1px solid rgba(205, 214, 244, 0.08);
+}
+
 /* Modo juego: misma semántica que idle_inhibitor — cyan = activo (k3s parado) */
 #custom-agenda {
   color: @fg-dim;

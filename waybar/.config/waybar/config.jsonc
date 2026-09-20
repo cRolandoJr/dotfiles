@@ -20,7 +20,7 @@
   "modules-center": ["hyprland/window"],
   // Todo lo que no se mira de continuo vive plegado en group/estado (se abre
   // al pasar el mouse). Afuera quedan las tres anclas que no se mueven nunca.
-  "modules-right": ["group/estado", "battery", "clock", "tray"],
+  "modules-right": ["group/estado", "keyboard-state", "battery", "clock", "tray"],
 
   // Grupo plegable. El primer módulo es el "leader" y es el único que no se
   // oculta; waybar lo empaqueta a la IZQUIERDA y los hijos aparecen entre él y
@@ -44,6 +44,20 @@
       "custom/gamemode",
       "temperature",
     ],
+  },
+
+  // Num lock: solo aparece ENCENDIDO. Apagado el icono va vacío y el módulo
+  // no ocupa lugar (medido contra no tenerlo: 0 px). Fuera del grupo a
+  // propósito: un indicador que hay que desplegar para consultar no indica nada.
+  "keyboard-state": {
+    "numlock": true,
+    "capslock": false,
+    "scrolllock": false,
+    "format": "{icon}",
+    "format-icons": {
+      "locked": "󰎠 NUM",
+      "unlocked": "",
+    },
   },
 
   // Leader del grupo: sin dato propio. Es la superficie de hover y el aviso de
