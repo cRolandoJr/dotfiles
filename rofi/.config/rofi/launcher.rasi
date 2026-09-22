@@ -1,0 +1,140 @@
+/* ╔════════════════════════════════════════════════════════════════╗
+   ║   R  O  F  I  ·  Launcher (combi)                              ║
+   ║   cRolandoJr · github.com/cRolandoJr                           ║
+   ╚════════════════════════════════════════════════════════════════╝ */
+
+/* Tema del launcher unificado (drun + window + calc en una sola lista).
+   Los otros menús (wifi, cliphist, keybinds) siguen con su -theme propio.
+
+   Gramática visual tomada de Ryoku: radios chicos (su base es 6, "Ryoku is
+   tight"), prefijo "//" en el prompt, mayúsculas con letter-spacing y fondo
+   casi negro. Los COLORES siguen siendo Deep Ocean, que es la paleta del
+   resto del escritorio: copiar también su rojo chocaría con waybar y eww. */
+
+configuration {
+    display-combi:  "//";
+    display-drun:   "APP";
+    display-window: "WIN";
+    display-calc:   "CALC";
+    drun-display-format: "{name}";
+    font: "JetBrainsMono Nerd Font Medium 10";
+    show-icons: true;
+    icon-theme: "Papirus";
+    terminal: "foot";
+    combi-hide-mode-prefix: false;
+}
+
+* {
+    /* Deep Ocean */
+    bg:         #0a0e17;
+    fg:         #cdd6f4;
+    fg-alt:     #7a8ba8;
+    accent:     #3b82f6;
+    accent2:    #00b4d8;
+
+    win-bg:     #070a11f2;
+    panel-bg:   #0f1623e6;
+    sel-bg:     #151e2df0;
+
+    background-color: transparent;
+    text-color: @fg;
+    margin: 0;
+    padding: 0;
+    spacing: 0;
+}
+
+window {
+    location: center;
+    anchor: center;
+    width: 42%;
+    border: 1px;
+    border-color: #1b2534ff;
+    border-radius: 10px;          /* radiusLarge de Ryoku */
+    background-color: @win-bg;
+}
+
+mainbox {
+    padding: 12px;
+    spacing: 10px;
+    children: [ "inputbar", "listview" ];
+}
+
+/* El prompt es el "//" de Ryoku: marca la superficie sin ocupar lugar. */
+inputbar {
+    background-color: @panel-bg;
+    border-radius: 6px;           /* radiusMedium */
+    padding: 9px 11px;
+    spacing: 9px;
+    children: [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled: true;
+    text-color: @accent2;
+    background-color: transparent;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @fg;
+    placeholder: "BUSCAR";
+    placeholder-color: @fg-alt;
+}
+
+listview {
+    background-color: transparent;
+    columns: 1;
+    lines: 9;
+    fixed-height: true;
+    spacing: 4px;                 /* spacingSmall */
+    scrollbar: true;
+}
+
+/* Pills: bajos, radio chico y borde que sólo aparece al seleccionar. */
+element {
+    background-color: transparent;
+    border-radius: 6px;
+    padding: 8px 10px;
+    spacing: 10px;
+    border: 1px;
+    border-color: transparent;
+}
+
+element selected.normal {
+    background-color: @sel-bg;
+    border-color: @accent2;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: @fg;
+    vertical-align: 0.5;
+}
+
+element-icon {
+    size: 20px;
+}
+
+/* La etiqueta de modo (APP / WIN / CALC) con el tracking de Ryoku. */
+element-text.normal.normal {
+    text-color: @fg;
+}
+
+scrollbar {
+    width: 4px;
+    handle-width: 4px;
+    background-color: transparent;
+    handle-color: #1b2534ff;
+    border-radius: 6px;
+}
+
+message {
+    background-color: transparent;
+}
+
+textbox {
+    background-color: @panel-bg;
+    text-color: @fg-alt;
+    border-radius: 6px;
+    padding: 9px;
+}

@@ -27,8 +27,12 @@ local FM2 = app("foot --app-id=foot_float yazi")
 local calendar = app("foot --app-id=foot_float ikhal")
 local fileManager = app("thunar")
 local browser = app("firefox")
-local menu = app("rofi -show drun -theme ~/.config/rofi/config.rasi")
-local wallselect = "~/.config/rofi/wallselect/script.sh"
+local menu = app(
+	"rofi -show combi -modes combi -combi-modes drun,window,calc "
+		.. "-theme ~/.config/rofi/launcher.rasi"
+)
+-- El wallselect de rofi (~/.config/rofi/wallselect/script.sh) queda como
+-- respaldo sin bind: para volver atras, restaurar SUPER + W a ese script.
 local clipboard = "~/.config/hypr/scripts/cliphist_fuzzel.sh"
 local wifi = "~/.config/rofi/wifi/wifi_manager.sh"
 
@@ -45,12 +49,12 @@ hl.bind(
 )
 hl.bind("SUPER + T", hl.dsp.exec_cmd(app("Telegram")), { description = "Telegram" })
 hl.bind("SUPER + I", hl.dsp.exec_cmd(calendar), { description = "Calendario (ikhal)" })
-hl.bind("SUPER + Space", hl.dsp.exec_cmd(menu), { description = "Lanzador de aplicaciones (rofi)" })
-hl.bind("SUPER + W", hl.dsp.exec_cmd(wallselect), { description = "Elegir wallpaper" })
+hl.bind("SUPER + Space", hl.dsp.exec_cmd(menu), { description = "Lanzador: apps, ventanas y calculadora" })
+hl.bind("SUPER + W", hl.dsp.exec_cmd("ryogami wallpaper ui"), { description = "Elegir wallpaper" })
 hl.bind(
 	"SUPER + SHIFT + W",
-	hl.dsp.exec_cmd("~/.config/hypr/scripts/wallhaven-fetch.sh"),
-	{ description = "Descargar wallpapers de wallhaven" }
+	hl.dsp.exec_cmd("ryogami wallpaper browse"),
+	{ description = "Buscar wallpapers en Wallhaven" }
 )
 hl.bind("SUPER + C", hl.dsp.exec_cmd(clipboard), { description = "Historial de portapapeles" })
 hl.bind("SUPER + L", hl.dsp.exec_cmd("~/.config/hypr/scripts/lock.sh"), { description = "Bloquear pantalla" })

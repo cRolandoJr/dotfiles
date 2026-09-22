@@ -17,13 +17,11 @@ configuration {
 /*****----- Main Window -----*****/
 window {
     transparency:                "real";
-    /* Panel de utilidad bajo el system-area de waybar (bar 28+2 + gap). */
-    location:                    northeast;
-    anchor:                      northeast;
+    /* Centrado, igual que el resto de los pasos del flujo. */
+    location:                    center;
+    anchor:                      center;
     fullscreen:                  false;
-    width:                       400px;
-    x-offset:                    -10px;
-    y-offset:                    40px;
+    width:                       40em;
 
     /* properties for all widgets */
     enabled:                     true;
