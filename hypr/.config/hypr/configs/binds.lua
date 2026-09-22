@@ -31,7 +31,6 @@ local menu = app(
 	"rofi -show combi -modes combi -combi-modes drun,window,calc "
 		.. "-theme ~/.config/rofi/launcher.rasi"
 )
--- El wallselect de rofi queda en su carpeta, sin bind, como respaldo.
 local clipboard = "~/.config/hypr/scripts/cliphist_fuzzel.sh"
 local wifi = "~/.config/rofi/wifi/wifi_manager.sh"
 

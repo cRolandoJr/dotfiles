@@ -7,7 +7,7 @@
    alpha va al final del hex: #RRGGBBAA.
 
    Este archivo es el tema del launcher. Los menús con layout propio
-   (wallselect, wifi, cliphist, keybinds) pasan su -theme aparte. */
+   (wifi, cliphist, keybinds) pasan su -theme aparte. */
 
 configuration {
     display-drun: "Applications:";
