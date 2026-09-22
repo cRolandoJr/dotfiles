@@ -5,36 +5,39 @@
 @import "../config.rasi"
 
 window {
-    width: 70%;
-    border-radius: 14px;
+    width: 780px;
+    border-radius: 12px;
 }
 
 mainbox {
-    padding: 18px;
-    spacing: 12px;
+    padding: 14px;
+    spacing: 10px;
     children: [ "inputbar", "message", "listview" ];
 }
 
 message {
     background-color: @hint-bg;
-    border-radius: 10px;
-    padding: 8px 12px;
+    border-radius: 8px;
+    padding: 6px 10px;
 }
 
 textbox {
     text-color: @fg-alt;
+    padding: 0px;
 }
 
+/* fixed-height:true ata el alto a `lines`; en false rofi estira hasta el borde
+   de la pantalla porque intenta mostrar los 92 binds de una. */
 listview {
-    lines: 22;
-    fixed-height: false;
-    spacing: 3px;
+    lines: 17;
+    fixed-height: true;
+    spacing: 2px;
     scrollbar: true;
 }
 
 element {
-    padding: 7px 14px;
-    border-radius: 8px;
+    padding: 4px 12px;
+    border-radius: 6px;
     spacing: 0;
 }
 

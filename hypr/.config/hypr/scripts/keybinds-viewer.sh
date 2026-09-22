@@ -37,7 +37,7 @@ function emit() {
     gsub(/\/home\/[^\/]+\/\.config\/hypr\/scripts\//, "~/scripts/", action)
     gsub(/~\/\.config\/hypr\/scripts\//, "~/scripts/", action)
     gsub(/[[:space:]]+/, " ", action)
-    printf "%-10s  %-26s  →  %s\n", "[" group "]", combo, action
+    printf "%-8s  %-23s  →  %s\n", "[" group "]", combo, action
 }
 
 # Un bloque nuevo empieza con el tipo de bind sin indentar (bind/binde/bindd/...)
