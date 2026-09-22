@@ -37,7 +37,7 @@ else
   CLASS="dirty"
 fi
 
-TEXT="<span color='$ICON_COLOR' size='large'>$ICON</span> $GEN"
+TEXT="<span color='$ICON_COLOR' size='15pt'>$ICON</span>"
 TOOLTIP="NixOS $VER\nGen $GEN | Kernel $KERNEL\nFlake: $FLAKE_LABEL\nRebuild: $LAST"
 
 printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$TEXT" "$TOOLTIP" "$CLASS"

@@ -1,15 +1,5 @@
-/* ╔════════════════════════════════════════════════════════════════╗
-   ║   R  O  F  I  ·  Launcher (combi)                              ║
-   ║   cRolandoJr · github.com/cRolandoJr                           ║
-   ╚════════════════════════════════════════════════════════════════╝ */
-
-/* Tema del launcher unificado (drun + window + calc en una sola lista).
-   Los otros menús (wifi, cliphist, keybinds) siguen con su -theme propio.
-
-   Gramática visual tomada de Ryoku: radios chicos (su base es 6, "Ryoku is
-   tight"), prefijo "//" en el prompt, mayúsculas con letter-spacing y fondo
-   casi negro. Los COLORES siguen siendo Deep Ocean, que es la paleta del
-   resto del escritorio: copiar también su rojo chocaría con waybar y eww. */
+/* Tema del launcher unificado (combi: drun + window + calc).
+   Radios de 6px a proposito: el resto de los menus usa 12-14 y se ve mas blando. */
 
 configuration {
     display-combi:  "//";

@@ -23,11 +23,9 @@ hl.on("hyprland.start", function()
     -- BusName=org.freedesktop.Notifications) que arranca on-demand cuando
     -- llega la primera notif. Lanzarlo dos veces (uwsm + dbus-activation)
     -- generaba conflicto de BusName.
-    -- Wallpaper: ryogami y su superficie NO se lanzan aqui: son servicios de usuario
-    -- (ryogami.service / ryogami-surface.service, en la nix-config), igual que
-    -- waybar. Este handler corre solo en hyprland.start, asi que un rebuild sin
-    -- reiniciar sesion dejaba el daemon sin arrancar y los binds fallaban en
-    -- silencio. Como unidad ademas se relevanta sola y loguea al journal.
+    -- ryogami: NO se lanza aquí. Va como servicio de usuario (nix-config) igual
+    -- que waybar, porque este handler corre solo en hyprland.start y un rebuild
+    -- sin reiniciar sesión dejaba los binds fallando en silencio.
 
     -- OSD
     hl.exec_cmd("uwsm app -- swayosd-server")

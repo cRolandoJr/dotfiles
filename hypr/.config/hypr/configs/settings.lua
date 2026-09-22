@@ -24,7 +24,7 @@ hl.config({
 
         col = {
             -- Deep Ocean borders
-            active_border   = { colors = { "rgb(00b4d8)", "rgb(3b82f6)" }, angle = 45 }, -- cyan → azul NixOS
+            active_border   = { colors = { "rgb(3b82f6)", "rgb(00b4d8)" }, angle = 45 },
             inactive_border = "rgb(1a2744)",                                             -- navy border
         },
 

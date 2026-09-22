@@ -1,7 +1,5 @@
-// SPIKE DESCARTABLE — sólo la superficie de wallpaper de Ryoku, sin su shell.
-// Capa Background + exclusionMode Ignore: queda DEBAJO de waybar y no reserva
-// espacio, así que no reacomoda ventanas. Estructura copiada de shell.qml:154
-// (Variants -> Scope -> Wallpaper + ventana), que es el patrón probado del repo.
+// Superficie que pinta el wallpaper: capa Background con exclusionMode Ignore,
+// para quedar debajo de waybar sin reservar espacio ni reacomodar ventanas.
 import QtQuick
 import Quickshell
 import Quickshell.Wayland

@@ -8,16 +8,18 @@
 @define-color bar-bg      rgba(10, 14, 23, 0.00);
 @define-color border      rgba(26, 39, 68, 0.90);
 
-@define-color cyan        rgba(0, 180, 216, 0.90);
-@define-color cyan-glow   rgba(0, 180, 216, 0.40);
-@define-color cyan-dim    rgba(0, 180, 216, 0.18);
-@define-color blue-soft   #3b82f6;
+/* Un solo acento: lo activo y lo enfocado. */
+@define-color accent      rgba(59, 130, 246, 0.90);
+@define-color accent-glow rgba(59, 130, 246, 0.40);
+@define-color accent-dim  rgba(59, 130, 246, 0.18);
 
-@define-color lang-es     rgba(94, 234, 212, 0.75);  /* teal layout ES (mismo acento sin-purple que starship) */
+/* Excepcion deliberada al acento unico: el layout se lee de un vistazo. */
+@define-color lang-us     rgba(0, 180, 216, 0.90);
+@define-color lang-es     rgba(94, 234, 212, 0.85);
 
 @define-color crit        rgba(248, 113, 113, 0.90);
 @define-color warn        rgba(251, 146, 60, 0.90);
-@define-color ok          rgba(52, 211, 153, 0.90);
+@define-color ok          rgba(45, 156, 111, 0.95);
 
 * {
   border: none;
@@ -38,10 +40,10 @@ window#waybar {
 /* Logo NixOS — chip pequeño a la izquierda del island de workspaces */
 #custom-nixos {
   background: @island-bg;
-  color: @cyan;
+  color: @accent;
   font-size: 12px;
   margin: 2px 0;                  /* pegado al borde izquierdo del bar */
-  padding: 2px 10px;
+  padding: 0 14px 0 6px;          /* asimetrico: centra el glyph opticamente */
   min-height: 20px;
   border-radius: 14px;            /* capsule completa (Variante A) */
   border: 1px solid @border;
@@ -49,7 +51,7 @@ window#waybar {
 }
 
 #custom-nixos:hover {
-  background: @cyan-dim;
+  background: @accent-dim;
   color: #ffffff;
 }
 
@@ -64,7 +66,7 @@ window#waybar {
 
   /* Glow sutil: borde cyan superior-izquierdo, azul navy inferior-derecho */
   box-shadow:
-    -1px -1px 0 0 @cyan-dim,
+    -1px -1px 0 0 @accent-dim,
      1px  1px 0 0 rgba(37, 99, 235, 0.40);
 }
 
@@ -82,17 +84,17 @@ window#waybar {
 #workspaces button label { font-size: 0px; }
 
 #workspaces button:hover {
-  background: @cyan-dim;
+  background: @accent-dim;
 }
 
 #workspaces button.active {
-  background: @cyan;
-  box-shadow: 0 0 10px @cyan-glow;
+  background: @accent;
+  box-shadow: 0 0 10px @accent-glow;
   min-height: 16px;               /* altura suficiente para que el número centre */
   padding: 0 8px;                 /* sin min-width: el padding define el ancho y el dígito no se recorta */
 }
 
-/* Solo el activo muestra su número, en navy oscuro sobre el cyan */
+/* Solo el activo muestra su número */
 #workspaces button.active label {
   font-size: 11px;
   color: #0a0e17;
@@ -114,7 +116,7 @@ window#waybar {
   border: 1px solid @border;
 
   box-shadow:
-    -1px -1px 0 0 @cyan-dim,
+    -1px -1px 0 0 @accent-dim,
      1px  1px 0 0 rgba(37, 99, 235, 0.40),
      0px  0px 18px 0px rgba(0, 180, 216, 0.08);
 }
@@ -138,7 +140,7 @@ window#waybar {
   border: 1px solid @border;
 
   box-shadow:
-    -1px -1px 0 0 @cyan-dim,
+    -1px -1px 0 0 @accent-dim,
      1px  1px 0 0 rgba(37, 99, 235, 0.40);
 }
 
@@ -155,26 +157,14 @@ window#waybar {
   border-right: 1px solid rgba(205, 214, 244, 0.08);
 }
 
-/* Los hijos de group/estado están un nivel más adentro. Esta regla NO fija
- * padding a propósito: al llevar un #id le ganaría en especificidad a los
- * módulos que declaran el suyo, así que ahí cada uno pone su ancho. */
-#estado { padding: 0; }
-#estado > widget > * {
-  background: transparent;
-  margin: 0;
-  border-radius: 0;
-  box-shadow: none;
-  border-right: 1px solid rgba(205, 214, 244, 0.08);
-}
 
-/* Reloj — resaltado con cyan */
+
 #clock {
-  color: @cyan;
+  color: @accent;
   font-weight: 800;
 }
 
-/* Módulos estándar. El padding va explícito porque dentro del grupo no hay
- * regla genérica que lo ponga (ver el bloque de #estado). */
+/* Módulos estándar: cada uno declara su padding. */
 #temperature, #pulseaudio, #battery {
   color: @fg;
   padding: 0 8px;
@@ -193,7 +183,7 @@ window#waybar {
   border-radius: 14px;
   border: 1px solid @border;
 }
-#mpris.playing { color: @blue-soft; }
+#mpris.playing { color: @accent; }
 #mpris.paused { color: @fg-dim; font-style: italic; }
 
 #temperature.critical {
@@ -211,19 +201,15 @@ window#waybar {
   padding: 0 6px;
   min-width: 22px;
 }
-#custom-layout.us      { color: @blue-soft; }
+#custom-layout.us      { color: @lang-us; }
 #custom-layout.es      { color: @lang-es; }
 #custom-layout.unknown { color: @fg-dim; }
 
 /* Leader del grupo plegable: sin dato, solo superficie de hover. Se enciende
  * al apuntarlo para que se lea como control y no como adorno. */
-#custom-expand {
-  color: @fg-dim;
-  padding: 0 7px;
-  transition: color 140ms ease;
-}
+
 #custom-expand:hover {
-  color: @cyan;
+  color: @accent;
 }
 
 /* Systray (blueman, telegram, kdeconnect…) */
@@ -245,7 +231,7 @@ window#waybar {
   padding: 0 12px;
 }
 #idle_inhibitor.activated {
-  color: @cyan;
+  color: @accent;
 }
 
 /* Num lock: solo se ve encendido. El ancho y el separador los pone el label
@@ -267,7 +253,7 @@ window#waybar {
   padding: 0 6px;
 }
 #custom-agenda.soon {
-  color: @cyan;
+  color: @accent;
 }
 #custom-agenda.now {
   color: @crit;
@@ -281,14 +267,14 @@ window#waybar {
   padding: 0 6px;
 }
 #custom-gamemode.on {
-  color: @cyan;
+  color: @accent;
 }
 #custom-gamemode.busy {
   color: @warn;
 }
 /* Perfil battery: k3s no existe, no hay nada que togglear */
 #custom-gamemode.absent {
-  color: @blue-soft;
+  color: @fg-dim;
 }
 
 /* Tooltip coherente */
@@ -298,7 +284,7 @@ tooltip {
   border-radius: 10px;
   border: 1px solid @border;
   padding: 6px 10px;
-  box-shadow: 0 0 12px @cyan-glow;
+  box-shadow: 0 0 12px @accent-glow;
 }
 
 tooltip label { color: @fg; }
