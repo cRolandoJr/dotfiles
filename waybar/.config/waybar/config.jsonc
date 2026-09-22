@@ -16,7 +16,7 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["custom/nixos", "hyprland/workspaces", "custom/layout", "keyboard-state", "mpris"],
+  "modules-left": ["custom/nixos", "hyprland/workspaces", "group/teclado", "mpris"],
   "modules-center": ["hyprland/window"],
   // Todo visible: un modulo plegado es un modulo que se olvida. El orden va de
   // interactivos a estado pasivo, y termina en las anclas que no se mueven.
@@ -185,6 +185,13 @@
     "format-icons": { "activated": "", "deactivated": "" },
     "tooltip-format-activated": "Idle inhibido — la pantalla no se bloquea",
     "tooltip-format-deactivated": "Idle normal",
+  },
+
+  // Agrupados para compartir un island: sueltos quedaban sobre el wallpaper y
+  // se perdian con un fondo claro. Sin "drawer": es un contenedor, no un plegable.
+  "group/teclado": {
+    "orientation": "horizontal",
+    "modules": ["custom/layout", "keyboard-state"]
   },
 
   "custom/layout": {

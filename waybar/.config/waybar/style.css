@@ -195,6 +195,17 @@ window#waybar {
   to { color: rgba(248, 113, 113, 0.40); }
 }
 
+/* Island de teclado: layout + num lock. Mismo molde que #workspaces y #mpris.
+ * El padding lateral lo ponen los hijos, por eso aca va solo el vertical. */
+#teclado {
+  background: @island-bg;
+  margin: 2px 0 2px 6px;
+  padding: 0 2px;
+  min-height: 20px;
+  border-radius: 14px;
+  border: 1px solid @border;
+}
+
 /* Layout de teclado — color por clase que emite waybar-layout.sh */
 #custom-layout {
   color: @fg;
@@ -234,9 +245,10 @@ window#waybar {
   color: @accent;
 }
 
-/* Num lock: solo se ve encendido. El ancho y el separador los pone el label
- * .locked y no el módulo, porque apagado el label no lleva esa clase; así no
- * queda ni aire ni raya (medido contra no tener el módulo: 0 px). */
+/* Num lock: solo se ve encendido. El ancho lo pone el label .locked y no el
+ * módulo, porque apagado el label no lleva esa clase; así no queda aire
+ * (medido contra no tener el módulo: 0 px). El separador se fue al entrar al
+ * island: quedaba pegado al borde de la capsula y se leia como doble linea. */
 #keyboard-state {
   padding: 0;
   border-right: none;
@@ -244,7 +256,6 @@ window#waybar {
 #keyboard-state label.locked {
   color: @warn;
   padding: 0 8px;
-  border-right: 1px solid rgba(205, 214, 244, 0.08);
 }
 
 /* Modo juego: misma semántica que idle_inhibitor — cyan = activo (k3s parado) */
