@@ -78,10 +78,9 @@ hl.window_rule({
 -- --- REGLAS ANÓNIMAS (eran de una sola línea en hyprlang) ---
 
 -- VSCode ligeramente transparente
-hl.window_rule({ match = { class = "^(code)$" },        opacity = "0.98 0.98" })
+hl.window_rule({ match = { class = "^(code)$" },        opacity = "0.97 0.97" })
 -- Waypaper siempre flotante
 hl.window_rule({ match = { class = "^(waypaper)$" },    float   = true })
-hl.window_rule({ match = { class = "^(notion-app)$" },  opacity = "0.95 0.90" })
 hl.window_rule({ match = { class = "^(firefox)$" },     opacity = "0.98 0.95" })
 
 -- --- REGLAS DE CAPAS (Layer Rules) ---
