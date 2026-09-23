@@ -9,7 +9,7 @@
 # El JSON se emite con jq y no con printf porque los títulos son texto de la cátedra.
 set -euo pipefail
 
-ICON='󰃭'
+ICON="<span size='12pt'>󰃭</span>"
 DIAS=(dom lun mar mié jue vie sáb)
 
 emit() { jq -nc --arg text "$1" --arg tooltip "$2" --arg class "$3" \

@@ -5,7 +5,7 @@
 
 UNITS=(k3s.service scx.service)
 SYSTEMCTL=/run/current-system/sw/bin/systemctl
-ICON='󰊴'
+ICON="<span size='12pt'>󰊴</span>"
 
 # `is-active` devuelve "inactive" tanto si el unit está parado como si NO EXISTE,
 # así que no alcanza para decidir. `is-enabled` sí distingue (da "not-found").

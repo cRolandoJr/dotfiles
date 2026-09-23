@@ -73,8 +73,9 @@ window#waybar {
   padding: 0;
 }
 
-/* Mismo motivo de especificidad: el vertical es lo que le deja 16 px a los dots
-   dentro de los 20 del island. Sin el, GTK los estira y el activo crece. */
+/* Mismo motivo de especificidad. El tamaño de los dots NO lo fija este padding:
+   GTK estira los botones al alto del island, y lo que lo frena es el margin
+   vertical de `#workspaces button` (medido: 12x12 inactivo, 16 de alto activo). */
 #sistema > widget > #workspaces {
   padding: 2px 6px;
 }
@@ -98,7 +99,7 @@ window#waybar {
 /* Dots de workspace */
 #workspaces button {
   all: unset;
-  margin: 0 5px;
+  margin: 5px 5px;                /* el vertical frena el estirado de GTK al alto del island */
   min-width: 12px;
   min-height: 12px;
   border-radius: 999px;
@@ -116,6 +117,7 @@ window#waybar {
   background: @accent;
   box-shadow: 0 0 10px @accent-glow;
   min-height: 16px;               /* altura suficiente para que el número centre */
+  margin: 3px 5px;
   padding: 0 8px;                 /* sin min-width: el padding define el ancho y el dígito no se recorta */
 }
 
