@@ -585,7 +585,7 @@
                       :height "800px"
                       :anchor "bottom right")
   :stacking "fg"
-  :focusable true
+  :focusable "ondemand"
   :exclusive false
   :namespace "hub"
   (hub-content))
