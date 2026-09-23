@@ -29,7 +29,6 @@ configuration {
     fg-alt:     #7a8ba8;
 
     accent:     #3b82f6;   /* azul NixOS */
-    accent2:    #00b4d8;   /* cyan Deep Ocean */
 
     /* Transparent variants (RGBA: #RRGGBBAA) */
     win-bg:     #0a0e17e6;
@@ -78,7 +77,7 @@ inputbar {
 
 prompt {
     enabled: true;
-    text-color: @accent2;
+    text-color: @accent;
     background-color: transparent;
 }
 
@@ -131,7 +130,7 @@ element normal.normal {
 
 element selected.normal {
     background-color: @sel-bg;
-    border-color: @accent2;
+    border-color: @accent;
 }
 
 element-text {
@@ -175,5 +174,5 @@ button selected {
     background-color: @sel-bg;
     text-color: @fg;
     border: 2px;
-    border-color: @accent2;
+    border-color: @accent;
 }

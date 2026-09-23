@@ -10,7 +10,6 @@ configuration {
     background-alt:              #151e2d;
     foreground:                  #cdd6f4;
     selected:                    #3b82f6;
-    active:                      #00b4d8;
     urgent:                      #f87171;
 }
 
@@ -71,7 +70,7 @@ textbox-prompt-colon {
     str:                         "";
     padding:                     10px 22px 10px 12px;
     border-radius:               6px;
-    background-color:            #00b4d8;
+    background-color:            #3b82f6;
     text-color:                  @background;
 }
 

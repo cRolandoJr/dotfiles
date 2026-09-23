@@ -22,7 +22,6 @@ configuration {
     fg:         #cdd6f4;
     fg-alt:     #7a8ba8;
     accent:     #3b82f6;
-    accent2:    #00b4d8;
 
     win-bg:     #070a11f2;
     panel-bg:   #0f1623e6;
@@ -62,7 +61,7 @@ inputbar {
 
 prompt {
     enabled: true;
-    text-color: @accent2;
+    text-color: @accent;
     background-color: transparent;
 }
 
@@ -94,7 +93,7 @@ element {
 
 element selected.normal {
     background-color: @sel-bg;
-    border-color: @accent2;
+    border-color: @accent;
 }
 
 element-text {

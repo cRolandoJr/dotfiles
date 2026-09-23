@@ -49,5 +49,5 @@ element-text {
 element selected.normal {
     background-color: @sel-bg;
     border: 1px;
-    border-color: @accent2;
+    border-color: @accent;
 }

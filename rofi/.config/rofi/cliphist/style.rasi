@@ -13,7 +13,6 @@ configuration {
   fg: #cdd6f4;
 
   accent: #3b82f6;
-  accent2: #00b4d8;
 
   bg-alpha: #0a0e17cc;
   card: #0f162399;
@@ -54,7 +53,7 @@ inputbar {
 
 prompt {
   enabled: true;
-  text-color: @accent2;
+  text-color: @accent;
   padding: 0px 8px 0px 0px;
 }
 
@@ -94,6 +93,6 @@ element-text {
 }
 
 element selected.normal {
-  border-color: @accent2;
+  border-color: @accent;
   background-color: #0f1623cc;
 }
