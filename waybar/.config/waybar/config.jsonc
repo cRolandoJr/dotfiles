@@ -16,7 +16,7 @@
   "reload_on_change": true,
   "reload_style_on_change": true,
 
-  "modules-left": ["custom/nixos", "hyprland/workspaces", "group/teclado", "mpris"],
+  "modules-left": ["group/sistema", "mpris"],
   "modules-center": ["hyprland/window"],
   // Todo visible: un modulo plegado es un modulo que se olvida. El orden va de
   // interactivos a estado pasivo, y termina en las anclas que no se mueven.
@@ -187,11 +187,13 @@
     "tooltip-format-deactivated": "Idle normal",
   },
 
-  // Agrupados para compartir un island: sueltos quedaban sobre el wallpaper y
-  // se perdian con un fondo claro. Sin "drawer": es un contenedor, no un plegable.
-  "group/teclado": {
+  // Un solo island para todo lo de la izquierda, como .modules-right. mpris
+  // queda afuera a proposito: es el unico que aparece y desaparece, y dentro
+  // haria respirar la capsula entera cada vez que arranca o para la musica.
+  // Sin "drawer": es un contenedor, no un plegable.
+  "group/sistema": {
     "orientation": "horizontal",
-    "modules": ["custom/layout", "keyboard-state"]
+    "modules": ["custom/nixos", "hyprland/workspaces", "custom/layout", "keyboard-state"]
   },
 
   "custom/layout": {

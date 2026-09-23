@@ -35,39 +35,52 @@ window#waybar {
   color: @fg;
 }
 
-/* ========= LEFT: NixOS logo + workspaces island ========= */
-
-/* Logo NixOS — chip pequeño a la izquierda del island de workspaces */
-#custom-nixos {
+/* ========= LEFT: ONE island container ========= */
+/* Mismo molde que .modules-right. mpris no entra: es el unico que aparece y
+   desaparece, y adentro haria respirar la capsula al arrancar la musica. */
+#sistema {
   background: @island-bg;
-  color: @accent;
-  font-size: 12px;
   margin: 2px 0;                  /* pegado al borde izquierdo del bar */
-  padding: 0 14px 0 6px;          /* asimetrico: centra el glyph opticamente */
+  padding: 0 8px;                 /* sin vertical: sumaba 4px al alto del bar */
   min-height: 20px;
   border-radius: 14px;            /* capsule completa (Variante A) */
-  border: 1px solid @border;
-  transition: background 140ms ease, color 140ms ease;
-}
-
-#custom-nixos:hover {
-  background: @accent-dim;
-  color: #ffffff;
-}
-
-#workspaces {
-  background: @island-bg;
-  color: @fg;
-  margin: 2px 0 2px 6px;
-  padding: 2px 8px;
-  min-height: 20px;
-  border-radius: 14px;
   border: 1px solid @border;
 
   /* Glow sutil: borde cyan superior-izquierdo, azul navy inferior-derecho */
   box-shadow:
     -1px -1px 0 0 @accent-dim,
      1px  1px 0 0 rgba(37, 99, 235, 0.40);
+}
+
+/* Módulos internos: transparentes, sin margin, separadores sutiles. */
+#sistema > widget > * {
+  background: transparent;
+  margin: 0;
+  padding: 0 8px;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+#sistema > widget > *:not(:last-child) {
+  border-right: 1px solid rgba(205, 214, 244, 0.08);
+}
+
+/* Logo NixOS — primer elemento del island */
+#custom-nixos {
+  color: @accent;
+  font-size: 12px;
+  padding: 0 10px 0 4px;          /* asimetrico: centra el glyph opticamente */
+  transition: color 140ms ease;
+}
+
+#custom-nixos:hover {
+  color: #ffffff;
+}
+
+#workspaces {
+  color: @fg;
+  padding: 0 6px;
 }
 
 /* Dots de workspace */
@@ -193,17 +206,6 @@ window#waybar {
 
 @keyframes blink {
   to { color: rgba(248, 113, 113, 0.40); }
-}
-
-/* Island de teclado: layout + num lock. Mismo molde que #workspaces y #mpris.
- * El padding lateral lo ponen los hijos, por eso aca va solo el vertical. */
-#teclado {
-  background: @island-bg;
-  margin: 2px 0 2px 6px;
-  padding: 0 2px;
-  min-height: 20px;
-  border-radius: 14px;
-  border: 1px solid @border;
 }
 
 /* Layout de teclado — color por clase que emite waybar-layout.sh */
