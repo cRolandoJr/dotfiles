@@ -66,6 +66,19 @@ window#waybar {
   border-right: 1px solid rgba(205, 214, 244, 0.08);
 }
 
+/* El padding de arriba le gana a `#keyboard-state { padding: 0 }` por
+   especificidad (contenedor + hijo vs id suelto), y le reservaba 16 px aunque
+   estuviera apagado y sin pintar nada. Medido con un fondo de prueba. */
+#sistema > widget > #keyboard-state {
+  padding: 0;
+}
+
+/* Mismo motivo de especificidad: el vertical es lo que le deja 16 px a los dots
+   dentro de los 20 del island. Sin el, GTK los estira y el activo crece. */
+#sistema > widget > #workspaces {
+  padding: 2px 6px;
+}
+
 /* Logo NixOS — primer elemento del island */
 #custom-nixos {
   color: @accent;
@@ -80,7 +93,6 @@ window#waybar {
 
 #workspaces {
   color: @fg;
-  padding: 0 6px;
 }
 
 /* Dots de workspace */
