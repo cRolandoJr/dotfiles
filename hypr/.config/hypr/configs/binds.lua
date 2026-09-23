@@ -23,7 +23,7 @@ end
 
 local terminal = app("foot")
 local float_terminal = app("foot --app-id=foot_float")
-local FM2 = app("foot --app-id=foot_float yazi")
+local FM2 = app("foot yazi")
 local calendar = app("foot --app-id=foot_float ikhal")
 local fileManager = app("thunar")
 local browser = app("firefox")
