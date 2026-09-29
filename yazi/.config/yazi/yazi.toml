@@ -1,6 +1,6 @@
 [opener]
 pdf = [
-  { run = 'firefox "$@"', desc = "Firefox", orphan = true, for = "linux" },
+  { run = 'firefox %s', desc = "Firefox", orphan = true, for = "linux" },
 ]
 
 # prepend_rules se evalúa antes del catch-all del default.
