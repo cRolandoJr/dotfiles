@@ -8,7 +8,9 @@ import { join } from "node:path"
 const SCRIPT = join(homedir(), ".claude/hooks/mechanical-rules-bash.sh")
 
 // Devuelve el motivo del bloqueo, o null si el comando pasa.
-export function denyReason(command) {
+// NO se exporta: opencode carga como plugin CADA función exportada del archivo, y esta
+// devuelve null → "null is not an object (evaluating 'C.config')" y se cae el servidor.
+function denyReason(command) {
   const r = spawnSync("bash", [SCRIPT], {
     input: JSON.stringify({ tool_input: { command } }),
     encoding: "utf8",
