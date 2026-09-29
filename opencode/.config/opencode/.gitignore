@@ -1,0 +1,4 @@
+# lo que opencode genera en su carpeta de config
+node_modules/
+package.json
+bun.lock
