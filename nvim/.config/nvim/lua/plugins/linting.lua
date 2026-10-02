@@ -23,6 +23,9 @@ return {
                 group = grp,
                 callback = function() lint.try_lint() end,
             })
+            -- El plugin carga en BufReadPost: ese evento ya pasó para el primer buffer, y el
+            -- filetype todavía no está puesto. vim.schedule lo corre cuando ya lo está.
+            vim.schedule(function() lint.try_lint() end)
         end,
     },
 }
